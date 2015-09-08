@@ -16,7 +16,17 @@ import info.izumin.android.bletia.wrapper.BluetoothGattWrapper;
  */
 public class BluetoothGattCallbackHandler extends BluetoothGattCallbackWrapper {
 
+    private EnumMap<BleEvent.Type, List<BleEvent>> mEventMap;
+
     public BluetoothGattCallbackHandler() {
+        mEventMap = new EnumMap<>(BleEvent.Type.class);
+    }
+
+    public boolean append(BleEvent.Type key, BleEvent event) {
+        if (!mEventMap.containsKey(key)) {
+            mEventMap.put(key, new ArrayList<BleEvent>());
+        }
+        return mEventMap.get(key).add(event);
     }
 
     @Override
@@ -36,7 +46,17 @@ public class BluetoothGattCallbackHandler extends BluetoothGattCallbackWrapper {
 
     @Override
     public void onCharacteristicWrite(BluetoothGattWrapper gatt, BluetoothGattCharacteristic characteristic, int status) {
-        // TODO: Not yet implemented.
+        if (status == BluetoothGatt.GATT_SUCCESS) {
+            List<BleEvent> events = mEventMap.get(BleEvent.Type.WRITING_CHARACTERISTIC);
+            for (int i = 0; i < events.size(); i++) {
+                BleEvent event = events.get(i);
+                if (event.getCharacteristic().getUuid().equals(characteristic.getUuid())) {
+                    events.remove(i).<BluetoothGattCharacteristic, Object, Object>getDeferred().resolve(characteristic);
+                }
+            }
+        } else {
+            // TODO: Not yet implemented.
+        }
     }
 
     @Override
