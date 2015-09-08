@@ -9,6 +9,7 @@ android {
         targetSdkVersion 22
         versionCode 1
         versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
         release {
@@ -21,4 +22,7 @@ android {
 dependencies {
     compile 'org.jdeferred:jdeferred-android-aar:1.2.4'
     compile 'info.izumin.java:simpleeventemitter:1.1.0'
+
+    androidTestCompile 'com.android.support.test:runner:0.3'
+    androidTestCompile 'com.android.support.test:rules:0.3'
 }
