@@ -16,11 +16,17 @@ public class Bletia {
 
     private Context mContext;
     private BluetoothGattWrapper mGattWrapper;
-    private BluetoothGattCallbackHandler mCallbackHandler;
+
+    private BleState mState = BleState.DISCONNECTED;
+
+    private BluetoothGattCallbackHandler mCallbackHandler = new BluetoothGattCallbackHandler();
 
     public Bletia(Context context) {
         mContext = context;
-        mCallbackHandler = new BluetoothGattCallbackHandler();
+    }
+
+    public BleState getState() {
+        return mState;
     }
 
     public Promise<BluetoothGattCharacteristic, BluetoothGattStatus, Object> writeCharacteristic(BluetoothGattCharacteristic characteristic) {
