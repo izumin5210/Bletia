@@ -7,6 +7,7 @@ import android.support.test.runner.AndroidJUnit4;
 import android.test.AndroidTestCase;
 
 import org.jdeferred.DoneCallback;
+import org.jdeferred.FailCallback;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -67,6 +68,35 @@ public class BletiaTest extends AndroidTestCase {
         Thread.sleep(1000);
         mCallbackHandler.onCharacteristicWrite(
                 mBluetoothGattWrapper, mCharacteristic, BluetoothGatt.GATT_SUCCESS);
+
+        boolean res = latch.await(1000, TimeUnit.MILLISECONDS);
+
+        assertThat(res).isTrue();
+    }
+
+    @Test
+    public void writeCharacteristicFailure() throws Exception {
+        Whitebox.setInternalState(mBletia, "mGattWrapper", mBluetoothGattWrapper);
+        final CountDownLatch latch = new CountDownLatch(1);
+        when(mBluetoothGattWrapper.writeCharacteristic(mCharacteristic)).thenReturn(true);
+        when(mCharacteristic.getUuid()).thenReturn(UUID.randomUUID());
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                mBletia.writeCharacteristic(mCharacteristic).fail(new FailCallback<BluetoothGattStatus>() {
+                    @Override
+                    public void onFail(BluetoothGattStatus result) {
+                        assertThat(result).isEqualTo(BluetoothGattStatus.FAILURE);
+                        latch.countDown();
+                    }
+                });
+            }
+        }).start();
+
+        Thread.sleep(1000);
+        mCallbackHandler.onCharacteristicWrite(
+                mBluetoothGattWrapper, mCharacteristic, BluetoothGatt.GATT_FAILURE);
 
         boolean res = latch.await(1000, TimeUnit.MILLISECONDS);
 

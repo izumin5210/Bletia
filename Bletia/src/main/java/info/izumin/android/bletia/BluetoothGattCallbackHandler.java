@@ -4,6 +4,8 @@ import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattDescriptor;
 
+import org.jdeferred.Deferred;
+
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
@@ -46,16 +48,17 @@ public class BluetoothGattCallbackHandler extends BluetoothGattCallbackWrapper {
 
     @Override
     public void onCharacteristicWrite(BluetoothGattWrapper gatt, BluetoothGattCharacteristic characteristic, int status) {
-        if (status == BluetoothGatt.GATT_SUCCESS) {
-            List<BleEvent> events = mEventMap.get(BleEvent.Type.WRITING_CHARACTERISTIC);
-            for (int i = 0; i < events.size(); i++) {
-                BleEvent event = events.get(i);
-                if (event.getCharacteristic().getUuid().equals(characteristic.getUuid())) {
-                    events.remove(i).<BluetoothGattCharacteristic, Object, Object>getDeferred().resolve(characteristic);
+        List<BleEvent> events = mEventMap.get(BleEvent.Type.WRITING_CHARACTERISTIC);
+        for (int i = 0; i < events.size(); i++) {
+            BleEvent event = events.get(i);
+            if (event.getCharacteristic().getUuid().equals(characteristic.getUuid())) {
+                Deferred<BluetoothGattCharacteristic, BluetoothGattStatus, Object> deferred = events.remove(i).getDeferred();
+                if (status == BluetoothGatt.GATT_SUCCESS) {
+                    deferred.resolve(characteristic);
+                } else {
+                    deferred.reject(BluetoothGattStatus.valueOf(status));
                 }
             }
-        } else {
-            // TODO: Not yet implemented.
         }
     }
 

@@ -23,17 +23,14 @@ public class Bletia {
         mCallbackHandler = new BluetoothGattCallbackHandler();
     }
 
-    public Promise<BluetoothGattCharacteristic, Object, Object> writeCharacteristic(BluetoothGattCharacteristic characteristic) {
-        Deferred<BluetoothGattCharacteristic, Object, Object> deferred = new DeferredObject<>();
-        Promise<BluetoothGattCharacteristic, Object, Object> promise = deferred.promise();
+    public Promise<BluetoothGattCharacteristic, BluetoothGattStatus, Object> writeCharacteristic(BluetoothGattCharacteristic characteristic) {
+        Deferred<BluetoothGattCharacteristic, BluetoothGattStatus, Object> deferred = new DeferredObject<>();
+        Promise<BluetoothGattCharacteristic, BluetoothGattStatus, Object> promise = deferred.promise();
         BleEvent event = new BleEvent(deferred);
 
-        if (mGattWrapper.writeCharacteristic(characteristic)) {
-            event.setCharacteristic(characteristic);
-            mCallbackHandler.append(BleEvent.Type.WRITING_CHARACTERISTIC, event);
-        } else {
-            // TODO: Not yet implemented.
-        }
+        mGattWrapper.writeCharacteristic(characteristic);
+        event.setCharacteristic(characteristic);
+        mCallbackHandler.append(BleEvent.Type.WRITING_CHARACTERISTIC, event);
 
         return promise;
     }
