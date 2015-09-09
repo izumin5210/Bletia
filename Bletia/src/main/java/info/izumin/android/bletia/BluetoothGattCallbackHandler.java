@@ -43,23 +43,12 @@ public class BluetoothGattCallbackHandler extends BluetoothGattCallbackWrapper {
 
     @Override
     public void onCharacteristicRead(BluetoothGattWrapper gatt, BluetoothGattCharacteristic characteristic, int status) {
-        // TODO: Not yet implemented.
+        handleBleEvent(BleEvent.Type.READING_CHARACTERISTIC, characteristic, status);
     }
 
     @Override
     public void onCharacteristicWrite(BluetoothGattWrapper gatt, BluetoothGattCharacteristic characteristic, int status) {
-        List<BleEvent> events = mEventMap.get(BleEvent.Type.WRITING_CHARACTERISTIC);
-        for (int i = 0; i < events.size(); i++) {
-            BleEvent event = events.get(i);
-            if (event.getCharacteristic().getUuid().equals(characteristic.getUuid())) {
-                Deferred<BluetoothGattCharacteristic, BluetoothGattStatus, Object> deferred = events.remove(i).getDeferred();
-                if (status == BluetoothGatt.GATT_SUCCESS) {
-                    deferred.resolve(characteristic);
-                } else {
-                    deferred.reject(BluetoothGattStatus.valueOf(status));
-                }
-            }
-        }
+        handleBleEvent(BleEvent.Type.WRITING_CHARACTERISTIC, characteristic, status);
     }
 
     @Override
@@ -90,5 +79,21 @@ public class BluetoothGattCallbackHandler extends BluetoothGattCallbackWrapper {
     @Override
     public void onMtuChanged(BluetoothGattWrapper gatt, int mtu, int status) {
         // TODO: Not yet implemented.
+    }
+
+    private void handleBleEvent(BleEvent.Type type, BluetoothGattCharacteristic characteristic, int status) {
+        List<BleEvent> events = mEventMap.get(type);
+        for (int i = 0; i < events.size(); i++) {
+            BleEvent event = events.get(i);
+            if (event.getCharacteristic().getUuid().equals(characteristic.getUuid())) {
+                Deferred<BluetoothGattCharacteristic, BluetoothGattStatus, Object> deferred = events.remove(i).getDeferred();
+                if (status == BluetoothGatt.GATT_SUCCESS) {
+                    deferred.resolve(characteristic);
+                } else {
+                    deferred.reject(BluetoothGattStatus.valueOf(status));
+                }
+                break;
+            }
+        }
     }
 }

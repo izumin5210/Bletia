@@ -38,6 +38,12 @@ public class Bletia {
     public Promise<BluetoothGattCharacteristic, BluetoothGattStatus, Object> readCharacteristic(BluetoothGattCharacteristic characteristic) {
         Deferred<BluetoothGattCharacteristic, BluetoothGattStatus, Object> deferred = new DeferredObject<>();
         Promise<BluetoothGattCharacteristic, BluetoothGattStatus, Object> promise = deferred.promise();
+        BleEvent event = new BleEvent(deferred);
+        event.setCharacteristic(characteristic);
+
+        mGattWrapper.readCharacteristic(characteristic);
+        mCallbackHandler.append(BleEvent.Type.READING_CHARACTERISTIC, event);
+
         return promise;
     }
 }

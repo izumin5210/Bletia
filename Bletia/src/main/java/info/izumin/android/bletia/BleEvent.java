@@ -9,7 +9,8 @@ import org.jdeferred.Deferred;
  */
 public class BleEvent {
     enum Type {
-        WRITING_CHARACTERISTIC
+        WRITING_CHARACTERISTIC,
+        READING_CHARACTERISTIC
     }
 
     private final Deferred mDeferred;
