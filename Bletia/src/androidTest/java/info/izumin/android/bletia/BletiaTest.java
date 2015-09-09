@@ -44,6 +44,7 @@ public class BletiaTest extends AndroidTestCase {
         mBletia = new Bletia(mContext);
         mCallbackHandler = new BluetoothGattCallbackHandler();
         Whitebox.setInternalState(mBletia, "mCallbackHandler", mCallbackHandler);
+        when(mCharacteristic.getUuid()).thenReturn(UUID.randomUUID());
     }
 
     @Test
@@ -51,7 +52,6 @@ public class BletiaTest extends AndroidTestCase {
         Whitebox.setInternalState(mBletia, "mGattWrapper", mBluetoothGattWrapper);
         final CountDownLatch latch = new CountDownLatch(1);
         when(mBluetoothGattWrapper.writeCharacteristic(mCharacteristic)).thenReturn(true);
-        when(mCharacteristic.getUuid()).thenReturn(UUID.randomUUID());
 
         new Thread(new Runnable() {
             @Override
@@ -96,6 +96,61 @@ public class BletiaTest extends AndroidTestCase {
 
         Thread.sleep(1000);
         mCallbackHandler.onCharacteristicWrite(
+                mBluetoothGattWrapper, mCharacteristic, BluetoothGatt.GATT_FAILURE);
+
+        boolean res = latch.await(1000, TimeUnit.MILLISECONDS);
+
+        assertThat(res).isTrue();
+    }
+
+    @Test
+    public void readCharacteristicSuccessfully() throws Exception {
+        Whitebox.setInternalState(mBletia, "mGattWrapper", mBluetoothGattWrapper);
+        final CountDownLatch latch = new CountDownLatch(1);
+        when(mBluetoothGattWrapper.readCharacteristic(mCharacteristic)).thenReturn(true);
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                mBletia.readCharacteristic(mCharacteristic).then(new DoneCallback<BluetoothGattCharacteristic>() {
+                    @Override
+                    public void onDone(BluetoothGattCharacteristic result) {
+                        latch.countDown();
+                    }
+                });
+            }
+        }).start();
+
+        Thread.sleep(1000);
+        mCallbackHandler.onCharacteristicRead(
+                mBluetoothGattWrapper, mCharacteristic, BluetoothGatt.GATT_SUCCESS);
+
+        boolean res = latch.await(1000, TimeUnit.MILLISECONDS);
+
+        assertThat(res).isTrue();
+    }
+
+    @Test
+    public void readCharacteristicFailure() throws Exception {
+        Whitebox.setInternalState(mBletia, "mGattWrapper", mBluetoothGattWrapper);
+        final CountDownLatch latch = new CountDownLatch(1);
+        when(mBluetoothGattWrapper.readCharacteristic(mCharacteristic)).thenReturn(true);
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                mBletia.readCharacteristic(mCharacteristic).fail(new FailCallback<BluetoothGattStatus>() {
+                    @Override
+                    public void onFail(BluetoothGattStatus result) {
+                        assertThat(result).isEqualTo(BluetoothGattStatus.FAILURE);
+                        latch.countDown();
+                    }
+                });
+            }
+        }).start();
+
+        Thread.sleep(1000);
+        mCallbackHandler.onCharacteristicRead(
                 mBluetoothGattWrapper, mCharacteristic, BluetoothGatt.GATT_FAILURE);
 
         boolean res = latch.await(1000, TimeUnit.MILLISECONDS);
