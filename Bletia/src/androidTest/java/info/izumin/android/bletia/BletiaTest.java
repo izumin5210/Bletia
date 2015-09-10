@@ -32,6 +32,7 @@ public class BletiaTest extends AndroidTestCase {
 
     @Mock private BluetoothGattCharacteristic mCharacteristic;
     @Mock private BluetoothGattWrapper mBluetoothGattWrapper;
+    @Mock private BluetoothGattCallbackHandler.Callback mHandlerCallback;
 
     private BluetoothGattCallbackHandler mCallbackHandler;
     private Bletia mBletia;
@@ -42,7 +43,7 @@ public class BletiaTest extends AndroidTestCase {
         MockitoAnnotations.initMocks(this);
         mContext = getContext();
         mBletia = new Bletia(mContext);
-        mCallbackHandler = new BluetoothGattCallbackHandler();
+        mCallbackHandler = new BluetoothGattCallbackHandler(mHandlerCallback);
         Whitebox.setInternalState(mBletia, "mCallbackHandler", mCallbackHandler);
         when(mCharacteristic.getUuid()).thenReturn(UUID.randomUUID());
     }
