@@ -24,23 +24,35 @@ public class Bletia implements BluetoothGattCallbackHandler.Callback {
 
     private ConnectionHelper mConnectionHelper;
 
+    private EventEmitter mEmitter;
     private BluetoothGattCallbackHandler mCallbackHandler;
 
     public Bletia(Context context) {
         mContext = context;
         mConnectionHelper = new ConnectionHelper(mContext);
         mCallbackHandler = new BluetoothGattCallbackHandler(this);
+        mEmitter = new EventEmitter();
     }
 
     public BleState getState() {
         return mState;
     }
 
+    public void addListener(BletiaListener listener) {
+        mEmitter.addListener(listener);
+    }
+
+    public void removeListener(BletiaListener listener) {
+        mEmitter.removeListener(listener);
+    }
+
     public void connect(BluetoothDevice device) {
+        mState = BleState.CONNECTING;
         mConnectionHelper.connect(new BluetoothDeviceWrapper(device), mCallbackHandler);
     }
 
     public void disconenct() {
+        mState = BleState.DISCONNECTING;
         mConnectionHelper.disconnect();
     }
 
@@ -70,13 +82,19 @@ public class Bletia implements BluetoothGattCallbackHandler.Callback {
 
     @Override
     public void onConnect(BluetoothGattWrapper gatt) {
+        mState = BleState.CONNECTED;
+        mEmitter.emitConnectEvent();
     }
 
     @Override
     public void onDisconnect(BluetoothGattWrapper gatt) {
+        mState = BleState.DISCONNECTED;
+        mConnectionHelper.close();
+        mEmitter.emitDisconnectEvent();
     }
 
     @Override
     public void onError(BleStatus status) {
+        mEmitter.emitError(status);
     }
 }
