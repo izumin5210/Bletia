@@ -66,8 +66,8 @@ public class BluetoothDeviceWrapper {
         return mDevice.getUuids();
     }
 
-    public BluetoothGatt connectGatt(Context context, boolean autoConnect, BluetoothGattCallback callback) {
-        return mDevice.connectGatt(context, autoConnect, callback);
+    public BluetoothGattWrapper connectGatt(Context context, boolean autoConnect, BluetoothGattCallback callback) {
+        return new BluetoothGattWrapper(mDevice.connectGatt(context, autoConnect, callback));
     }
 
     public BluetoothClass getBluetoothClass() {
