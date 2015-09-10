@@ -1,5 +1,6 @@
 package info.izumin.android.bletia;
 
+import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.content.Context;
 
@@ -7,6 +8,8 @@ import org.jdeferred.Deferred;
 import org.jdeferred.Promise;
 import org.jdeferred.impl.DeferredObject;
 
+import info.izumin.android.bletia.helper.ConnectionHelper;
+import info.izumin.android.bletia.wrapper.BluetoothDeviceWrapper;
 import info.izumin.android.bletia.wrapper.BluetoothGattWrapper;
 
 /**
@@ -19,14 +22,25 @@ public class Bletia {
 
     private BleState mState = BleState.DISCONNECTED;
 
+    private ConnectionHelper mConnectionHelper;
+
     private BluetoothGattCallbackHandler mCallbackHandler = new BluetoothGattCallbackHandler();
 
     public Bletia(Context context) {
         mContext = context;
+        mConnectionHelper = new ConnectionHelper(mContext);
     }
 
     public BleState getState() {
         return mState;
+    }
+
+    public void connect(BluetoothDevice device) {
+        mConnectionHelper.connect(new BluetoothDeviceWrapper(device), mCallbackHandler);
+    }
+
+    public void disconenct() {
+        mConnectionHelper.disconnect();
     }
 
     public Promise<BluetoothGattCharacteristic, BluetoothGattStatus, Object> writeCharacteristic(BluetoothGattCharacteristic characteristic) {
