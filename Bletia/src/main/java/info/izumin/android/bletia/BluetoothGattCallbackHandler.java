@@ -19,9 +19,11 @@ import info.izumin.android.bletia.wrapper.BluetoothGattWrapper;
 public class BluetoothGattCallbackHandler extends BluetoothGattCallbackWrapper {
 
     private EnumMap<BleEvent.Type, List<BleEvent>> mEventMap;
+    private Callback mCallback;
 
-    public BluetoothGattCallbackHandler() {
+    public BluetoothGattCallbackHandler(Callback callback) {
         mEventMap = new EnumMap<>(BleEvent.Type.class);
+        mCallback = callback;
     }
 
     public boolean append(BleEvent.Type key, BleEvent event) {
@@ -95,5 +97,11 @@ public class BluetoothGattCallbackHandler extends BluetoothGattCallbackWrapper {
                 break;
             }
         }
+    }
+
+    interface Callback {
+        void onConnect(BluetoothGattWrapper gatt);
+        void onDisconnect(BluetoothGattWrapper gatt);
+        void onError(BleStatus status);
     }
 }

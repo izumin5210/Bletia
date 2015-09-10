@@ -15,7 +15,7 @@ import info.izumin.android.bletia.wrapper.BluetoothGattWrapper;
 /**
  * Created by izumin on 9/7/15.
  */
-public class Bletia {
+public class Bletia implements BluetoothGattCallbackHandler.Callback {
 
     private Context mContext;
     private BluetoothGattWrapper mGattWrapper;
@@ -24,11 +24,12 @@ public class Bletia {
 
     private ConnectionHelper mConnectionHelper;
 
-    private BluetoothGattCallbackHandler mCallbackHandler = new BluetoothGattCallbackHandler();
+    private BluetoothGattCallbackHandler mCallbackHandler;
 
     public Bletia(Context context) {
         mContext = context;
         mConnectionHelper = new ConnectionHelper(mContext);
+        mCallbackHandler = new BluetoothGattCallbackHandler(this);
     }
 
     public BleState getState() {
@@ -65,5 +66,17 @@ public class Bletia {
         mCallbackHandler.append(BleEvent.Type.READING_CHARACTERISTIC, event);
 
         return promise;
+    }
+
+    @Override
+    public void onConnect(BluetoothGattWrapper gatt) {
+    }
+
+    @Override
+    public void onDisconnect(BluetoothGattWrapper gatt) {
+    }
+
+    @Override
+    public void onError(BleStatus status) {
     }
 }
