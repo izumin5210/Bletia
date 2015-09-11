@@ -8,10 +8,6 @@ build:
           echo $ANDROID_HOME
           echo $ANDROID_BUILD_TOOLS
           echo $ANDROID_UPDATE_FILTER
-    - android-sdk-update:
-        filter: platform-tools,extra-android-m2repository,extra-android-support
-    - setup-android-emulator:
-        target: android-23
     - script:
         name: start android emulator
         code: |
