@@ -11,7 +11,6 @@ build:
     - script:
         name: start android emulator
         code: |
-          android create avd --force -n android-23 -t android-23 --abi armeabi-v7a
           emulator -avd android-23 -no-skin -no-audio -no-window -port 5678
     - script:
         name: run gradle connectedAndroidTest
