@@ -1,10 +1,10 @@
-box: wercker/android
+box: izumin5210/android
 build:
   steps:
     - script:
         name: show base information
         code: |
-          ./gradlew -v
+          gradle -v
           echo $ANDROID_HOME
           echo $ANDROID_BUILD_TOOLS
           echo $ANDROID_UPDATE_FILTER
@@ -13,9 +13,14 @@ build:
     - setup-android-emulator:
         target: android-23
     - script:
+        name: start android emulator
+        code: |
+          android create avd --force -n android-23 -t android-23
+          emulator -avd android-23 -no-skin -no-audio -no-window -port 5678
+    - script:
         name: run gradle connectedAndroidTest
         code: |
-          ./gradlew --full-stacktrace -q --project-cache-dir=$WERCKER_CACHE_DIR connectedAndroidTest
+          gradle --full-stacktrace -q --project-cache-dir=$WERCKER_CACHE_DIR connectedAndroidTest
   after-steps:
     - script:
         name: inspect build result
