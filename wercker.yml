@@ -11,8 +11,7 @@ build:
     - script:
         name: start android emulator
         code: |
-          emulator -avd android-23 -no-skin -no-audio -no-window -port 5678
-          wait-for-simulator
+          start-emulator
     - script:
         name: run gradle connectedAndroidTest
         code: |
