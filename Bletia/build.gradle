@@ -40,3 +40,90 @@ dependencies {
     androidTestCompile 'com.google.dexmaker:dexmaker-mockito:1.2'
     androidTestCompile 'com.squareup.assertj:assertj-android:1.1.0'
 }
+
+apply plugin: 'com.github.dcendents.android-maven'
+apply plugin: 'com.jfrog.bintray'
+
+group = 'info.izumin.android'
+version = sdkVersionName
+
+def siteUrl = 'https://github.com/izumin5210/Bletia'
+def gitUrl = 'https://github.com/izumin5210/Bletia.git'
+
+bintray {
+    user = System.getenv('BINTRAY_USER')
+    key = System.getenv('BINTRAY_API_KEY')
+
+    publish = true
+    configurations = ['archives']
+    pkg {
+        repo = 'maven'
+        name = project.name
+        desc = 'Android BLE Gatt wrapper with promise.'
+        websiteUrl = siteUrl
+        issueTrackerUrl = "${siteUrl}/issues"
+        vcsUrl = gitUrl
+        licenses = ['Apache-2.0']
+        labels = ['aar', 'android', 'BLE']
+        publicDownloadNumbers = true
+        version {
+            name = sdkVersionName
+            desc = "Bletia: Android BLE Gatt wrapper ${sdkVersionName}"
+            released  = new Date()
+            vcsTag = sdkVersionName
+        }
+    }
+}
+
+install {
+    repositories.mavenInstaller {
+        pom {
+            project {
+                packaging 'aar'
+                name 'bletia'
+                url siteUrl
+                licenses {
+                    license {
+                        name 'The Apache Software License, Version 2.0'
+                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+                developers {
+                    developer {
+                        id 'izumin5210'
+                        name 'Masayuki IZUMI'
+                        email 'masayuki@izumin.info'
+                    }
+                }
+                scm {
+                    connection gitUrl
+                    developerConnection gitUrl
+                    url siteUrl
+                }
+            }
+        }
+    }
+}
+
+task sourcesJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    classifier = 'sources'
+}
+
+task javadoc(type: Javadoc) {
+    source = android.sourceSets.main.java.srcDirs
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+artifacts {
+    archives javadocJar
+    archives sourcesJar
+}
+
+task findConventions << {
+    println project.getConvention()
+}
