@@ -1,21 +1,21 @@
-box: wercker/android
+box: izumin5210/android
 build:
   steps:
     - script:
         name: show base information
         code: |
-          ./gradlew -v
+          gradle -v
           echo $ANDROID_HOME
           echo $ANDROID_BUILD_TOOLS
           echo $ANDROID_UPDATE_FILTER
-    - android-sdk-update:
-        filter: platform-tools,extra-android-m2repository,extra-android-support
-    - setup-android-emulator:
-        target: android-22
+    - script:
+        name: start android emulator
+        code: |
+          start-emulator
     - script:
         name: run gradle connectedAndroidTest
         code: |
-          ./gradlew --full-stacktrace -q --project-cache-dir=$WERCKER_CACHE_DIR connectedAndroidTest
+          gradle --full-stacktrace -q --project-cache-dir=$WERCKER_CACHE_DIR connectedAndroidTest
   after-steps:
     - script:
         name: inspect build result
