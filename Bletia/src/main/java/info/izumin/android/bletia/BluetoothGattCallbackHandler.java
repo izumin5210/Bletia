@@ -4,11 +4,12 @@ import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattDescriptor;
 
-import org.jdeferred.Deferred;
-
-import java.util.ArrayList;
 import java.util.EnumMap;
-import java.util.List;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 
 import info.izumin.android.bletia.wrapper.BluetoothGattCallbackWrapper;
 import info.izumin.android.bletia.wrapper.BluetoothGattWrapper;
@@ -18,7 +19,7 @@ import info.izumin.android.bletia.wrapper.BluetoothGattWrapper;
  */
 public class BluetoothGattCallbackHandler extends BluetoothGattCallbackWrapper {
 
-    private EnumMap<BleEvent.Type, List<BleEvent>> mEventMap;
+    private EnumMap<BleEvent.Type, Map<UUID, BleEvent>> mEventMap;
     private Callback mCallback;
 
     public BluetoothGattCallbackHandler(Callback callback) {
@@ -26,11 +27,11 @@ public class BluetoothGattCallbackHandler extends BluetoothGattCallbackWrapper {
         mCallback = callback;
     }
 
-    public boolean append(BleEvent.Type key, BleEvent event) {
+    public BleEvent append(BleEvent.Type key, BleEvent event) {
         if (!mEventMap.containsKey(key)) {
-            mEventMap.put(key, new ArrayList<BleEvent>());
+            mEventMap.put(key, new HashMap<UUID, BleEvent>());
         }
-        return mEventMap.get(key).add(event);
+        return mEventMap.get(key).put(event.getUuid(), event);
     }
 
     @Override
@@ -92,19 +93,23 @@ public class BluetoothGattCallbackHandler extends BluetoothGattCallbackWrapper {
         // TODO: Not yet implemented.
     }
 
+    public UUID generateUuid(BleEvent.Type type) {
+        UUID uuid;
+        final Map<UUID, BleEvent> map = mEventMap.get(type);
+        final Set<UUID> usedUuids = (map != null) ? map.keySet() : new HashSet<UUID>();
+        do {
+            uuid = UUID.randomUUID();
+        } while (usedUuids.contains(uuid));
+        return uuid;
+    }
+
     private void handleBleEvent(BleEvent.Type type, BluetoothGattCharacteristic characteristic, int status) {
-        List<BleEvent> events = mEventMap.get(type);
-        for (int i = 0; i < events.size(); i++) {
-            BleEvent event = events.get(i);
-            if (event.getCharacteristic().getUuid().equals(characteristic.getUuid())) {
-                Deferred<BluetoothGattCharacteristic, BluetoothGattStatus, Object> deferred = events.remove(i).getDeferred();
-                if (status == BluetoothGatt.GATT_SUCCESS) {
-                    deferred.resolve(characteristic);
-                } else {
-                    deferred.reject(BluetoothGattStatus.valueOf(status));
-                }
-                break;
-            }
+        UUID uuid = UUID.fromString(new String(characteristic.getDescriptor(Bletia.BRETIA_UUID).getValue()));
+        BleEvent event = mEventMap.get(type).get(uuid);
+        if (status == BluetoothGatt.GATT_SUCCESS) {
+            event.getDeferred().resolve(characteristic);
+        } else {
+            event.getDeferred().reject(BluetoothGattStatus.valueOf(status));
         }
     }
 

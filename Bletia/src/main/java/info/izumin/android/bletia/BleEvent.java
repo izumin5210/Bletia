@@ -4,6 +4,8 @@ import android.bluetooth.BluetoothGattCharacteristic;
 
 import org.jdeferred.Deferred;
 
+import java.util.UUID;
+
 /**
  * Created by izumin on 9/7/15.
  */
@@ -13,11 +15,17 @@ public class BleEvent {
         READING_CHARACTERISTIC
     }
 
+    private final UUID mUuid;
     private final Deferred mDeferred;
     private BluetoothGattCharacteristic mCharacteristic;
 
-    public BleEvent(Deferred deferred) {
+    public BleEvent(UUID uuid, Deferred deferred) {
+        mUuid = uuid;
         mDeferred = deferred;
+    }
+
+    public UUID getUuid() {
+        return mUuid;
     }
 
     public <D, F, P> Deferred<D, F, P> getDeferred() {
