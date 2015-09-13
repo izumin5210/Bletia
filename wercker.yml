@@ -23,3 +23,17 @@ build:
           pwd
           ls -la ./Bletia/build/outputs/
           cp -r ./Bletia/build/outputs/* ${WERCKER_REPORT_ARTIFACTS_DIR}
+deploy:
+  steps:
+    - script:
+        name: show base information
+        code: |
+          gradle -v
+    - script:
+        name: build with gradle
+        code: |
+          gradle build
+    - script:
+        name: upload to bintray
+        code: |
+          gradle bintrayUpload
