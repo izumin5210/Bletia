@@ -13,14 +13,6 @@ build:
         code: |
           start-emulator
     - script:
-        name: run gradle androidDependencies
-        code: |
-          gradle --full-stacktrace -q --project-cache-dir=$WERCKER_CACHE_DIR androidDependencies
-    - script:
-        name: run gradle build
-        code: |
-          gradle --full-stacktrace -q --project-cache-dir=$WERCKER_CACHE_DIR build
-    - script:
         name: run gradle connectedAndroidTest
         code: |
           gradle --full-stacktrace -q --project-cache-dir=$WERCKER_CACHE_DIR connectedAndroidTest
