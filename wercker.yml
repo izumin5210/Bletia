@@ -11,7 +11,7 @@ build:
     - android-sdk-update:
         filter: platform-tools,extra-android-m2repository,extra-android-support
     - setup-android-emulator:
-        target: android-23
+        target: android-22
     - script:
         name: run gradle connectedAndroidTest
         code: |
