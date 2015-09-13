@@ -1,1 +1,1 @@
-include ':app', ':Bletia'
+include ':Bletia'
