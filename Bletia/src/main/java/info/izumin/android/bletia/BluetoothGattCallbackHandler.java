@@ -80,18 +80,20 @@ public class BluetoothGattCallbackHandler extends BluetoothGattCallbackWrapper {
     }
 
     private void handleBleEvent(BleEvent.Type type, BluetoothGattCharacteristic characteristic, int status) {
-        handleBleEvent(mEventStore.closeEvent(type, characteristic.getUuid()), status);
-    }
-
-    private void handleBleEvent(BleEvent.Type type, BluetoothGattDescriptor descriptor, int status) {
-        handleBleEvent(mEventStore.closeEvent(type, descriptor.getUuid()), status);
-    }
-
-    private <T> void handleBleEvent(BleEvent<T> event, int status) {
+        BleEvent<BluetoothGattCharacteristic> event = mEventStore.closeEvent(type, characteristic.getUuid());
         if (status == BluetoothGatt.GATT_SUCCESS) {
             event.getDeferred().resolve(event.getValue());
         } else {
-            event.getDeferred().reject(new BletiaException(BleErrorType.valueOf(status)));
+            event.getDeferred().reject(new BletiaException(BleErrorType.valueOf(status), characteristic));
+        }
+    }
+
+    private void handleBleEvent(BleEvent.Type type, BluetoothGattDescriptor descriptor, int status) {
+        BleEvent<BluetoothGattDescriptor> event = mEventStore.closeEvent(type, descriptor.getUuid());
+        if (status == BluetoothGatt.GATT_SUCCESS) {
+            event.getDeferred().resolve(descriptor);
+        } else {
+            event.getDeferred().reject(new BletiaException(BleErrorType.valueOf(status), descriptor));
         }
     }
 
