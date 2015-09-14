@@ -2,7 +2,6 @@ package info.izumin.android.bletia;
 
 import android.os.Handler;
 import android.os.HandlerThread;
-import android.os.Looper;
 import android.os.Message;
 
 import org.jdeferred.Deferred;
@@ -35,9 +34,9 @@ public class BleMessageThread extends Handler {
         mHandlerThread.quitSafely();
     }
 
-    public <T> Promise<T, BleStatus, Object> sendEvent(BleEvent<T> event) {
-        Deferred<T, BleStatus, Object> deferred = new DeferredObject<>();
-        Promise<T, BleStatus, Object> promise = deferred.promise();
+    public <T> Promise<T, BletiaException, Object> sendEvent(BleEvent<T> event) {
+        Deferred<T, BletiaException, Object> deferred = new DeferredObject<>();
+        Promise<T, BletiaException, Object> promise = deferred.promise();
         event.setDeferred(deferred);
 
         mEventStore.addEvent(event);

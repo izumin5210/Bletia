@@ -67,7 +67,7 @@ public class BleEvent<T> {
     private final UUID mUuid;
     private final T mValue;
 
-    private Deferred<T, BleStatus, ?> mDeferred;
+    private Deferred<T, BletiaException, ?> mDeferred;
 
     public BleEvent(Type type, UUID uuid, T value) {
         mType = type;
@@ -87,11 +87,11 @@ public class BleEvent<T> {
         return mValue;
     }
 
-    public Deferred<T, BleStatus, ?> getDeferred() {
+    public Deferred<T, BletiaException, ?> getDeferred() {
         return mDeferred;
     }
 
-    public void setDeferred(Deferred<T, BleStatus, ?> deferred) {
+    public void setDeferred(Deferred<T, BletiaException, ?> deferred) {
         mDeferred = deferred;
     }
 

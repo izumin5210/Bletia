@@ -30,9 +30,9 @@ public class EventEmitter {
         }
     }
 
-    public void emitError(BleStatus status) {
+    public void emitError(BletiaException exception) {
         for (BletiaListener listener : mListeners) {
-            listener.onError(status);
+            listener.onError(exception);
         }
     }
 }

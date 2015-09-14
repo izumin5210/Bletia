@@ -4,8 +4,6 @@ import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattDescriptor;
 
-import java.util.UUID;
-
 import info.izumin.android.bletia.wrapper.BluetoothGattCallbackWrapper;
 import info.izumin.android.bletia.wrapper.BluetoothGattWrapper;
 
@@ -32,7 +30,7 @@ public class BluetoothGattCallbackHandler extends BluetoothGattCallbackWrapper {
                 mCallback.onDisconnect(gatt);
             }
         } else {
-            mCallback.onError(BleStatus.valueOf(status));
+            mCallback.onError(new BletiaException(BleErrorType.valueOf(status)));
         }
     }
 
@@ -86,13 +84,13 @@ public class BluetoothGattCallbackHandler extends BluetoothGattCallbackWrapper {
         if (status == BluetoothGatt.GATT_SUCCESS) {
             event.getDeferred().resolve(characteristic);
         } else {
-            event.getDeferred().reject(BleStatus.valueOf(status));
+            event.getDeferred().reject(new BletiaException(BleErrorType.valueOf(status)));
         }
     }
 
     interface Callback {
         void onConnect(BluetoothGattWrapper gatt);
         void onDisconnect(BluetoothGattWrapper gatt);
-        void onError(BleStatus status);
+        void onError(BletiaException exception);
     }
 }
