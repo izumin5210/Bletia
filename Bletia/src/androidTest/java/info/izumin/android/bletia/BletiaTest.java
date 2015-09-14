@@ -98,6 +98,8 @@ public class BletiaTest extends AndroidTestCase {
                     @Override
                     public void onFail(BletiaException result) {
                         assertThat(result.getType()).isEqualTo(BleErrorType.FAILURE);
+                        assertThat(result.getCharacteristic()).isEqualTo(mCharacteristic);
+                        assertThat(result.getDescriptor()).isNull();
                         mLatch.countDown();
                     }
                 });
@@ -117,6 +119,7 @@ public class BletiaTest extends AndroidTestCase {
                     @Override
                     public void onFail(BletiaException result) {
                         assertThat(result.getType()).isEqualTo(BleErrorType.OPERATION_INITIATED_FAILURE);
+                        assertThat(result.getCharacteristic()).isEqualTo(mCharacteristic);
                         mLatch.countDown();
                     }
                 });
@@ -148,6 +151,8 @@ public class BletiaTest extends AndroidTestCase {
                     @Override
                     public void onFail(BletiaException result) {
                         assertThat(result.getType()).isEqualTo(BleErrorType.FAILURE);
+                        assertThat(result.getCharacteristic()).isEqualTo(mCharacteristic);
+                        assertThat(result.getDescriptor()).isNull();
                         mLatch.countDown();
                     }
                 });
@@ -167,6 +172,8 @@ public class BletiaTest extends AndroidTestCase {
                     @Override
                     public void onFail(BletiaException result) {
                         assertThat(result.getType()).isEqualTo(BleErrorType.OPERATION_INITIATED_FAILURE);
+                        assertThat(result.getCharacteristic()).isEqualTo(mCharacteristic);
+                        assertThat(result.getDescriptor()).isNull();
                         mLatch.countDown();
                     }
                 });
@@ -196,6 +203,8 @@ public class BletiaTest extends AndroidTestCase {
                     @Override
                     public void onFail(BletiaException result) {
                         assertThat(result.getType()).isEqualTo(BleErrorType.FAILURE);
+                        assertThat(result.getCharacteristic()).isNull();
+                        assertThat(result.getDescriptor()).isEqualTo(mDescriptor);
                         mLatch.countDown();
                     }
                 });
@@ -215,6 +224,8 @@ public class BletiaTest extends AndroidTestCase {
                     @Override
                     public void onFail(BletiaException result) {
                         assertThat(result.getType()).isEqualTo(BleErrorType.OPERATION_INITIATED_FAILURE);
+                        assertThat(result.getCharacteristic()).isNull();
+                        assertThat(result.getDescriptor()).isEqualTo(mDescriptor);
                         mLatch.countDown();
                     }
                 });
@@ -247,6 +258,8 @@ public class BletiaTest extends AndroidTestCase {
                     @Override
                     public void onFail(BletiaException result) {
                         assertThat(result.getType()).isEqualTo(BleErrorType.FAILURE);
+                        assertThat(result.getCharacteristic()).isNull();
+                        assertThat(result.getDescriptor()).isEqualTo(mDescriptor);
                         mLatch.countDown();
                     }
                 });
@@ -266,6 +279,8 @@ public class BletiaTest extends AndroidTestCase {
                     @Override
                     public void onFail(BletiaException result) {
                         assertThat(result.getType()).isEqualTo(BleErrorType.OPERATION_INITIATED_FAILURE);
+                        assertThat(result.getCharacteristic()).isNull();
+                        assertThat(result.getDescriptor()).isEqualTo(mDescriptor);
                         mLatch.countDown();
                     }
                 });
