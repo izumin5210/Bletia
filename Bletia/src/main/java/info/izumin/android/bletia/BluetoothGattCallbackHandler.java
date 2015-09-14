@@ -58,12 +58,12 @@ public class BluetoothGattCallbackHandler extends BluetoothGattCallbackWrapper {
 
     @Override
     public void onDescriptorRead(BluetoothGattWrapper gatt, BluetoothGattDescriptor descriptor, int status) {
-        // TODO: Not yet implemented.
+        handleBleEvent(BleEvent.Type.READ_DESCRIPTOR, descriptor, status);
     }
 
     @Override
     public void onDescriptorWrite(BluetoothGattWrapper gatt, BluetoothGattDescriptor descriptor, int status) {
-        // TODO: Not yet implemented.
+        handleBleEvent(BleEvent.Type.WRITE_DESCRIPTOR, descriptor, status);
     }
 
     @Override
@@ -82,9 +82,16 @@ public class BluetoothGattCallbackHandler extends BluetoothGattCallbackWrapper {
     }
 
     private void handleBleEvent(BleEvent.Type type, BluetoothGattCharacteristic characteristic, int status) {
-        BleEvent<BluetoothGattCharacteristic> event = mEventStore.closeEvent(type, characteristic.getUuid());
+        handleBleEvent(mEventStore.closeEvent(type, characteristic.getUuid()), status);
+    }
+
+    private void handleBleEvent(BleEvent.Type type, BluetoothGattDescriptor descriptor, int status) {
+        handleBleEvent(mEventStore.closeEvent(type, descriptor.getUuid()), status);
+    }
+
+    private <T> void handleBleEvent(BleEvent<T> event, int status) {
         if (status == BluetoothGatt.GATT_SUCCESS) {
-            event.getDeferred().resolve(characteristic);
+            event.getDeferred().resolve(event.getValue());
         } else {
             event.getDeferred().reject(BleStatus.valueOf(status));
         }
