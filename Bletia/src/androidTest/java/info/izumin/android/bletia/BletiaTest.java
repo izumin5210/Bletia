@@ -177,10 +177,10 @@ public class BletiaTest extends AndroidTestCase {
 
     @Test
     public void writeDescriptorFailure() throws Exception {
-        mBletia.writeDescriptor(mDescriptor).fail(new FailCallback<BleStatus>() {
+        mBletia.writeDescriptor(mDescriptor).fail(new FailCallback<BletiaException>() {
             @Override
-            public void onFail(BleStatus result) {
-                assertThat(result).isEqualTo(BleStatus.FAILURE);
+            public void onFail(BletiaException result) {
+                assertThat(result.getType()).isEqualTo(BleErrorType.FAILURE);
                 mLatch.countDown();
             }
         });
@@ -208,10 +208,10 @@ public class BletiaTest extends AndroidTestCase {
 
     @Test
     public void readDescriptorFailure() throws Exception {
-        mBletia.readDescriptor(mDescriptor).fail(new FailCallback<BleStatus>() {
+        mBletia.readDescriptor(mDescriptor).fail(new FailCallback<BletiaException>() {
             @Override
-            public void onFail(BleStatus result) {
-                assertThat(result).isEqualTo(BleStatus.FAILURE);
+            public void onFail(BletiaException result) {
+                assertThat(result.getType()).isEqualTo(BleErrorType.FAILURE);
                 mLatch.countDown();
             }
         });

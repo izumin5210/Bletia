@@ -84,14 +84,14 @@ public class Bletia implements BluetoothGattCallbackHandler.Callback {
         return mMessageThread.sendEvent(event);
     }
 
-    public Promise<BluetoothGattDescriptor, BleStatus, Object> writeDescriptor(BluetoothGattDescriptor descriptor) {
+    public Promise<BluetoothGattDescriptor, BletiaException, Object> writeDescriptor(BluetoothGattDescriptor descriptor) {
         BleEvent<BluetoothGattDescriptor> event =
                 new BleEvent<>(BleEvent.Type.WRITE_DESCRIPTOR, descriptor.getUuid(), descriptor);
 
         return mMessageThread.sendEvent(event);
     }
 
-    public Promise<BluetoothGattDescriptor, BleStatus, Object> readDescriptor(BluetoothGattDescriptor descriptor) {
+    public Promise<BluetoothGattDescriptor, BletiaException, Object> readDescriptor(BluetoothGattDescriptor descriptor) {
         BleEvent<BluetoothGattDescriptor> event =
                 new BleEvent<>(BleEvent.Type.READ_DESCRIPTOR, descriptor.getUuid(), descriptor);
 
