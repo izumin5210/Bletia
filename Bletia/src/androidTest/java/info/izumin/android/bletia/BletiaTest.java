@@ -23,6 +23,7 @@ import java.util.concurrent.TimeUnit;
 import info.izumin.android.bletia.wrapper.BluetoothGattWrapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 
 /**
@@ -100,6 +101,20 @@ public class BletiaTest extends AndroidTestCase {
     }
 
     @Test
+    public void writeCharacteristicWhenOperationIsInitiatedFailure() throws Exception {
+        when(mBluetoothGattWrapper.writeCharacteristic(any(BluetoothGattCharacteristic.class))).thenReturn(false);
+        mBletia.writeCharacteristic(mCharacteristic).done(mNeverCalledDoneCallback)
+                .fail(new FailCallback<BletiaException>() {
+                    @Override
+                    public void onFail(BletiaException result) {
+                        assertThat(result.getType()).isEqualTo(BleErrorType.OPERATION_INITIATED_FAILURE);
+                        mLatch.countDown();
+                    }
+                });
+        await();
+    }
+
+    @Test
     public void readCharacteristicSuccessfully() throws Exception {
         mBletia.readCharacteristic(mCharacteristic).then(new DoneCallback<BluetoothGattCharacteristic>() {
             @Override
@@ -130,8 +145,30 @@ public class BletiaTest extends AndroidTestCase {
         await();
     }
 
+    @Test
+    public void readCharacteristicWhenOperationIsInitiatedFailure() throws Exception {
+        when(mBluetoothGattWrapper.readCharacteristic(any(BluetoothGattCharacteristic.class))).thenReturn(false);
+        mBletia.readCharacteristic(mCharacteristic).done(mNeverCalledDoneCallback)
+                .fail(new FailCallback<BletiaException>() {
+                    @Override
+                    public void onFail(BletiaException result) {
+                        assertThat(result.getType()).isEqualTo(BleErrorType.OPERATION_INITIATED_FAILURE);
+                        mLatch.countDown();
+                    }
+                });
+        await();
+    }
+
     private void await() throws InterruptedException {
         boolean res = mLatch.await(1000, TimeUnit.MILLISECONDS);
         assertThat(res).isTrue();
     }
+
+    private DoneCallback mNeverCalledDoneCallback = new DoneCallback() {
+        @Override public void onDone(Object result) { fail(); }
+    };
+
+    private FailCallback mNeverCalledFailCallback = new FailCallback() {
+        @Override public void onFail(Object result) { fail(); }
+    };
 }

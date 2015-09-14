@@ -19,13 +19,17 @@ public class BleEvent<T> {
         WRITE_CHARACTERISTIC(1) {
             @Override
             public void handle(BluetoothGattWrapper gattWrapper, BleEvent event) {
-                gattWrapper.writeCharacteristic((BluetoothGattCharacteristic) event.getValue());
+                if (!gattWrapper.writeCharacteristic((BluetoothGattCharacteristic) event.getValue())) {
+                    reject(event.getDeferred());
+                }
             }
         },
         READ_CHARACTERISTIC(2) {
             @Override
             public void handle(BluetoothGattWrapper gattWrapper, BleEvent event) {
-                gattWrapper.readCharacteristic((BluetoothGattCharacteristic) event.getValue());
+                if (!gattWrapper.readCharacteristic((BluetoothGattCharacteristic) event.getValue())) {
+                    reject(event.getDeferred());
+                }
             }
         },
         WRITE_DESCRIPTOR(3) {
@@ -49,6 +53,10 @@ public class BleEvent<T> {
 
         public int getWhat() {
             return mWhat;
+        }
+
+        public void reject(Deferred<?, BletiaException, ?> deferred) {
+            deferred.reject(new BletiaException(BleErrorType.OPERATION_INITIATED_FAILURE));
         }
 
         public abstract void handle(BluetoothGattWrapper gattWrapper, BleEvent event);
