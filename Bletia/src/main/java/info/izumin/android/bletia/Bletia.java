@@ -2,12 +2,10 @@ package info.izumin.android.bletia;
 
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGattCharacteristic;
-import android.bluetooth.BluetoothGattDescriptor;
 import android.content.Context;
+import android.os.HandlerThread;
 
-import org.jdeferred.Deferred;
 import org.jdeferred.Promise;
-import org.jdeferred.impl.DeferredObject;
 
 import java.util.UUID;
 
@@ -30,13 +28,16 @@ public class Bletia implements BluetoothGattCallbackHandler.Callback {
     private ConnectionHelper mConnectionHelper;
 
     private EventEmitter mEmitter;
+    private BleEventStore mEventStore;
     private BluetoothGattCallbackHandler mCallbackHandler;
+    private BleMessageThread mMessageThread;
 
     public Bletia(Context context) {
         mContext = context;
         mConnectionHelper = new ConnectionHelper(mContext);
-        mCallbackHandler = new BluetoothGattCallbackHandler(this);
         mEmitter = new EventEmitter();
+        mEventStore = new BleEventStore();
+        mCallbackHandler = new BluetoothGattCallbackHandler(this, mEventStore);
     }
 
     public BleState getState() {
@@ -54,43 +55,30 @@ public class Bletia implements BluetoothGattCallbackHandler.Callback {
     public void connect(BluetoothDevice device) {
         mState = BleState.CONNECTING;
         mConnectionHelper.connect(new BluetoothDeviceWrapper(device), mCallbackHandler);
+
+        HandlerThread thread = new HandlerThread(device.getName());
+        thread.start();
+        mMessageThread = new BleMessageThread(thread, mGattWrapper, mEventStore);
     }
 
     public void disconenct() {
         mState = BleState.DISCONNECTING;
         mConnectionHelper.disconnect();
+        mMessageThread.stop();
     }
 
-    public Promise<BluetoothGattCharacteristic, BluetoothGattStatus, Object> writeCharacteristic(BluetoothGattCharacteristic characteristic) {
-        Deferred<BluetoothGattCharacteristic, BluetoothGattStatus, Object> deferred = new DeferredObject<>();
-        Promise<BluetoothGattCharacteristic, BluetoothGattStatus, Object> promise = deferred.promise();
-        BluetoothGattDescriptor descriptor = new BluetoothGattDescriptor(Bletia.BRETIA_UUID, BluetoothGattDescriptor.PERMISSION_READ);
-        UUID uuid = mCallbackHandler.generateUuid(BleEvent.Type.WRITING_CHARACTERISTIC);
-        descriptor.setValue(uuid.toString().getBytes());
-        characteristic.addDescriptor(descriptor);
-        BleEvent event = new BleEvent(uuid, deferred);
-        event.setCharacteristic(characteristic);
+    public Promise<BluetoothGattCharacteristic, BleStatus, Object> writeCharacteristic(BluetoothGattCharacteristic characteristic) {
+        BleEvent<BluetoothGattCharacteristic> event =
+                new BleEvent<>(BleEvent.Type.WRITE_CHARACTERISTIC, characteristic.getUuid(), characteristic);
 
-        mGattWrapper.writeCharacteristic(characteristic);
-        mCallbackHandler.append(BleEvent.Type.WRITING_CHARACTERISTIC, event);
-
-        return promise;
+        return mMessageThread.sendEvent(event);
     }
 
-    public Promise<BluetoothGattCharacteristic, BluetoothGattStatus, Object> readCharacteristic(BluetoothGattCharacteristic characteristic) {
-        Deferred<BluetoothGattCharacteristic, BluetoothGattStatus, Object> deferred = new DeferredObject<>();
-        Promise<BluetoothGattCharacteristic, BluetoothGattStatus, Object> promise = deferred.promise();
-        BluetoothGattDescriptor descriptor = new BluetoothGattDescriptor(Bletia.BRETIA_UUID, BluetoothGattDescriptor.PERMISSION_READ);
-        UUID uuid = mCallbackHandler.generateUuid(BleEvent.Type.READING_CHARACTERISTIC);
-        descriptor.setValue(uuid.toString().getBytes());
-        characteristic.addDescriptor(descriptor);
-        BleEvent event = new BleEvent(uuid, deferred);
-        event.setCharacteristic(characteristic);
+    public Promise<BluetoothGattCharacteristic, BleStatus, Object> readCharacteristic(BluetoothGattCharacteristic characteristic) {
+        BleEvent<BluetoothGattCharacteristic> event =
+                new BleEvent<>(BleEvent.Type.READ_CHARACTERISTIC, characteristic.getUuid(), characteristic);
 
-        mGattWrapper.readCharacteristic(characteristic);
-        mCallbackHandler.append(BleEvent.Type.READING_CHARACTERISTIC, event);
-
-        return promise;
+        return mMessageThread.sendEvent(event);
     }
 
     @Override
