@@ -62,6 +62,8 @@ public class BletiaTest extends AndroidTestCase {
         when(mCharacteristic.getUuid()).thenReturn(UUID.randomUUID());
         when(mBluetoothGattWrapper.writeCharacteristic(mCharacteristic)).thenReturn(true);
         when(mBluetoothGattWrapper.readCharacteristic(mCharacteristic)).thenReturn(true);
+        when(mBluetoothGattWrapper.writeDescriptor(mDescriptor)).thenReturn(true);
+        when(mBluetoothGattWrapper.readDescriptor(mDescriptor)).thenReturn(true);
 
         mLatch = new CountDownLatch(1);
     }
@@ -192,6 +194,20 @@ public class BletiaTest extends AndroidTestCase {
     }
 
     @Test
+    public void writeDescriptorWhenOperationIsInitiatedFailure() throws Exception {
+        when(mBluetoothGattWrapper.writeDescriptor(any(BluetoothGattDescriptor.class))).thenReturn(false);
+        mBletia.writeDescriptor(mDescriptor).done(mNeverCalledDoneCallback)
+                .fail(new FailCallback<BletiaException>() {
+                    @Override
+                    public void onFail(BletiaException result) {
+                        assertThat(result.getType()).isEqualTo(BleErrorType.OPERATION_INITIATED_FAILURE);
+                        mLatch.countDown();
+                    }
+                });
+        await();
+    }
+
+    @Test
     public void readDescriptorSuccessfully() throws Exception {
         mBletia.readDescriptor(mDescriptor).then(new DoneCallback<BluetoothGattDescriptor>() {
             @Override
@@ -219,6 +235,20 @@ public class BletiaTest extends AndroidTestCase {
         Thread.sleep(300);
         mCallbackHandler.onDescriptorRead(
                 mBluetoothGattWrapper, mDescriptor, BluetoothGatt.GATT_FAILURE);
+        await();
+    }
+
+    @Test
+    public void readDescriptorWhenOperationIsInitiatedFailure() throws Exception {
+        when(mBluetoothGattWrapper.readDescriptor(any(BluetoothGattDescriptor.class))).thenReturn(false);
+        mBletia.readDescriptor(mDescriptor).done(mNeverCalledDoneCallback)
+                .fail(new FailCallback<BletiaException>() {
+                    @Override
+                    public void onFail(BletiaException result) {
+                        assertThat(result.getType()).isEqualTo(BleErrorType.OPERATION_INITIATED_FAILURE);
+                        mLatch.countDown();
+                    }
+                });
         await();
     }
 

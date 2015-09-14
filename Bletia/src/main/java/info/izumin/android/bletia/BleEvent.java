@@ -35,13 +35,17 @@ public class BleEvent<T> {
         WRITE_DESCRIPTOR(3) {
             @Override
             public void handle(BluetoothGattWrapper gattWrapper, BleEvent event) {
-                gattWrapper.writeDescriptor((BluetoothGattDescriptor) event.getValue());
+                if (!gattWrapper.writeDescriptor((BluetoothGattDescriptor) event.getValue())) {
+                    reject(event.getDeferred());
+                }
             }
         },
         READ_DESCRIPTOR(4) {
             @Override
             public void handle(BluetoothGattWrapper gattWrapper, BleEvent event) {
-                gattWrapper.readDescriptor((BluetoothGattDescriptor) event.getValue());
+                if (!gattWrapper.readDescriptor((BluetoothGattDescriptor) event.getValue())) {
+                    reject(event.getDeferred());
+                }
             }
         };
 
