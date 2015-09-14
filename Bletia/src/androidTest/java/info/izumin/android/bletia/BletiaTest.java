@@ -85,10 +85,10 @@ public class BletiaTest extends AndroidTestCase {
 
     @Test
     public void writeCharacteristicFailure() throws Exception {
-        mBletia.writeCharacteristic(mCharacteristic).fail(new FailCallback<BleStatus>() {
+        mBletia.writeCharacteristic(mCharacteristic).fail(new FailCallback<BletiaException>() {
             @Override
-            public void onFail(BleStatus result) {
-                assertThat(result).isEqualTo(BleStatus.FAILURE);
+            public void onFail(BletiaException result) {
+                assertThat(result.getType()).isEqualTo(BleErrorType.FAILURE);
                 mLatch.countDown();
             }
         });
@@ -116,10 +116,10 @@ public class BletiaTest extends AndroidTestCase {
 
     @Test
     public void readCharacteristicFailure() throws Exception {
-        mBletia.readCharacteristic(mCharacteristic).fail(new FailCallback<BleStatus>() {
+        mBletia.readCharacteristic(mCharacteristic).fail(new FailCallback<BletiaException>() {
             @Override
-            public void onFail(BleStatus result) {
-                assertThat(result).isEqualTo(BleStatus.FAILURE);
+            public void onFail(BletiaException result) {
+                assertThat(result.getType()).isEqualTo(BleErrorType.FAILURE);
                 mLatch.countDown();
             }
         });
