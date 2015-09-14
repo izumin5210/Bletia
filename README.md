@@ -1,6 +1,7 @@
 # Bletia
 [![wercker status](https://app.wercker.com/status/480ca2bbd43cc73740554a6ad347cca5/s/master "wercker status")](//app.wercker.com/project/bykey/480ca2bbd43cc73740554a6ad347cca5)
 [![LICENSE](https://img.shields.io/badge/license-Apache%202.0-brightgreen.svg "LICENSE")](//github.com/izumin5210/Bletia/blob/master/LICENSE.md)
+[![Download](https://api.bintray.com/packages/izumin5210/maven/Bletia/images/download.svg)](https://bintray.com/izumin5210/maven/Bletia/_latestVersion)
 
 ## Download
 
