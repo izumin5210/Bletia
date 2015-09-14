@@ -5,7 +5,7 @@ import android.bluetooth.BluetoothGatt;
 /**
  * Created by izumin on 9/10/15.
  */
-public enum BleStatus {
+public enum BleErrorType implements BletiaErrorType {
     // BluetoothGatt.GATT_CONNECTION_CONGESTED is added in API level 21(Lolipop)
     // CONNECTION_CONGESTED(BluetoothGatt.GATT_CONNECTION_CONGESTED),
     CONNECTION_CONGESTED(143),
@@ -18,24 +18,33 @@ public enum BleStatus {
     REQUEST_NOT_SUPPORTED(BluetoothGatt.GATT_REQUEST_NOT_SUPPORTED),
     SUCCESS(BluetoothGatt.GATT_SUCCESS),
     WRITE_NOT_PERMITTED(BluetoothGatt.GATT_WRITE_NOT_PERMITTED),
-    UNKNOWN(-1);
+    INVALID_PARAMETER(-1),
+    OPERATION_INITIATED_FAILURE(-1),
+    REQUEST_FAILURE(-1),
+    UNKNOWN_ERROR(-1);
 
     private final int mCode;
 
-    BleStatus(int code) {
+    BleErrorType(int code) {
         mCode = code;
     }
 
+    @Override
     public int getCode() {
         return mCode;
     }
 
-    public static BleStatus valueOf(int code) {
-        for (BleStatus status : values()) {
+    @Override
+    public String getName() {
+        return name();
+    }
+
+    public static BleErrorType valueOf(int code) {
+        for (BleErrorType status : values()) {
             if (code == status.getCode()) {
                 return status;
             }
         }
-        return UNKNOWN;
+        return UNKNOWN_ERROR;
     }
 }

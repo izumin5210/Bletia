@@ -24,6 +24,7 @@ import java.util.concurrent.TimeUnit;
 import info.izumin.android.bletia.wrapper.BluetoothGattWrapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 
 /**
@@ -61,6 +62,8 @@ public class BletiaTest extends AndroidTestCase {
         when(mCharacteristic.getUuid()).thenReturn(UUID.randomUUID());
         when(mBluetoothGattWrapper.writeCharacteristic(mCharacteristic)).thenReturn(true);
         when(mBluetoothGattWrapper.readCharacteristic(mCharacteristic)).thenReturn(true);
+        when(mBluetoothGattWrapper.writeDescriptor(mDescriptor)).thenReturn(true);
+        when(mBluetoothGattWrapper.readDescriptor(mDescriptor)).thenReturn(true);
 
         mLatch = new CountDownLatch(1);
     }
@@ -72,12 +75,14 @@ public class BletiaTest extends AndroidTestCase {
 
     @Test
     public void writeCharacteristicSuccessfully() throws Exception {
-        mBletia.writeCharacteristic(mCharacteristic).then(new DoneCallback<BluetoothGattCharacteristic>() {
-            @Override
-            public void onDone(BluetoothGattCharacteristic result) {
-                mLatch.countDown();
-            }
-        });
+        mBletia.writeCharacteristic(mCharacteristic)
+                .then(new DoneCallback<BluetoothGattCharacteristic>() {
+                    @Override
+                    public void onDone(BluetoothGattCharacteristic result) {
+                        assertThat(result.getUuid()).isEqualTo(mCharacteristic.getUuid());
+                        mLatch.countDown();
+                    }
+                }).fail(mNeverCalledFailCallback);
 
         Thread.sleep(300);
         mCallbackHandler.onCharacteristicWrite(
@@ -87,13 +92,17 @@ public class BletiaTest extends AndroidTestCase {
 
     @Test
     public void writeCharacteristicFailure() throws Exception {
-        mBletia.writeCharacteristic(mCharacteristic).fail(new FailCallback<BleStatus>() {
-            @Override
-            public void onFail(BleStatus result) {
-                assertThat(result).isEqualTo(BleStatus.FAILURE);
-                mLatch.countDown();
-            }
-        });
+        mBletia.writeCharacteristic(mCharacteristic)
+                .done(mNeverCalledDoneCallback)
+                .fail(new FailCallback<BletiaException>() {
+                    @Override
+                    public void onFail(BletiaException result) {
+                        assertThat(result.getType()).isEqualTo(BleErrorType.FAILURE);
+                        assertThat(result.getCharacteristic()).isEqualTo(mCharacteristic);
+                        assertThat(result.getDescriptor()).isNull();
+                        mLatch.countDown();
+                    }
+                });
 
         Thread.sleep(300);
         mCallbackHandler.onCharacteristicWrite(
@@ -102,13 +111,31 @@ public class BletiaTest extends AndroidTestCase {
     }
 
     @Test
+    public void writeCharacteristicWhenOperationIsInitiatedFailure() throws Exception {
+        when(mBluetoothGattWrapper.writeCharacteristic(any(BluetoothGattCharacteristic.class))).thenReturn(false);
+        mBletia.writeCharacteristic(mCharacteristic)
+                .done(mNeverCalledDoneCallback)
+                .fail(new FailCallback<BletiaException>() {
+                    @Override
+                    public void onFail(BletiaException result) {
+                        assertThat(result.getType()).isEqualTo(BleErrorType.OPERATION_INITIATED_FAILURE);
+                        assertThat(result.getCharacteristic()).isEqualTo(mCharacteristic);
+                        mLatch.countDown();
+                    }
+                });
+        await();
+    }
+
+    @Test
     public void readCharacteristicSuccessfully() throws Exception {
-        mBletia.readCharacteristic(mCharacteristic).then(new DoneCallback<BluetoothGattCharacteristic>() {
-            @Override
-            public void onDone(BluetoothGattCharacteristic result) {
-                mLatch.countDown();
-            }
-        });
+        mBletia.readCharacteristic(mCharacteristic)
+                .then(new DoneCallback<BluetoothGattCharacteristic>() {
+                    @Override
+                    public void onDone(BluetoothGattCharacteristic result) {
+                        assertThat(result.getUuid()).isEqualTo(mCharacteristic.getUuid());
+                        mLatch.countDown();
+                    }
+                }).fail(mNeverCalledFailCallback);
 
         Thread.sleep(300);
         mCallbackHandler.onCharacteristicRead(
@@ -118,13 +145,17 @@ public class BletiaTest extends AndroidTestCase {
 
     @Test
     public void readCharacteristicFailure() throws Exception {
-        mBletia.readCharacteristic(mCharacteristic).fail(new FailCallback<BleStatus>() {
-            @Override
-            public void onFail(BleStatus result) {
-                assertThat(result).isEqualTo(BleStatus.FAILURE);
-                mLatch.countDown();
-            }
-        });
+        mBletia.readCharacteristic(mCharacteristic)
+                .done(mNeverCalledDoneCallback)
+                .fail(new FailCallback<BletiaException>() {
+                    @Override
+                    public void onFail(BletiaException result) {
+                        assertThat(result.getType()).isEqualTo(BleErrorType.FAILURE);
+                        assertThat(result.getCharacteristic()).isEqualTo(mCharacteristic);
+                        assertThat(result.getDescriptor()).isNull();
+                        mLatch.countDown();
+                    }
+                });
 
         Thread.sleep(300);
         mCallbackHandler.onCharacteristicRead(
@@ -133,13 +164,30 @@ public class BletiaTest extends AndroidTestCase {
     }
 
     @Test
+    public void readCharacteristicWhenOperationIsInitiatedFailure() throws Exception {
+        when(mBluetoothGattWrapper.readCharacteristic(any(BluetoothGattCharacteristic.class))).thenReturn(false);
+        mBletia.readCharacteristic(mCharacteristic)
+                .done(mNeverCalledDoneCallback)
+                .fail(new FailCallback<BletiaException>() {
+                    @Override
+                    public void onFail(BletiaException result) {
+                        assertThat(result.getType()).isEqualTo(BleErrorType.OPERATION_INITIATED_FAILURE);
+                        assertThat(result.getCharacteristic()).isEqualTo(mCharacteristic);
+                        assertThat(result.getDescriptor()).isNull();
+                        mLatch.countDown();
+                    }
+                });
+        await();
+    }
+
     public void writeDescriptorSuccessfully() throws Exception {
         mBletia.writeDescriptor(mDescriptor).then(new DoneCallback<BluetoothGattDescriptor>() {
             @Override
             public void onDone(BluetoothGattDescriptor result) {
+                assertThat(result.getUuid()).isEqualTo(mDescriptor.getUuid());
                 mLatch.countDown();
             }
-        });
+        }).fail(mNeverCalledFailCallback);
 
         Thread.sleep(300);
         mCallbackHandler.onDescriptorWrite(
@@ -149,13 +197,17 @@ public class BletiaTest extends AndroidTestCase {
 
     @Test
     public void writeDescriptorFailure() throws Exception {
-        mBletia.writeDescriptor(mDescriptor).fail(new FailCallback<BleStatus>() {
-            @Override
-            public void onFail(BleStatus result) {
-                assertThat(result).isEqualTo(BleStatus.FAILURE);
-                mLatch.countDown();
-            }
-        });
+        mBletia.writeDescriptor(mDescriptor)
+                .done(mNeverCalledDoneCallback)
+                .fail(new FailCallback<BletiaException>() {
+                    @Override
+                    public void onFail(BletiaException result) {
+                        assertThat(result.getType()).isEqualTo(BleErrorType.FAILURE);
+                        assertThat(result.getCharacteristic()).isNull();
+                        assertThat(result.getDescriptor()).isEqualTo(mDescriptor);
+                        mLatch.countDown();
+                    }
+                });
 
         Thread.sleep(300);
         mCallbackHandler.onDescriptorWrite(
@@ -164,13 +216,33 @@ public class BletiaTest extends AndroidTestCase {
     }
 
     @Test
+    public void writeDescriptorWhenOperationIsInitiatedFailure() throws Exception {
+        when(mBluetoothGattWrapper.writeDescriptor(any(BluetoothGattDescriptor.class))).thenReturn(false);
+        mBletia.writeDescriptor(mDescriptor)
+                .done(mNeverCalledDoneCallback)
+                .fail(new FailCallback<BletiaException>() {
+                    @Override
+                    public void onFail(BletiaException result) {
+                        assertThat(result.getType()).isEqualTo(BleErrorType.OPERATION_INITIATED_FAILURE);
+                        assertThat(result.getCharacteristic()).isNull();
+                        assertThat(result.getDescriptor()).isEqualTo(mDescriptor);
+                        mLatch.countDown();
+                    }
+                });
+        await();
+    }
+
+    @Test
     public void readDescriptorSuccessfully() throws Exception {
-        mBletia.readDescriptor(mDescriptor).then(new DoneCallback<BluetoothGattDescriptor>() {
-            @Override
-            public void onDone(BluetoothGattDescriptor result) {
-                mLatch.countDown();
-            }
-        });
+        mBletia.readDescriptor(mDescriptor)
+                .then(new DoneCallback<BluetoothGattDescriptor>() {
+                    @Override
+                    public void onDone(BluetoothGattDescriptor result) {
+                        assertThat(result.getUuid()).isEqualTo(mDescriptor.getUuid());
+                        mLatch.countDown();
+                    }
+                })
+                .fail(mNeverCalledFailCallback);
 
         Thread.sleep(300);
         mCallbackHandler.onDescriptorRead(
@@ -180,13 +252,17 @@ public class BletiaTest extends AndroidTestCase {
 
     @Test
     public void readDescriptorFailure() throws Exception {
-        mBletia.readDescriptor(mDescriptor).fail(new FailCallback<BleStatus>() {
-            @Override
-            public void onFail(BleStatus result) {
-                assertThat(result).isEqualTo(BleStatus.FAILURE);
-                mLatch.countDown();
-            }
-        });
+        mBletia.readDescriptor(mDescriptor)
+                .done(mNeverCalledDoneCallback)
+                .fail(new FailCallback<BletiaException>() {
+                    @Override
+                    public void onFail(BletiaException result) {
+                        assertThat(result.getType()).isEqualTo(BleErrorType.FAILURE);
+                        assertThat(result.getCharacteristic()).isNull();
+                        assertThat(result.getDescriptor()).isEqualTo(mDescriptor);
+                        mLatch.countDown();
+                    }
+                });
 
         Thread.sleep(300);
         mCallbackHandler.onDescriptorRead(
@@ -194,8 +270,33 @@ public class BletiaTest extends AndroidTestCase {
         await();
     }
 
+    @Test
+    public void readDescriptorWhenOperationIsInitiatedFailure() throws Exception {
+        when(mBluetoothGattWrapper.readDescriptor(any(BluetoothGattDescriptor.class))).thenReturn(false);
+        mBletia.readDescriptor(mDescriptor)
+                .done(mNeverCalledDoneCallback)
+                .fail(new FailCallback<BletiaException>() {
+                    @Override
+                    public void onFail(BletiaException result) {
+                        assertThat(result.getType()).isEqualTo(BleErrorType.OPERATION_INITIATED_FAILURE);
+                        assertThat(result.getCharacteristic()).isNull();
+                        assertThat(result.getDescriptor()).isEqualTo(mDescriptor);
+                        mLatch.countDown();
+                    }
+                });
+        await();
+    }
+
     private void await() throws InterruptedException {
         boolean res = mLatch.await(1000, TimeUnit.MILLISECONDS);
         assertThat(res).isTrue();
     }
+
+    private DoneCallback mNeverCalledDoneCallback = new DoneCallback() {
+        @Override public void onDone(Object result) { fail(); }
+    };
+
+    private FailCallback mNeverCalledFailCallback = new FailCallback() {
+        @Override public void onFail(Object result) { fail(); }
+    };
 }

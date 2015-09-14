@@ -6,5 +6,5 @@ package info.izumin.android.bletia;
 public interface BletiaListener {
     void onConnect();
     void onDisconnect();
-    void onError(BleStatus status);
+    void onError(BletiaException exception);
 }
