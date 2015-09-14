@@ -2,6 +2,7 @@ package info.izumin.android.bletia;
 
 import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCharacteristic;
+import android.bluetooth.BluetoothGattDescriptor;
 import android.content.Context;
 import android.os.HandlerThread;
 import android.support.test.runner.AndroidJUnit4;
@@ -33,6 +34,7 @@ import static org.mockito.Mockito.when;
 public class BletiaTest extends AndroidTestCase {
 
     @Mock private BluetoothGattCharacteristic mCharacteristic;
+    @Mock private BluetoothGattDescriptor mDescriptor;
     @Mock private BluetoothGattWrapper mBluetoothGattWrapper;
 
     private BleEventStore mEventStore;
@@ -156,6 +158,67 @@ public class BletiaTest extends AndroidTestCase {
                         mLatch.countDown();
                     }
                 });
+        await();
+    }
+
+    public void writeDescriptorSuccessfully() throws Exception {
+        mBletia.writeDescriptor(mDescriptor).then(new DoneCallback<BluetoothGattDescriptor>() {
+            @Override
+            public void onDone(BluetoothGattDescriptor result) {
+                mLatch.countDown();
+            }
+        });
+
+        Thread.sleep(300);
+        mCallbackHandler.onDescriptorWrite(
+                mBluetoothGattWrapper, mDescriptor, BluetoothGatt.GATT_SUCCESS);
+        await();
+    }
+
+    @Test
+    public void writeDescriptorFailure() throws Exception {
+        mBletia.writeDescriptor(mDescriptor).fail(new FailCallback<BleStatus>() {
+            @Override
+            public void onFail(BleStatus result) {
+                assertThat(result).isEqualTo(BleStatus.FAILURE);
+                mLatch.countDown();
+            }
+        });
+
+        Thread.sleep(300);
+        mCallbackHandler.onDescriptorWrite(
+                mBluetoothGattWrapper, mDescriptor, BluetoothGatt.GATT_FAILURE);
+        await();
+    }
+
+    @Test
+    public void readDescriptorSuccessfully() throws Exception {
+        mBletia.readDescriptor(mDescriptor).then(new DoneCallback<BluetoothGattDescriptor>() {
+            @Override
+            public void onDone(BluetoothGattDescriptor result) {
+                mLatch.countDown();
+            }
+        });
+
+        Thread.sleep(300);
+        mCallbackHandler.onDescriptorRead(
+                mBluetoothGattWrapper, mDescriptor, BluetoothGatt.GATT_SUCCESS);
+        await();
+    }
+
+    @Test
+    public void readDescriptorFailure() throws Exception {
+        mBletia.readDescriptor(mDescriptor).fail(new FailCallback<BleStatus>() {
+            @Override
+            public void onFail(BleStatus result) {
+                assertThat(result).isEqualTo(BleStatus.FAILURE);
+                mLatch.countDown();
+            }
+        });
+
+        Thread.sleep(300);
+        mCallbackHandler.onDescriptorRead(
+                mBluetoothGattWrapper, mDescriptor, BluetoothGatt.GATT_FAILURE);
         await();
     }
 

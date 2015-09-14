@@ -1,7 +1,9 @@
 package info.izumin.android.bletia;
 
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCharacteristic;
+import android.bluetooth.BluetoothGattDescriptor;
 import android.content.Context;
 import android.os.HandlerThread;
 
@@ -19,6 +21,7 @@ import info.izumin.android.bletia.wrapper.BluetoothGattWrapper;
 public class Bletia implements BluetoothGattCallbackHandler.Callback {
 
     public static UUID BRETIA_UUID = UUID.fromString("00000000-0000-4e6c-abcf-960c2715e72d");
+    public static UUID CLIENT_CHARCTERISTIC_CONFIG = UUID.fromString("00002902-0000-1000-8000-00805f9b34fb");
 
     private Context mContext;
     private BluetoothGattWrapper mGattWrapper;
@@ -77,6 +80,20 @@ public class Bletia implements BluetoothGattCallbackHandler.Callback {
     public Promise<BluetoothGattCharacteristic, BletiaException, Object> readCharacteristic(BluetoothGattCharacteristic characteristic) {
         BleEvent<BluetoothGattCharacteristic> event =
                 new BleEvent<>(BleEvent.Type.READ_CHARACTERISTIC, characteristic.getUuid(), characteristic);
+
+        return mMessageThread.sendEvent(event);
+    }
+
+    public Promise<BluetoothGattDescriptor, BleStatus, Object> writeDescriptor(BluetoothGattDescriptor descriptor) {
+        BleEvent<BluetoothGattDescriptor> event =
+                new BleEvent<>(BleEvent.Type.WRITE_DESCRIPTOR, descriptor.getUuid(), descriptor);
+
+        return mMessageThread.sendEvent(event);
+    }
+
+    public Promise<BluetoothGattDescriptor, BleStatus, Object> readDescriptor(BluetoothGattDescriptor descriptor) {
+        BleEvent<BluetoothGattDescriptor> event =
+                new BleEvent<>(BleEvent.Type.READ_DESCRIPTOR, descriptor.getUuid(), descriptor);
 
         return mMessageThread.sendEvent(event);
     }
