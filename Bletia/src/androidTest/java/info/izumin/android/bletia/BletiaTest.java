@@ -2,8 +2,8 @@ package info.izumin.android.bletia;
 
 import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCharacteristic;
-import android.bluetooth.BluetoothGattDescriptor;
 import android.content.Context;
+import android.os.HandlerThread;
 import android.support.test.runner.AndroidJUnit4;
 import android.test.AndroidTestCase;
 
@@ -12,7 +12,6 @@ import org.jdeferred.FailCallback;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.internal.util.reflection.Whitebox;
@@ -24,7 +23,6 @@ import java.util.concurrent.TimeUnit;
 import info.izumin.android.bletia.wrapper.BluetoothGattWrapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 /**
@@ -35,22 +33,32 @@ public class BletiaTest extends AndroidTestCase {
 
     @Mock private BluetoothGattCharacteristic mCharacteristic;
     @Mock private BluetoothGattWrapper mBluetoothGattWrapper;
-    @Mock private BluetoothGattCallbackHandler.Callback mHandlerCallback;
 
+    private BleEventStore mEventStore;
+    private BleMessageThread mMessageThread;
     private BluetoothGattCallbackHandler mCallbackHandler;
     private Bletia mBletia;
     private Context mContext;
-
-    private ArgumentCaptor<BluetoothGattDescriptor> mDescriptorCaptor;
 
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
         mContext = getContext();
         mBletia = new Bletia(mContext);
-        mCallbackHandler = new BluetoothGattCallbackHandler(mHandlerCallback);
-        Whitebox.setInternalState(mBletia, "mCallbackHandler", mCallbackHandler);
+
+        mEventStore = (BleEventStore) Whitebox.getInternalState(mBletia, "mEventStore");
+        mCallbackHandler = (BluetoothGattCallbackHandler) Whitebox.getInternalState(mBletia, "mCallbackHandler");
+        HandlerThread thread = new HandlerThread("test");
+        thread.start();
+        mMessageThread = new BleMessageThread(thread, mBluetoothGattWrapper, mEventStore);
+        Whitebox.setInternalState(mBletia, "mMessageThread", mMessageThread);
+
         when(mCharacteristic.getUuid()).thenReturn(UUID.randomUUID());
+    }
+
+    @Override
+    public void tearDown() throws Exception {
+        mMessageThread.stop();
     }
 
     @Test
@@ -58,23 +66,15 @@ public class BletiaTest extends AndroidTestCase {
         Whitebox.setInternalState(mBletia, "mGattWrapper", mBluetoothGattWrapper);
         final CountDownLatch latch = new CountDownLatch(1);
         when(mBluetoothGattWrapper.writeCharacteristic(mCharacteristic)).thenReturn(true);
-        mDescriptorCaptor = ArgumentCaptor.forClass(BluetoothGattDescriptor.class);
 
-        new Thread(new Runnable() {
+        mBletia.writeCharacteristic(mCharacteristic).then(new DoneCallback<BluetoothGattCharacteristic>() {
             @Override
-            public void run() {
-                mBletia.writeCharacteristic(mCharacteristic).then(new DoneCallback<BluetoothGattCharacteristic>() {
-                    @Override
-                    public void onDone(BluetoothGattCharacteristic result) {
-                        latch.countDown();
-                    }
-                });
-                verify(mCharacteristic).addDescriptor(mDescriptorCaptor.capture());
+            public void onDone(BluetoothGattCharacteristic result) {
+                latch.countDown();
             }
-        }).start();
+        });
 
         Thread.sleep(1000);
-        when(mCharacteristic.getDescriptor(Bletia.BRETIA_UUID)).thenReturn(mDescriptorCaptor.getValue());
         mCallbackHandler.onCharacteristicWrite(
                 mBluetoothGattWrapper, mCharacteristic, BluetoothGatt.GATT_SUCCESS);
 
@@ -88,25 +88,16 @@ public class BletiaTest extends AndroidTestCase {
         Whitebox.setInternalState(mBletia, "mGattWrapper", mBluetoothGattWrapper);
         final CountDownLatch latch = new CountDownLatch(1);
         when(mBluetoothGattWrapper.writeCharacteristic(mCharacteristic)).thenReturn(true);
-        when(mCharacteristic.getUuid()).thenReturn(UUID.randomUUID());
-        mDescriptorCaptor = ArgumentCaptor.forClass(BluetoothGattDescriptor.class);
 
-        new Thread(new Runnable() {
+        mBletia.writeCharacteristic(mCharacteristic).fail(new FailCallback<BleStatus>() {
             @Override
-            public void run() {
-                mBletia.writeCharacteristic(mCharacteristic).fail(new FailCallback<BluetoothGattStatus>() {
-                    @Override
-                    public void onFail(BluetoothGattStatus result) {
-                        assertThat(result).isEqualTo(BluetoothGattStatus.FAILURE);
-                        latch.countDown();
-                    }
-                });
-                verify(mCharacteristic).addDescriptor(mDescriptorCaptor.capture());
+            public void onFail(BleStatus result) {
+                assertThat(result).isEqualTo(BleStatus.FAILURE);
+                latch.countDown();
             }
-        }).start();
+        });
 
         Thread.sleep(1000);
-        when(mCharacteristic.getDescriptor(Bletia.BRETIA_UUID)).thenReturn(mDescriptorCaptor.getValue());
         mCallbackHandler.onCharacteristicWrite(
                 mBluetoothGattWrapper, mCharacteristic, BluetoothGatt.GATT_FAILURE);
 
@@ -120,23 +111,15 @@ public class BletiaTest extends AndroidTestCase {
         Whitebox.setInternalState(mBletia, "mGattWrapper", mBluetoothGattWrapper);
         final CountDownLatch latch = new CountDownLatch(1);
         when(mBluetoothGattWrapper.readCharacteristic(mCharacteristic)).thenReturn(true);
-        mDescriptorCaptor = ArgumentCaptor.forClass(BluetoothGattDescriptor.class);
 
-        new Thread(new Runnable() {
+        mBletia.readCharacteristic(mCharacteristic).then(new DoneCallback<BluetoothGattCharacteristic>() {
             @Override
-            public void run() {
-                mBletia.readCharacteristic(mCharacteristic).then(new DoneCallback<BluetoothGattCharacteristic>() {
-                    @Override
-                    public void onDone(BluetoothGattCharacteristic result) {
-                        latch.countDown();
-                    }
-                });
-                verify(mCharacteristic).addDescriptor(mDescriptorCaptor.capture());
+            public void onDone(BluetoothGattCharacteristic result) {
+                latch.countDown();
             }
-        }).start();
+        });
 
         Thread.sleep(1000);
-        when(mCharacteristic.getDescriptor(Bletia.BRETIA_UUID)).thenReturn(mDescriptorCaptor.getValue());
         mCallbackHandler.onCharacteristicRead(
                 mBluetoothGattWrapper, mCharacteristic, BluetoothGatt.GATT_SUCCESS);
 
@@ -150,24 +133,16 @@ public class BletiaTest extends AndroidTestCase {
         Whitebox.setInternalState(mBletia, "mGattWrapper", mBluetoothGattWrapper);
         final CountDownLatch latch = new CountDownLatch(1);
         when(mBluetoothGattWrapper.readCharacteristic(mCharacteristic)).thenReturn(true);
-        mDescriptorCaptor = ArgumentCaptor.forClass(BluetoothGattDescriptor.class);
 
-        new Thread(new Runnable() {
+        mBletia.readCharacteristic(mCharacteristic).fail(new FailCallback<BleStatus>() {
             @Override
-            public void run() {
-                mBletia.readCharacteristic(mCharacteristic).fail(new FailCallback<BluetoothGattStatus>() {
-                    @Override
-                    public void onFail(BluetoothGattStatus result) {
-                        assertThat(result).isEqualTo(BluetoothGattStatus.FAILURE);
-                        latch.countDown();
-                    }
-                });
-                verify(mCharacteristic).addDescriptor(mDescriptorCaptor.capture());
+            public void onFail(BleStatus result) {
+                assertThat(result).isEqualTo(BleStatus.FAILURE);
+                latch.countDown();
             }
-        }).start();
+        });
 
         Thread.sleep(1000);
-        when(mCharacteristic.getDescriptor(Bletia.BRETIA_UUID)).thenReturn(mDescriptorCaptor.getValue());
         mCallbackHandler.onCharacteristicRead(
                 mBluetoothGattWrapper, mCharacteristic, BluetoothGatt.GATT_FAILURE);
 
