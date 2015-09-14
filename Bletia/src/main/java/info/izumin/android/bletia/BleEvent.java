@@ -1,42 +1,106 @@
 package info.izumin.android.bletia;
 
 import android.bluetooth.BluetoothGattCharacteristic;
+import android.bluetooth.BluetoothGattDescriptor;
+import android.os.Bundle;
+import android.os.Message;
 
 import org.jdeferred.Deferred;
 
 import java.util.UUID;
 
+import info.izumin.android.bletia.wrapper.BluetoothGattWrapper;
+
 /**
  * Created by izumin on 9/7/15.
  */
-public class BleEvent {
+public class BleEvent<T> {
     enum Type {
-        WRITING_CHARACTERISTIC,
-        READING_CHARACTERISTIC
+        WRITE_CHARACTERISTIC(1) {
+            @Override
+            public void handle(BluetoothGattWrapper gattWrapper, BleEvent event) {
+                gattWrapper.writeCharacteristic((BluetoothGattCharacteristic) event.getValue());
+            }
+        },
+        READ_CHARACTERISTIC(2) {
+            @Override
+            public void handle(BluetoothGattWrapper gattWrapper, BleEvent event) {
+                gattWrapper.readCharacteristic((BluetoothGattCharacteristic) event.getValue());
+            }
+        },
+        WRITE_DESCRIPTOR(3) {
+            @Override
+            public void handle(BluetoothGattWrapper gattWrapper, BleEvent event) {
+                gattWrapper.writeDescriptor((BluetoothGattDescriptor) event.getValue());
+            }
+        },
+        READ_DESCRIPTOR(4) {
+            @Override
+            public void handle(BluetoothGattWrapper gattWrapper, BleEvent event) {
+                gattWrapper.readDescriptor((BluetoothGattDescriptor) event.getValue());
+            }
+        };
+
+        private final int mWhat;
+
+        Type(int what) {
+            mWhat = what;
+        }
+
+        public int getWhat() {
+            return mWhat;
+        }
+
+        public abstract void handle(BluetoothGattWrapper gattWrapper, BleEvent event);
+
+        public static Type valueOf(int what) {
+            for (Type type : values()) {
+                if (type.getWhat() == what) { return type; }
+            }
+            throw new IllegalArgumentException();
+        }
     }
 
-    private final UUID mUuid;
-    private final Deferred mDeferred;
-    private BluetoothGattCharacteristic mCharacteristic;
+    public static final String KEY_UUID = "event uuid";
 
-    public BleEvent(UUID uuid, Deferred deferred) {
+    private final Type mType;
+    private final UUID mUuid;
+    private final T mValue;
+
+    private Deferred<T, BleStatus, ?> mDeferred;
+
+    public BleEvent(Type type, UUID uuid, T value) {
+        mType = type;
         mUuid = uuid;
-        mDeferred = deferred;
+        mValue = value;
+    }
+
+    public Type getType() {
+        return mType;
     }
 
     public UUID getUuid() {
         return mUuid;
     }
 
-    public <D, F, P> Deferred<D, F, P> getDeferred() {
+    public T getValue() {
+        return mValue;
+    }
+
+    public Deferred<T, BleStatus, ?> getDeferred() {
         return mDeferred;
     }
 
-    public BluetoothGattCharacteristic getCharacteristic() {
-        return mCharacteristic;
+    public void setDeferred(Deferred<T, BleStatus, ?> deferred) {
+        mDeferred = deferred;
     }
 
-    public void setCharacteristic(BluetoothGattCharacteristic characteristic) {
-        mCharacteristic = characteristic;
+    public Message obtainMessage() {
+        Message message = Message.obtain();
+        message.what = mType.getWhat();
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(KEY_UUID, mUuid);
+        message.setData(bundle);
+        return message;
     }
 }
