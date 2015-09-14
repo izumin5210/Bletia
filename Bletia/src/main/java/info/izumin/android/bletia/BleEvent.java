@@ -1,6 +1,7 @@
 package info.izumin.android.bletia;
 
 import android.bluetooth.BluetoothGattCharacteristic;
+import android.bluetooth.BluetoothGattDescriptor;
 import android.os.Bundle;
 import android.os.Message;
 
@@ -8,15 +9,37 @@ import org.jdeferred.Deferred;
 
 import java.util.UUID;
 
+import info.izumin.android.bletia.wrapper.BluetoothGattWrapper;
+
 /**
  * Created by izumin on 9/7/15.
  */
-public class BleEvent {
+public class BleEvent<T> {
     enum Type {
-        WRITE_CHARACTERISTIC(1),
-        READ_CHARACTERISTIC(2),
-        WRITE_DESCRIPTOR(3),
-        READ_DESCRIPTOR(4);
+        WRITE_CHARACTERISTIC(1) {
+            @Override
+            public void handle(BluetoothGattWrapper gattWrapper, BleEvent event) {
+                gattWrapper.writeCharacteristic((BluetoothGattCharacteristic) event.getValue());
+            }
+        },
+        READ_CHARACTERISTIC(2) {
+            @Override
+            public void handle(BluetoothGattWrapper gattWrapper, BleEvent event) {
+                gattWrapper.readCharacteristic((BluetoothGattCharacteristic) event.getValue());
+            }
+        },
+        WRITE_DESCRIPTOR(3) {
+            @Override
+            public void handle(BluetoothGattWrapper gattWrapper, BleEvent event) {
+                gattWrapper.writeDescriptor((BluetoothGattDescriptor) event.getValue());
+            }
+        },
+        READ_DESCRIPTOR(4) {
+            @Override
+            public void handle(BluetoothGattWrapper gattWrapper, BleEvent event) {
+                gattWrapper.readDescriptor((BluetoothGattDescriptor) event.getValue());
+            }
+        };
 
         private final int mWhat;
 
@@ -26,6 +49,15 @@ public class BleEvent {
 
         public int getWhat() {
             return mWhat;
+        }
+
+        public abstract void handle(BluetoothGattWrapper gattWrapper, BleEvent event);
+
+        public static Type valueOf(int what) {
+            for (Type type : values()) {
+                if (type.getWhat() == what) { return type; }
+            }
+            throw new IllegalArgumentException();
         }
     }
 
