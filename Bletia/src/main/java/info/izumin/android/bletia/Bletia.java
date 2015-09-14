@@ -67,14 +67,14 @@ public class Bletia implements BluetoothGattCallbackHandler.Callback {
         mMessageThread.stop();
     }
 
-    public Promise<BluetoothGattCharacteristic, BleStatus, Object> writeCharacteristic(BluetoothGattCharacteristic characteristic) {
+    public Promise<BluetoothGattCharacteristic, BletiaException, Object> writeCharacteristic(BluetoothGattCharacteristic characteristic) {
         BleEvent<BluetoothGattCharacteristic> event =
                 new BleEvent<>(BleEvent.Type.WRITE_CHARACTERISTIC, characteristic.getUuid(), characteristic);
 
         return mMessageThread.sendEvent(event);
     }
 
-    public Promise<BluetoothGattCharacteristic, BleStatus, Object> readCharacteristic(BluetoothGattCharacteristic characteristic) {
+    public Promise<BluetoothGattCharacteristic, BletiaException, Object> readCharacteristic(BluetoothGattCharacteristic characteristic) {
         BleEvent<BluetoothGattCharacteristic> event =
                 new BleEvent<>(BleEvent.Type.READ_CHARACTERISTIC, characteristic.getUuid(), characteristic);
 
@@ -95,7 +95,7 @@ public class Bletia implements BluetoothGattCallbackHandler.Callback {
     }
 
     @Override
-    public void onError(BleStatus status) {
-        mEmitter.emitError(status);
+    public void onError(BletiaException exception) {
+        mEmitter.emitError(exception);
     }
 }
