@@ -63,29 +63,36 @@ public class BleEvent<T> {
 
     public static final String KEY_UUID = "event uuid";
 
+    private final Type mType;
     private final UUID mUuid;
-    private final Deferred mDeferred;
-    private BluetoothGattCharacteristic mCharacteristic;
+    private final T mValue;
 
-    public BleEvent(UUID uuid, Deferred deferred) {
+    private Deferred<T, BleStatus, ?> mDeferred;
+
+    public BleEvent(Type type, UUID uuid, T value) {
+        mType = type;
         mUuid = uuid;
-        mDeferred = deferred;
+        mValue = value;
+    }
+
+    public Type getType() {
+        return mType;
     }
 
     public UUID getUuid() {
         return mUuid;
     }
 
-    public <D, F, P> Deferred<D, F, P> getDeferred() {
+    public T getValue() {
+        return mValue;
+    }
+
+    public Deferred<T, BleStatus, ?> getDeferred() {
         return mDeferred;
     }
 
-    public BluetoothGattCharacteristic getCharacteristic() {
-        return mCharacteristic;
-    }
-
-    public void setCharacteristic(BluetoothGattCharacteristic characteristic) {
-        mCharacteristic = characteristic;
+    public void setDeferred(Deferred<T, BleStatus, ?> deferred) {
+        mDeferred = deferred;
     }
 
     public Message obtainMessage() {
