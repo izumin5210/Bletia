@@ -34,7 +34,7 @@ public class BleMessageThread extends Handler {
         mHandlerThread.quitSafely();
     }
 
-    public <T> Promise<T, BletiaException, Object> sendEvent(BletiaEvent<T> event) {
+    public <T> Promise<T, BletiaException, Object> execute(BletiaEvent<T> event) {
         Deferred<T, BletiaException, Object> deferred = new DeferredObject<>();
         Promise<T, BletiaException, Object> promise = deferred.promise();
         event.setDeferred(deferred);
