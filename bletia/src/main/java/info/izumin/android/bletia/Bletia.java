@@ -79,44 +79,57 @@ public class Bletia implements BluetoothGattCallbackHandler.Callback {
         return mGattWrapper.getService(uuid);
     }
 
-    public Promise<BluetoothGattCharacteristic, BletiaException, Object> writeCharacteristic(BluetoothGattCharacteristic characteristic) {
-        BleEvent<BluetoothGattCharacteristic> event =
-                new BleEvent<>(BleEvent.Type.WRITE_CHARACTERISTIC, characteristic.getUuid(), characteristic);
+    public <T> Promise<T, BletiaException, Object> execute(BletiaEvent<T> event) {
+        return mMessageThread.execute(event);
+    }
 
-        return mMessageThread.sendEvent(event);
+    public BletiaEvent<BluetoothGattCharacteristic> getWriteCharacteristicEvent(BluetoothGattCharacteristic characteristic) {
+        return new BletiaEvent<>(BletiaEvent.Type.WRITE_CHARACTERISTIC, characteristic.getUuid(), characteristic);
+    }
+
+    public Promise<BluetoothGattCharacteristic, BletiaException, Object> writeCharacteristic(BluetoothGattCharacteristic characteristic) {
+        return execute(getWriteCharacteristicEvent(characteristic));
+    }
+
+    public BletiaEvent<BluetoothGattCharacteristic> getReadCharacteristicEvent(BluetoothGattCharacteristic characteristic) {
+        return new BletiaEvent<>(BletiaEvent.Type.READ_CHARACTERISTIC, characteristic.getUuid(), characteristic);
     }
 
     public Promise<BluetoothGattCharacteristic, BletiaException, Object> readCharacteristic(BluetoothGattCharacteristic characteristic) {
-        BleEvent<BluetoothGattCharacteristic> event =
-                new BleEvent<>(BleEvent.Type.READ_CHARACTERISTIC, characteristic.getUuid(), characteristic);
+        return execute(getReadCharacteristicEvent(characteristic));
+    }
 
-        return mMessageThread.sendEvent(event);
+    public BletiaEvent<BluetoothGattDescriptor> getWriteDescriptorEvent(BluetoothGattDescriptor descriptor) {
+        return new BletiaEvent<>(BletiaEvent.Type.WRITE_DESCRIPTOR, descriptor.getUuid(), descriptor);
     }
 
     public Promise<BluetoothGattDescriptor, BletiaException, Object> writeDescriptor(BluetoothGattDescriptor descriptor) {
-        BleEvent<BluetoothGattDescriptor> event =
-                new BleEvent<>(BleEvent.Type.WRITE_DESCRIPTOR, descriptor.getUuid(), descriptor);
+        return execute(getWriteDescriptorEvent(descriptor));
+    }
 
-        return mMessageThread.sendEvent(event);
+    public BletiaEvent<BluetoothGattDescriptor> getReadDescriptorEvent(BluetoothGattDescriptor descriptor) {
+        return new BletiaEvent<>(BletiaEvent.Type.READ_DESCRIPTOR, descriptor.getUuid(), descriptor);
     }
 
     public Promise<BluetoothGattDescriptor, BletiaException, Object> readDescriptor(BluetoothGattDescriptor descriptor) {
-        BleEvent<BluetoothGattDescriptor> event =
-                new BleEvent<>(BleEvent.Type.READ_DESCRIPTOR, descriptor.getUuid(), descriptor);
+        return execute(getReadDescriptorEvent(descriptor));
+    }
 
-        return mMessageThread.sendEvent(event);
+    public BletiaEvent<BluetoothGattCharacteristic> getEnableNotificationEvent(BluetoothGattCharacteristic characteristic, boolean enabled) {
+        BletiaEvent.Type type = enabled ? BletiaEvent.Type.ENABLE_NOTIFICATION : BletiaEvent.Type.DISABLE_NOTIFICATION;
+        return new BletiaEvent<>(type, characteristic.getUuid(), characteristic);
     }
 
     public Promise<BluetoothGattCharacteristic, BletiaException, Object> enableNotification(BluetoothGattCharacteristic characteristic, boolean enabled) {
-        BleEvent.Type type = enabled ? BleEvent.Type.ENABLE_NOTIFICATION : BleEvent.Type.DISABLE_NOTIFICATION;
-        BleEvent<BluetoothGattCharacteristic> event = new BleEvent<>(type, characteristic.getUuid(), characteristic);
+        return execute(getEnableNotificationEvent(characteristic, enabled));
+    }
 
-        return mMessageThread.sendEvent(event);
+    public BletiaEvent<Integer> getReadRemoteRssiEvent() {
+        return new BletiaEvent<>(BletiaEvent.Type.READ_REMOTE_RSSI);
     }
 
     public Promise<Integer, BletiaException, Object> readRemoteRssi() {
-        BleEvent<Integer> event = new BleEvent<>(BleEvent.Type.READ_REMOTE_RSSI);
-        return mMessageThread.sendEvent(event);
+        return execute(getReadRemoteRssiEvent());
     }
 
     @Override
