@@ -37,7 +37,7 @@ public class BluetoothGattCallbackHandler extends BluetoothGattCallbackWrapper {
 
     @Override
     public void onServicesDiscovered(BluetoothGattWrapper gatt, int status) {
-        // TODO: Not yet implemented.
+        mCallback.onServiceDiscovered(status);
     }
 
     @Override
@@ -52,7 +52,7 @@ public class BluetoothGattCallbackHandler extends BluetoothGattCallbackWrapper {
 
     @Override
     public void onCharacteristicChanged(BluetoothGattWrapper gatt, BluetoothGattCharacteristic characteristic) {
-        // TODO: Not yet implemented.
+        mCallback.onCharacteristicChanged(characteristic);
     }
 
     @Override
@@ -112,6 +112,8 @@ public class BluetoothGattCallbackHandler extends BluetoothGattCallbackWrapper {
     interface Callback {
         void onConnect(BluetoothGattWrapper gatt);
         void onDisconnect(BluetoothGattWrapper gatt);
+        void onServiceDiscovered(int status);
+        void onCharacteristicChanged(BluetoothGattCharacteristic characteristic);
         void onError(BletiaException exception);
     }
 }
