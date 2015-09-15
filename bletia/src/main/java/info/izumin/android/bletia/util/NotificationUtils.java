@@ -22,17 +22,9 @@ public final class NotificationUtils {
         return descriptor;
     }
 
-    public static boolean isNotficationDescriptor(BluetoothGattDescriptor descriptor) {
-        return descriptor.getUuid().equals(Bletia.CLIENT_CHARCTERISTIC_CONFIG);
-    }
-
     public static boolean isEnableNotificationDescriptor(BluetoothGattDescriptor descriptor) {
-        return isNotficationDescriptor(descriptor)
-                && Arrays.equals(descriptor.getValue(), BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
-    }
-
-    public static boolean isDisableNotificationDescriptor(BluetoothGattDescriptor descriptor) {
-        return isNotficationDescriptor(descriptor)
-                && Arrays.equals(descriptor.getValue(), BluetoothGattDescriptor.DISABLE_NOTIFICATION_VALUE);
+        return descriptor.getUuid().equals(Bletia.CLIENT_CHARCTERISTIC_CONFIG)
+                && (Arrays.equals(descriptor.getValue(), BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE)
+                || Arrays.equals(descriptor.getValue(), BluetoothGattDescriptor.DISABLE_NOTIFICATION_VALUE));
     }
 }
