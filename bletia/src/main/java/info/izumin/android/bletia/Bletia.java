@@ -3,6 +3,7 @@ package info.izumin.android.bletia;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattDescriptor;
+import android.bluetooth.BluetoothGattService;
 import android.content.Context;
 import android.os.HandlerThread;
 
@@ -67,6 +68,15 @@ public class Bletia implements BluetoothGattCallbackHandler.Callback {
         mState = BleState.DISCONNECTING;
         mConnectionHelper.disconnect();
         mMessageThread.stop();
+    }
+
+    public boolean discoverServices() {
+        mState = BleState.SERVICE_DISCOVERING;
+        return mGattWrapper.discoverServices();
+    }
+
+    public BluetoothGattService getService(UUID uuid) {
+        return mGattWrapper.getService(uuid);
     }
 
     public Promise<BluetoothGattCharacteristic, BletiaException, Object> writeCharacteristic(BluetoothGattCharacteristic characteristic) {
