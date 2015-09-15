@@ -3,9 +3,7 @@
 [![LICENSE](https://img.shields.io/badge/license-Apache%202.0-brightgreen.svg "LICENSE")](//github.com/izumin5210/Bletia/blob/master/LICENSE.md)
 [![Download](https://api.bintray.com/packages/izumin5210/maven/bletia/images/download.svg)](https://bintray.com/izumin5210/maven/bletia/_latestVersion)
 
-Promisified BluetoothGatt wrapper library.
-
-Including [JDeferred](https://github.com/jdeferred/jdeferred): Promise/Deferred library.
+Promisified BluetoothGatt wrapper library, including [JDeferred](https://github.com/jdeferred/jdeferred).
 
 ## Download
 
@@ -124,6 +122,31 @@ bletia.writeDescriptor(descriptor)
         }
     });
 ```
+
+### Read remote RSSI
+
+```java
+bletia.readRemoteRssi()
+    .then(new DoneCallback<Integer>() {
+        @Override
+        public void onDone(Integer result) {
+            // Call when the request was successfully.
+        }
+    })
+    .fail(new FailCallback<BletiaException>() {
+        @OVerride
+        public void onFail(BletiaException result) {
+            // Call when the request was failure.
+        }
+    });
+```
+
+## TODO
+
+* Add sample application
+* Support `reliableWrite`
+* Support `requestMtu`
+* Replace JDeferred with simple promise implementation
 
 ## License
 

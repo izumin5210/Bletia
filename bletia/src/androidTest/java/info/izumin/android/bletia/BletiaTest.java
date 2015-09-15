@@ -457,6 +457,60 @@ public class BletiaTest extends AndroidTestCase {
         await();
     }
 
+    @Test
+    public void readRemoteRssiSuccessfully() throws Exception {
+        when(mBluetoothGattWrapper.readRemoteRssi()).thenReturn(true);
+        mBletia.readRemoteRssi()
+                .done(new DoneCallback<Integer>() {
+                    @Override
+                    public void onDone(Integer result) {
+                        assertThat(result).isEqualTo(100);
+                        mLatch.countDown();
+                    }
+                })
+                .fail(mNeverCalledFailCallback);
+
+        Thread.sleep(300);
+        mCallbackHandler.onReadRemoteRssi(
+                mBluetoothGattWrapper, 100, BluetoothGatt.GATT_SUCCESS);
+        await();
+    }
+
+    @Test
+    public void readRemoteRssiRequestFailure() throws Exception {
+        when(mBluetoothGattWrapper.readRemoteRssi()).thenReturn(false);
+        mBletia.readRemoteRssi()
+                .done(mNeverCalledDoneCallback)
+                .fail(new FailCallback<BletiaException>() {
+                    @Override
+                    public void onFail(BletiaException result) {
+                        assertThat(result.getType()).isEqualTo(BleErrorType.REQUEST_FAILURE);
+                        mLatch.countDown();
+                    }
+                });
+
+        await();
+    }
+
+    @Test
+    public void readRemoteRssiOperationFailure() throws Exception {
+        when(mBluetoothGattWrapper.readRemoteRssi()).thenReturn(true);
+        mBletia.readRemoteRssi()
+                .done(mNeverCalledDoneCallback)
+                .fail(new FailCallback<BletiaException>() {
+                    @Override
+                    public void onFail(BletiaException result) {
+                        assertThat(result.getType()).isEqualTo(BleErrorType.FAILURE);
+                        mLatch.countDown();
+                    }
+                });
+
+        Thread.sleep(300);
+        mCallbackHandler.onReadRemoteRssi(
+                mBluetoothGattWrapper, 100, BluetoothGatt.GATT_FAILURE);
+        await();
+    }
+
     private void await() throws InterruptedException {
         boolean res = mLatch.await(1000, TimeUnit.MILLISECONDS);
         assertThat(res).isTrue();
