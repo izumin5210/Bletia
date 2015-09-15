@@ -114,6 +114,10 @@ public class Bletia implements BluetoothGattCallbackHandler.Callback {
         return mMessageThread.sendEvent(event);
     }
 
+    public Promise<Integer, BletiaException, Object> readRemoteRssi() {
+        return null;
+    }
+
     @Override
     public void onConnect(BluetoothGattWrapper gatt) {
         mState = BleState.CONNECTED;
