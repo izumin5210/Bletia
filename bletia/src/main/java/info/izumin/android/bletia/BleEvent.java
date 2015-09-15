@@ -76,6 +76,14 @@ public class BleEvent<T> {
                     reject(BleErrorType.REQUEST_FAILURE, event.getDeferred(), characteristic, null);
                 }
             }
+        },
+        READ_REMOTE_RSSI(7) {
+            @Override
+            public void handle(BluetoothGattWrapper gattWrapper, BleEvent event) {
+                if (!gattWrapper.readRemoteRssi()) {
+                    reject(BleErrorType.REQUEST_FAILURE, event.getDeferred(), null, null);
+                }
+            }
         };
 
         private final int mWhat;

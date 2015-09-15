@@ -78,7 +78,12 @@ public class BluetoothGattCallbackHandler extends BluetoothGattCallbackWrapper {
 
     @Override
     public void onReadRemoteRssi(BluetoothGattWrapper gatt, int rssi, int status) {
-        // TODO: Not yet implemented.
+        BleEvent event = mEventStore.closeEvent(BleEvent.Type.READ_REMOTE_RSSI, null);
+        if (status == BluetoothGatt.GATT_SUCCESS) {
+            event.getDeferred().resolve(rssi);
+        } else {
+            event.getDeferred().reject(new BletiaException(BleErrorType.valueOf(status)));
+        }
     }
 
     @Override

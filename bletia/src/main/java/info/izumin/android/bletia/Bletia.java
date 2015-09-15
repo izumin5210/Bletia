@@ -115,7 +115,8 @@ public class Bletia implements BluetoothGattCallbackHandler.Callback {
     }
 
     public Promise<Integer, BletiaException, Object> readRemoteRssi() {
-        return null;
+        BleEvent<Integer> event = new BleEvent<>(BleEvent.Type.READ_REMOTE_RSSI);
+        return mMessageThread.sendEvent(event);
     }
 
     @Override
