@@ -18,7 +18,7 @@ public final class NotificationUtils {
     public static BluetoothGattDescriptor getDescriptor(BluetoothGattCharacteristic characteristic, boolean enabled) {
         byte[] value = enabled ? BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE : BluetoothGattDescriptor.DISABLE_NOTIFICATION_VALUE;
         BluetoothGattDescriptor descriptor = characteristic.getDescriptor(Bletia.CLIENT_CHARCTERISTIC_CONFIG);
-        descriptor.setValue(BluetoothGattDescriptor.DISABLE_NOTIFICATION_VALUE);
+        descriptor.setValue(value);
         return descriptor;
     }
 
