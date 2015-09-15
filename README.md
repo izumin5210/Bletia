@@ -125,6 +125,24 @@ bletia.writeDescriptor(descriptor)
     });
 ```
 
+### Read remote RSSI
+
+```java
+bletia.readRemoteRssi()
+    .then(new DoneCallback<Integer>() {
+        @Override
+        public void onDone(Integer result) {
+            // Call when the request was successfully.
+        }
+    })
+    .fail(new FailCallback<BletiaException>() {
+        @OVerride
+        public void onFail(BletiaException result) {
+            // Call when the request was failure.
+        }
+    });
+```
+
 ## License
 
 ```
