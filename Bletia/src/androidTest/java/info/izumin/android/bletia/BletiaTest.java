@@ -13,9 +13,12 @@ import org.jdeferred.FailCallback;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.internal.util.reflection.Whitebox;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
@@ -28,6 +31,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 /**
@@ -37,7 +42,7 @@ import static org.mockito.Mockito.when;
 public class BletiaTest extends AndroidTestCase {
 
     @Mock private BluetoothGattCharacteristic mCharacteristic;
-    @Mock private BluetoothGattDescriptor mDescriptor, mNotificationDescriptor;
+    @Mock private BluetoothGattDescriptor mDescriptor;
     @Mock private BluetoothGattWrapper mBluetoothGattWrapper;
 
     private BleEventStore mEventStore;
@@ -69,14 +74,24 @@ public class BletiaTest extends AndroidTestCase {
         when(mBluetoothGattWrapper.writeDescriptor(mDescriptor)).thenReturn(true);
         when(mBluetoothGattWrapper.readDescriptor(mDescriptor)).thenReturn(true);
         when(mBluetoothGattWrapper.setCharacteristicNotification(eq(mCharacteristic), anyBoolean())).thenReturn(true);
-        when(mCharacteristic.getDescriptor(any(UUID.class))).thenReturn(mDescriptor);
-        when(mDescriptor.getCharacteristic()).thenReturn(mCharacteristic);
-//        when(mCallbackHandler.isNotficationDescriptor(any(BluetoothGattDescriptor.class))).thenReturn(false);
-//        when(mCallbackHandler.isEnableNotificationDescriptor(any(BluetoothGattDescriptor.class))).thenReturn(false);
-//        when(mCallbackHandler.isDisableNotificationDescriptor(any(BluetoothGattDescriptor.class))).thenReturn(false);
-        when(mNotificationDescriptor.getUuid()).thenReturn(Bletia.CLIENT_CHARCTERISTIC_CONFIG);
-        when(mNotificationDescriptor.getValue()).thenReturn(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
-        when(mNotificationDescriptor.getCharacteristic()).thenReturn(mCharacteristic);
+
+        final ArgumentCaptor<UUID> uuidCaptor = ArgumentCaptor.forClass(UUID.class);
+        final ArgumentCaptor<byte[]> valueCaptor = ArgumentCaptor.forClass(byte[].class);
+        when(mCharacteristic.getDescriptor(uuidCaptor.capture())).thenAnswer(new Answer<BluetoothGattDescriptor>() {
+            @Override
+            public BluetoothGattDescriptor answer(InvocationOnMock invocation) throws Throwable {
+                when(mDescriptor.getUuid()).thenReturn(uuidCaptor.getValue());
+                when(mDescriptor.getCharacteristic()).thenReturn(mCharacteristic);
+                return mDescriptor;
+            }
+        });
+        when(mDescriptor.setValue(valueCaptor.capture())).thenAnswer(new Answer<Boolean>() {
+            @Override
+            public Boolean answer(InvocationOnMock invocation) throws Throwable {
+                when(mDescriptor.getValue()).thenReturn(valueCaptor.getValue());
+                return true;
+            }
+        });
 
         mLatch = new CountDownLatch(1);
     }
@@ -312,7 +327,7 @@ public class BletiaTest extends AndroidTestCase {
                 .fail(mNeverCalledFailCallback);
 
         Thread.sleep(300);
-        mCallbackHandler.onDescriptorWrite(mBluetoothGattWrapper, mNotificationDescriptor, BluetoothGatt.GATT_SUCCESS);
+        mCallbackHandler.onDescriptorWrite(mBluetoothGattWrapper, mDescriptor, BluetoothGatt.GATT_SUCCESS);
         await();
     }
 
@@ -359,14 +374,15 @@ public class BletiaTest extends AndroidTestCase {
                     public void onFail(BletiaException result) {
                         assertThat(result.getType()).isEqualTo(BleErrorType.FAILURE);
                         assertThat(result.getCharacteristic()).isEqualTo(mCharacteristic);
-                        assertThat(result.getDescriptor()).isEqualTo(mNotificationDescriptor);
+                        assertThat(result.getDescriptor()).isEqualTo(mDescriptor);
                         mLatch.countDown();
                     }
                 });
 
         Thread.sleep(300);
+        verify(mBluetoothGattWrapper, times(1)).writeDescriptor(mDescriptor);
         mCallbackHandler.onDescriptorWrite(
-                mBluetoothGattWrapper, mNotificationDescriptor, BluetoothGatt.GATT_FAILURE);
+                mBluetoothGattWrapper, mDescriptor, BluetoothGatt.GATT_FAILURE);
         await();
     }
 
@@ -382,8 +398,8 @@ public class BletiaTest extends AndroidTestCase {
                 .fail(mNeverCalledFailCallback);
 
         Thread.sleep(300);
-        when(mNotificationDescriptor.getValue()).thenReturn(BluetoothGattDescriptor.DISABLE_NOTIFICATION_VALUE);
-        mCallbackHandler.onDescriptorWrite(mBluetoothGattWrapper, mNotificationDescriptor, BluetoothGatt.GATT_SUCCESS);
+        verify(mBluetoothGattWrapper, times(1)).writeDescriptor(mDescriptor);
+        mCallbackHandler.onDescriptorWrite(mBluetoothGattWrapper, mDescriptor, BluetoothGatt.GATT_SUCCESS);
         await();
     }
 
@@ -430,15 +446,15 @@ public class BletiaTest extends AndroidTestCase {
                     public void onFail(BletiaException result) {
                         assertThat(result.getType()).isEqualTo(BleErrorType.FAILURE);
                         assertThat(result.getCharacteristic()).isEqualTo(mCharacteristic);
-                        assertThat(result.getDescriptor()).isEqualTo(mNotificationDescriptor);
+                        assertThat(result.getDescriptor()).isEqualTo(mDescriptor);
                         mLatch.countDown();
                     }
                 });
 
         Thread.sleep(300);
-        when(mNotificationDescriptor.getValue()).thenReturn(BluetoothGattDescriptor.DISABLE_NOTIFICATION_VALUE);
+        verify(mBluetoothGattWrapper, times(1)).writeDescriptor(mDescriptor);
         mCallbackHandler.onDescriptorWrite(
-                mBluetoothGattWrapper, mNotificationDescriptor, BluetoothGatt.GATT_FAILURE);
+                mBluetoothGattWrapper, mDescriptor, BluetoothGatt.GATT_FAILURE);
         await();
     }
 
