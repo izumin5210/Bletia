@@ -9,6 +9,7 @@ import org.jdeferred.Deferred;
 
 import java.util.UUID;
 
+import info.izumin.android.bletia.util.NotificationUtils;
 import info.izumin.android.bletia.wrapper.BluetoothGattWrapper;
 
 /**
@@ -47,6 +48,34 @@ public class BleEvent<T> {
                     reject(event.getDeferred(), (BluetoothGattDescriptor) event.getValue());
                 }
             }
+        },
+        ENABLE_NOTIFICATION(5) {
+            @Override
+            public void handle(BluetoothGattWrapper gattWrapper, BleEvent event) {
+                BluetoothGattCharacteristic characteristic = (BluetoothGattCharacteristic) event.getValue();
+                if (gattWrapper.setCharacteristicNotification(characteristic, true)) {
+                    BluetoothGattDescriptor descriptor = NotificationUtils.getDescriptor(characteristic, true);
+                    if (!gattWrapper.writeDescriptor(descriptor)) {
+                        reject(event.getDeferred(), characteristic, descriptor);
+                    }
+                } else {
+                    reject(BleErrorType.REQUEST_FAILURE, event.getDeferred(), characteristic, null);
+                }
+            }
+        },
+        DISABLE_NOTIFICATION(6) {
+            @Override
+            public void handle(BluetoothGattWrapper gattWrapper, BleEvent event) {
+                BluetoothGattCharacteristic characteristic = (BluetoothGattCharacteristic) event.getValue();
+                if (gattWrapper.setCharacteristicNotification(characteristic, true)) {
+                    BluetoothGattDescriptor descriptor = NotificationUtils.getDescriptor(characteristic, false);
+                    if (!gattWrapper.writeDescriptor(descriptor)) {
+                        reject(event.getDeferred(), characteristic, descriptor);
+                    }
+                } else {
+                    reject(BleErrorType.REQUEST_FAILURE, event.getDeferred(), characteristic, null);
+                }
+            }
         };
 
         private final int mWhat;
@@ -59,12 +88,21 @@ public class BleEvent<T> {
             return mWhat;
         }
 
+        public void reject(BleErrorType type, Deferred<? , BletiaException, ?> deferred,
+                           BluetoothGattCharacteristic characteristic, BluetoothGattDescriptor descriptor) {
+            deferred.reject(new BletiaException(type, characteristic, descriptor));
+        }
+
         public void reject(Deferred<BluetoothGattCharacteristic, BletiaException, ?> deferred, BluetoothGattCharacteristic characteristic) {
-            deferred.reject(new BletiaException(BleErrorType.OPERATION_INITIATED_FAILURE, characteristic));
+            reject(BleErrorType.OPERATION_INITIATED_FAILURE, deferred, characteristic, null);
         }
 
         public void reject(Deferred<BluetoothGattDescriptor, BletiaException, ?> deferred, BluetoothGattDescriptor descriptor) {
-            deferred.reject(new BletiaException(BleErrorType.OPERATION_INITIATED_FAILURE, descriptor));
+            reject(BleErrorType.OPERATION_INITIATED_FAILURE, deferred, null, descriptor);
+        }
+
+        public void reject(Deferred<BluetoothGattDescriptor, BletiaException, ?> deferred, BluetoothGattCharacteristic characteristic, BluetoothGattDescriptor descriptor) {
+            deferred.reject(new BletiaException(BleErrorType.OPERATION_INITIATED_FAILURE, characteristic, descriptor));
         }
 
         public abstract void handle(BluetoothGattWrapper gattWrapper, BleEvent event);

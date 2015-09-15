@@ -98,6 +98,13 @@ public class Bletia implements BluetoothGattCallbackHandler.Callback {
         return mMessageThread.sendEvent(event);
     }
 
+    public Promise<BluetoothGattCharacteristic, BletiaException, Object> enableNotification(BluetoothGattCharacteristic characteristic, boolean enabled) {
+        BleEvent.Type type = enabled ? BleEvent.Type.ENABLE_NOTIFICATION : BleEvent.Type.DISABLE_NOTIFICATION;
+        BleEvent<BluetoothGattCharacteristic> event = new BleEvent<>(type, characteristic.getUuid(), characteristic);
+
+        return mMessageThread.sendEvent(event);
+    }
+
     @Override
     public void onConnect(BluetoothGattWrapper gatt) {
         mState = BleState.CONNECTED;
