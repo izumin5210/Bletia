@@ -34,7 +34,7 @@ public class BleMessageThread extends Handler {
         mHandlerThread.quitSafely();
     }
 
-    public <T> Promise<T, BletiaException, Object> sendEvent(BleEvent<T> event) {
+    public <T> Promise<T, BletiaException, Object> execute(BletiaEvent<T> event) {
         Deferred<T, BletiaException, Object> deferred = new DeferredObject<>();
         Promise<T, BletiaException, Object> promise = deferred.promise();
         event.setDeferred(deferred);
@@ -47,8 +47,8 @@ public class BleMessageThread extends Handler {
 
     @Override
     public void handleMessage(Message msg) {
-        UUID uuid = (UUID) msg.getData().getSerializable(BleEvent.KEY_UUID);
-        BleEvent.Type type = BleEvent.Type.valueOf(msg.what);
+        UUID uuid = (UUID) msg.getData().getSerializable(BletiaEvent.KEY_UUID);
+        BletiaEvent.Type type = BletiaEvent.Type.valueOf(msg.what);
 
         if (mEventStore.isRunning(type, uuid)) {
             sendMessageDelayed(msg, DELAY_MILLIS);
