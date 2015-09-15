@@ -5,14 +5,78 @@
 
 ## Download
 
-```java
-// TODO: Not yet written.
+```groovy
+dependencies {
+    compile 'info.izumin.android:bletia:1.0.0'
+}
 ```
 
-## Usage
+## Example
+### Instantiate
 
 ```java
-// TODO: Not yet written.
+Bletia bletia = new Bletia(context);
+```
+
+### Connect to BLE device
+
+```java
+// BluetoothDevice device
+bletia.connect(device);
+```
+
+### Enable notification
+
+```java
+bletia.enableNotification(characteristic, true)
+    .then(new DoneCallback<BluetoothGattCharacteristic>() {
+        @Override
+        public void onDone(BluetoothGattCharacteristic result) {
+            // Call when the request was successfully.
+        }
+    })
+    .fail(new FailCallback<BletiaException>() {
+        @OVerride
+        public void onFail(BletiaException result) {
+            // Call when the request was failure.
+        }
+    });
+```
+
+### Read characteristic
+
+```java
+bletia.readCharacteristic(characteristic)
+    .then(new DoneCallback<BluetoothGattCharacteristic>() {
+        @Override
+        public void onDone(BluetoothGattCharacteristic result) {
+            // Call when the request was successfully.
+        }
+    })
+    .fail(new FailCallback<BletiaException>() {
+        @OVerride
+        public void onFail(BletiaException result) {
+            // Call when the request was failure.
+        }
+    });
+```
+
+### Write characteristic
+
+```java
+bletia.writeCharacteristic(characteristic)
+    .then(new DoneCallback<BluetoothGattCharacteristic>() {
+        @Override
+        public void onDone(BluetoothGattCharacteristic result) {
+            // Call when the request was successfully.
+        }
+    })
+    .fail(new FailCallback<BletiaException>() {
+        @OVerride
+        public void onFail(BletiaException result) {
+            // Call when the request was failure.
+        }
+    });
 ```
 
 ## License
