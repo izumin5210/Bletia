@@ -4,6 +4,11 @@ import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattDescriptor;
 
+import info.izumin.android.bletia.event.CharacteristicEvent;
+import info.izumin.android.bletia.event.DescriptorEvent;
+import info.izumin.android.bletia.event.EnableNotificationEvent;
+import info.izumin.android.bletia.event.Event;
+import info.izumin.android.bletia.event.ReadRemoteRssiEvent;
 import info.izumin.android.bletia.util.NotificationUtils;
 import info.izumin.android.bletia.wrapper.BluetoothGattCallbackWrapper;
 import info.izumin.android.bletia.wrapper.BluetoothGattWrapper;
@@ -42,12 +47,12 @@ public class BluetoothGattCallbackHandler extends BluetoothGattCallbackWrapper {
 
     @Override
     public void onCharacteristicRead(BluetoothGattWrapper gatt, BluetoothGattCharacteristic characteristic, int status) {
-        handleBleEvent(BletiaEvent.Type.READ_CHARACTERISTIC, characteristic, status);
+        handleBleEvent(Event.Type.READ_CHARACTERISTIC, characteristic, status);
     }
 
     @Override
     public void onCharacteristicWrite(BluetoothGattWrapper gatt, BluetoothGattCharacteristic characteristic, int status) {
-        handleBleEvent(BletiaEvent.Type.WRITE_CHARACTERISTIC, characteristic, status);
+        handleBleEvent(Event.Type.WRITE_CHARACTERISTIC, characteristic, status);
     }
 
     @Override
@@ -57,17 +62,15 @@ public class BluetoothGattCallbackHandler extends BluetoothGattCallbackWrapper {
 
     @Override
     public void onDescriptorRead(BluetoothGattWrapper gatt, BluetoothGattDescriptor descriptor, int status) {
-        handleBleEvent(BletiaEvent.Type.READ_DESCRIPTOR, descriptor, status);
+        handleBleEvent(Event.Type.READ_DESCRIPTOR, descriptor, status);
     }
 
     @Override
     public void onDescriptorWrite(BluetoothGattWrapper gatt, BluetoothGattDescriptor descriptor, int status) {
         if (NotificationUtils.isEnableNotificationDescriptor(descriptor)) {
-            handleBleEvent(BletiaEvent.Type.ENABLE_NOTIFICATION, descriptor.getCharacteristic(), descriptor, status);
-        } else if (NotificationUtils.isDisableNotificationDescriptor(descriptor)) {
-            handleBleEvent(BletiaEvent.Type.DISABLE_NOTIFICATION, descriptor.getCharacteristic(), descriptor, status);
+            handleBleEvent(Event.Type.ENABLE_NOTIFICATION, descriptor.getCharacteristic(), descriptor, status);
         } else {
-            handleBleEvent(BletiaEvent.Type.WRITE_DESCRIPTOR, descriptor, status);
+            handleBleEvent(Event.Type.WRITE_DESCRIPTOR, descriptor, status);
         }
     }
 
@@ -78,7 +81,7 @@ public class BluetoothGattCallbackHandler extends BluetoothGattCallbackWrapper {
 
     @Override
     public void onReadRemoteRssi(BluetoothGattWrapper gatt, int rssi, int status) {
-        BletiaEvent event = mEventStore.closeEvent(BletiaEvent.Type.READ_REMOTE_RSSI, null);
+        ReadRemoteRssiEvent event = (ReadRemoteRssiEvent) mEventStore.close(Event.Type.READ_REMOTE_RSSI, null);
         if (status == BluetoothGatt.GATT_SUCCESS) {
             event.getDeferred().resolve(rssi);
         } else {
@@ -91,27 +94,31 @@ public class BluetoothGattCallbackHandler extends BluetoothGattCallbackWrapper {
         // TODO: Not yet implemented.
     }
 
-    private void handleBleEvent(BletiaEvent event, BluetoothGattCharacteristic characteristic, BluetoothGattDescriptor descriptor, int status) {
+    private void handleBleEvent(Event.Type type, BluetoothGattCharacteristic characteristic, BluetoothGattDescriptor descriptor, int status) {
+        EnableNotificationEvent event = (EnableNotificationEvent) mEventStore.close(type, characteristic.getUuid());
         if (status == BluetoothGatt.GATT_SUCCESS) {
-            event.getDeferred().resolve(event.getValue());
+            event.getDeferred().resolve(characteristic);
         } else {
             event.getDeferred().reject(new BletiaException(BleErrorType.valueOf(status), characteristic, descriptor));
         }
     }
 
-    private void handleBleEvent(BletiaEvent.Type type, BluetoothGattCharacteristic characteristic, BluetoothGattDescriptor descriptor, int status) {
-        BletiaEvent<BluetoothGattCharacteristic> event = mEventStore.closeEvent(type, characteristic.getUuid());
-        handleBleEvent(event, characteristic, descriptor, status);
+    private void handleBleEvent(Event.Type type, BluetoothGattCharacteristic characteristic, int status) {
+        CharacteristicEvent event = (CharacteristicEvent) mEventStore.close(type, characteristic.getUuid());
+        if (status == BluetoothGatt.GATT_SUCCESS) {
+            event.getDeferred().resolve(characteristic);
+        } else {
+            event.getDeferred().reject(new BletiaException(BleErrorType.valueOf(status), characteristic));
+        }
     }
 
-    private void handleBleEvent(BletiaEvent.Type type, BluetoothGattCharacteristic characteristic, int status) {
-        BletiaEvent<BluetoothGattCharacteristic> event = mEventStore.closeEvent(type, characteristic.getUuid());
-        handleBleEvent(event, characteristic, null, status);
-    }
-
-    private void handleBleEvent(BletiaEvent.Type type, BluetoothGattDescriptor descriptor, int status) {
-        BletiaEvent<BluetoothGattDescriptor> event = mEventStore.closeEvent(type, descriptor.getUuid());
-        handleBleEvent(event, null, descriptor, status);
+    private void handleBleEvent(Event.Type type, BluetoothGattDescriptor descriptor, int status) {
+        DescriptorEvent event = (DescriptorEvent) mEventStore.close(type, descriptor.getUuid());
+        if (status == BluetoothGatt.GATT_SUCCESS) {
+            event.getDeferred().resolve(descriptor);
+        } else {
+            event.getDeferred().reject(new BletiaException(BleErrorType.valueOf(status), descriptor));
+        }
     }
 
     interface Callback {

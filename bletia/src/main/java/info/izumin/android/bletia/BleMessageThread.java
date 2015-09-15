@@ -4,12 +4,11 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Message;
 
-import org.jdeferred.Deferred;
 import org.jdeferred.Promise;
-import org.jdeferred.impl.DeferredObject;
 
 import java.util.UUID;
 
+import info.izumin.android.bletia.event.Event;
 import info.izumin.android.bletia.wrapper.BluetoothGattWrapper;
 
 /**
@@ -34,27 +33,22 @@ public class BleMessageThread extends Handler {
         mHandlerThread.quitSafely();
     }
 
-    public <T> Promise<T, BletiaException, Object> execute(BletiaEvent<T> event) {
-        Deferred<T, BletiaException, Object> deferred = new DeferredObject<>();
-        Promise<T, BletiaException, Object> promise = deferred.promise();
-        event.setDeferred(deferred);
-
-        mEventStore.addEvent(event);
+    public <T> Promise<T, BletiaException, Object> execute(Event<T> event) {
+        mEventStore.add(event);
         dispatchMessage(event.obtainMessage());
 
-        return promise;
+        return event.getDeferred().promise();
     }
 
     @Override
     public void handleMessage(Message msg) {
-        UUID uuid = (UUID) msg.getData().getSerializable(BletiaEvent.KEY_UUID);
-        BletiaEvent.Type type = BletiaEvent.Type.valueOf(msg.what);
+        UUID uuid = (UUID) msg.getData().getSerializable(Event.KEY_UUID);
+        Event.Type type = Event.Type.valueOf(msg.what);
 
         if (mEventStore.isRunning(type, uuid)) {
             sendMessageDelayed(msg, DELAY_MILLIS);
-            return;
+        } else {
+            mEventStore.execute(type, uuid).handle(mGattWrapper);
         }
-
-        type.handle(mGattWrapper, mEventStore.runEvent(type, uuid));
     }
 }

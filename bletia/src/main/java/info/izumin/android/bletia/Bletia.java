@@ -11,6 +11,13 @@ import org.jdeferred.Promise;
 
 import java.util.UUID;
 
+import info.izumin.android.bletia.event.EnableNotificationEvent;
+import info.izumin.android.bletia.event.Event;
+import info.izumin.android.bletia.event.ReadCharacteristicEvent;
+import info.izumin.android.bletia.event.ReadDescriptorEvent;
+import info.izumin.android.bletia.event.ReadRemoteRssiEvent;
+import info.izumin.android.bletia.event.WriteCharacteristicEvent;
+import info.izumin.android.bletia.event.WriteDescriptorEvent;
 import info.izumin.android.bletia.helper.ConnectionHelper;
 import info.izumin.android.bletia.wrapper.BluetoothDeviceWrapper;
 import info.izumin.android.bletia.wrapper.BluetoothGattWrapper;
@@ -79,53 +86,52 @@ public class Bletia implements BluetoothGattCallbackHandler.Callback {
         return mGattWrapper.getService(uuid);
     }
 
-    public <T> Promise<T, BletiaException, Object> execute(BletiaEvent<T> event) {
+    public <T> Promise<T, BletiaException, Object> execute(Event<T> event) {
         return mMessageThread.execute(event);
     }
 
-    public BletiaEvent<BluetoothGattCharacteristic> getWriteCharacteristicEvent(BluetoothGattCharacteristic characteristic) {
-        return new BletiaEvent<>(BletiaEvent.Type.WRITE_CHARACTERISTIC, characteristic.getUuid(), characteristic);
+    public WriteCharacteristicEvent getWriteCharacteristicEvent(BluetoothGattCharacteristic characteristic) {
+        return new WriteCharacteristicEvent(characteristic);
     }
 
     public Promise<BluetoothGattCharacteristic, BletiaException, Object> writeCharacteristic(BluetoothGattCharacteristic characteristic) {
         return execute(getWriteCharacteristicEvent(characteristic));
     }
 
-    public BletiaEvent<BluetoothGattCharacteristic> getReadCharacteristicEvent(BluetoothGattCharacteristic characteristic) {
-        return new BletiaEvent<>(BletiaEvent.Type.READ_CHARACTERISTIC, characteristic.getUuid(), characteristic);
+    public ReadCharacteristicEvent getReadCharacteristicEvent(BluetoothGattCharacteristic characteristic) {
+        return new ReadCharacteristicEvent(characteristic);
     }
 
     public Promise<BluetoothGattCharacteristic, BletiaException, Object> readCharacteristic(BluetoothGattCharacteristic characteristic) {
         return execute(getReadCharacteristicEvent(characteristic));
     }
 
-    public BletiaEvent<BluetoothGattDescriptor> getWriteDescriptorEvent(BluetoothGattDescriptor descriptor) {
-        return new BletiaEvent<>(BletiaEvent.Type.WRITE_DESCRIPTOR, descriptor.getUuid(), descriptor);
+    public WriteDescriptorEvent getWriteDescriptorEvent(BluetoothGattDescriptor descriptor) {
+        return new WriteDescriptorEvent(descriptor);
     }
 
     public Promise<BluetoothGattDescriptor, BletiaException, Object> writeDescriptor(BluetoothGattDescriptor descriptor) {
         return execute(getWriteDescriptorEvent(descriptor));
     }
 
-    public BletiaEvent<BluetoothGattDescriptor> getReadDescriptorEvent(BluetoothGattDescriptor descriptor) {
-        return new BletiaEvent<>(BletiaEvent.Type.READ_DESCRIPTOR, descriptor.getUuid(), descriptor);
+    public ReadDescriptorEvent getReadDescriptorEvent(BluetoothGattDescriptor descriptor) {
+        return new ReadDescriptorEvent(descriptor);
     }
 
     public Promise<BluetoothGattDescriptor, BletiaException, Object> readDescriptor(BluetoothGattDescriptor descriptor) {
         return execute(getReadDescriptorEvent(descriptor));
     }
 
-    public BletiaEvent<BluetoothGattCharacteristic> getEnableNotificationEvent(BluetoothGattCharacteristic characteristic, boolean enabled) {
-        BletiaEvent.Type type = enabled ? BletiaEvent.Type.ENABLE_NOTIFICATION : BletiaEvent.Type.DISABLE_NOTIFICATION;
-        return new BletiaEvent<>(type, characteristic.getUuid(), characteristic);
+    public EnableNotificationEvent getEnableNotificationEvent(BluetoothGattCharacteristic characteristic, boolean enabled) {
+        return new EnableNotificationEvent(characteristic, enabled);
     }
 
     public Promise<BluetoothGattCharacteristic, BletiaException, Object> enableNotification(BluetoothGattCharacteristic characteristic, boolean enabled) {
         return execute(getEnableNotificationEvent(characteristic, enabled));
     }
 
-    public BletiaEvent<Integer> getReadRemoteRssiEvent() {
-        return new BletiaEvent<>(BletiaEvent.Type.READ_REMOTE_RSSI);
+    public ReadRemoteRssiEvent getReadRemoteRssiEvent() {
+        return new ReadRemoteRssiEvent();
     }
 
     public Promise<Integer, BletiaException, Object> readRemoteRssi() {
