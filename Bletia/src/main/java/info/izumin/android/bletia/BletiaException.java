@@ -17,12 +17,16 @@ public class BletiaException extends Exception {
     }
 
     public BletiaException(BletiaErrorType type, BluetoothGattCharacteristic characteristic) {
-        this(type);
-        mCharacteristic = characteristic;
+        this(type, characteristic, null);
     }
 
     public BletiaException(BletiaErrorType type, BluetoothGattDescriptor descriptor) {
+        this(type, null, descriptor);
+    }
+
+    public BletiaException(BletiaErrorType type, BluetoothGattCharacteristic characteristic, BluetoothGattDescriptor descriptor) {
         this(type);
+        mCharacteristic = characteristic;
         mDescriptor = descriptor;
     }
 
