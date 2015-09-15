@@ -64,7 +64,7 @@ public class Bletia implements BluetoothGattCallbackHandler.Callback {
 
     public void connect(BluetoothDevice device) {
         mState = BleState.CONNECTING;
-        mConnectionHelper.connect(new BluetoothDeviceWrapper(device), mCallbackHandler);
+        mGattWrapper = mConnectionHelper.connect(new BluetoothDeviceWrapper(device), mCallbackHandler);
 
         HandlerThread thread = new HandlerThread(device.getName());
         thread.start();
@@ -141,7 +141,6 @@ public class Bletia implements BluetoothGattCallbackHandler.Callback {
     @Override
     public void onConnect(BluetoothGattWrapper gatt) {
         mState = BleState.CONNECTED;
-        mGattWrapper = gatt;
         mEmitter.emitConnectEvent();
     }
 
