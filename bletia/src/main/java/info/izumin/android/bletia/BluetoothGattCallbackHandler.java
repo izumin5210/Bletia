@@ -37,7 +37,7 @@ public class BluetoothGattCallbackHandler extends BluetoothGattCallbackWrapper {
 
     @Override
     public void onServicesDiscovered(BluetoothGattWrapper gatt, int status) {
-        // TODO: Not yet implemented.
+        mCallback.onServiceDiscovered(status);
     }
 
     @Override
@@ -52,7 +52,7 @@ public class BluetoothGattCallbackHandler extends BluetoothGattCallbackWrapper {
 
     @Override
     public void onCharacteristicChanged(BluetoothGattWrapper gatt, BluetoothGattCharacteristic characteristic) {
-        // TODO: Not yet implemented.
+        mCallback.onCharacteristicChanged(characteristic);
     }
 
     @Override
@@ -78,7 +78,12 @@ public class BluetoothGattCallbackHandler extends BluetoothGattCallbackWrapper {
 
     @Override
     public void onReadRemoteRssi(BluetoothGattWrapper gatt, int rssi, int status) {
-        // TODO: Not yet implemented.
+        BleEvent event = mEventStore.closeEvent(BleEvent.Type.READ_REMOTE_RSSI, null);
+        if (status == BluetoothGatt.GATT_SUCCESS) {
+            event.getDeferred().resolve(rssi);
+        } else {
+            event.getDeferred().reject(new BletiaException(BleErrorType.valueOf(status)));
+        }
     }
 
     @Override
@@ -112,6 +117,8 @@ public class BluetoothGattCallbackHandler extends BluetoothGattCallbackWrapper {
     interface Callback {
         void onConnect(BluetoothGattWrapper gatt);
         void onDisconnect(BluetoothGattWrapper gatt);
+        void onServiceDiscovered(int status);
+        void onCharacteristicChanged(BluetoothGattCharacteristic characteristic);
         void onError(BletiaException exception);
     }
 }

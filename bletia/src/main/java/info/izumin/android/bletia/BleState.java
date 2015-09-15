@@ -8,6 +8,6 @@ public enum BleState {
     CONNECTING,
     CONNECTED,
     SERVICE_DISCOVERING,
-    READY,
+    SERVICE_DISCOVERED,
     DISCONNECTING
 }

@@ -76,6 +76,14 @@ public class BleEvent<T> {
                     reject(BleErrorType.REQUEST_FAILURE, event.getDeferred(), characteristic, null);
                 }
             }
+        },
+        READ_REMOTE_RSSI(7) {
+            @Override
+            public void handle(BluetoothGattWrapper gattWrapper, BleEvent event) {
+                if (!gattWrapper.readRemoteRssi()) {
+                    reject(BleErrorType.REQUEST_FAILURE, event.getDeferred(), null, null);
+                }
+            }
         };
 
         private final int mWhat;
@@ -118,13 +126,17 @@ public class BleEvent<T> {
     public static final String KEY_UUID = "event uuid";
 
     private final Type mType;
-    private final UUID mUuid;
-    private final T mValue;
+    private UUID mUuid;
+    private T mValue;
 
     private Deferred<T, BletiaException, ?> mDeferred;
 
-    public BleEvent(Type type, UUID uuid, T value) {
+    public BleEvent(Type type) {
         mType = type;
+    }
+
+    public BleEvent(Type type, UUID uuid, T value) {
+        this(type);
         mUuid = uuid;
         mValue = value;
     }
@@ -152,9 +164,11 @@ public class BleEvent<T> {
     public Message obtainMessage() {
         Message message = Message.obtain();
         message.what = mType.getWhat();
-        Bundle bundle = new Bundle();
-        bundle.putSerializable(KEY_UUID, mUuid);
-        message.setData(bundle);
+        if (mUuid != null) {
+            Bundle bundle = new Bundle();
+            bundle.putSerializable(KEY_UUID, mUuid);
+            message.setData(bundle);
+        }
         return message;
     }
 }

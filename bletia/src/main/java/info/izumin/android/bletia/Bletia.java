@@ -3,6 +3,7 @@ package info.izumin.android.bletia;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattDescriptor;
+import android.bluetooth.BluetoothGattService;
 import android.content.Context;
 import android.os.HandlerThread;
 
@@ -37,7 +38,7 @@ public class Bletia implements BluetoothGattCallbackHandler.Callback {
     public Bletia(Context context) {
         mContext = context;
         mConnectionHelper = new ConnectionHelper(mContext);
-        mEmitter = new EventEmitter();
+        mEmitter = new EventEmitter(this);
         mEventStore = new BleEventStore();
         mCallbackHandler = new BluetoothGattCallbackHandler(this, mEventStore);
     }
@@ -67,6 +68,15 @@ public class Bletia implements BluetoothGattCallbackHandler.Callback {
         mState = BleState.DISCONNECTING;
         mConnectionHelper.disconnect();
         mMessageThread.stop();
+    }
+
+    public boolean discoverServices() {
+        mState = BleState.SERVICE_DISCOVERING;
+        return mGattWrapper.discoverServices();
+    }
+
+    public BluetoothGattService getService(UUID uuid) {
+        return mGattWrapper.getService(uuid);
     }
 
     public Promise<BluetoothGattCharacteristic, BletiaException, Object> writeCharacteristic(BluetoothGattCharacteristic characteristic) {
@@ -104,6 +114,11 @@ public class Bletia implements BluetoothGattCallbackHandler.Callback {
         return mMessageThread.sendEvent(event);
     }
 
+    public Promise<Integer, BletiaException, Object> readRemoteRssi() {
+        BleEvent<Integer> event = new BleEvent<>(BleEvent.Type.READ_REMOTE_RSSI);
+        return mMessageThread.sendEvent(event);
+    }
+
     @Override
     public void onConnect(BluetoothGattWrapper gatt) {
         mState = BleState.CONNECTED;
@@ -115,6 +130,17 @@ public class Bletia implements BluetoothGattCallbackHandler.Callback {
         mState = BleState.DISCONNECTED;
         mConnectionHelper.close();
         mEmitter.emitDisconnectEvent();
+    }
+
+    @Override
+    public void onServiceDiscovered(int status) {
+        mState = BleState.SERVICE_DISCOVERED;
+        mEmitter.emitServiceDiscovered(status);
+    }
+
+    @Override
+    public void onCharacteristicChanged(BluetoothGattCharacteristic characteristic) {
+        mEmitter.emitCharacteristicChanged(characteristic);
     }
 
     @Override
