@@ -10,5 +10,5 @@ public interface BletiaListener {
     void onDisconnect(Bletia bletia);
     void onError(BletiaException exception);
     void onServicesDiscovered(Bletia bletia, int status);
-    void onCharacteristicChanged(Bletia bletia, BluetoothGattCharacteristic characteristic, int status);
+    void onCharacteristicChanged(Bletia bletia, BluetoothGattCharacteristic characteristic);
 }
