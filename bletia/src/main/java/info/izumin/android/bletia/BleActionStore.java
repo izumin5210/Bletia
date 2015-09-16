@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import info.izumin.android.bletia.action.Action;
+import info.izumin.android.bletia.wrapper.BluetoothGattWrapper;
 
 /**
  * Created by izumin on 9/14/15.
@@ -40,24 +41,27 @@ public class BleActionStore {
         }
     }
 
-    public Action execute(Action.Type type) {
+    public void execute(Action.Type type, BluetoothGattWrapper gattWrapper) {
         Action action = mWaitingActionList.get(type).remove(0);
         if (!mRunningActionList.containsKey(type)) {
             mRunningActionList.put(type, new ArrayList<Action>());
         }
         mRunningActionList.get(type).add(action);
-        return action;
+        action.execute(gattWrapper);
     }
 
-    public Action execute(Action.Type type, UUID uuid) {
-        if (uuid == null) { return execute(type); }
+    public void execute(Action.Type type, UUID uuid, BluetoothGattWrapper gattWrapper) {
+        if (uuid == null) {
+            execute(type, gattWrapper);
+            return;
+        }
 
         Action action = mWaitingActionMap.get(type).remove(uuid);
         if (!mRunningActionMap.containsKey(type)) {
             mRunningActionMap.put(type, new HashMap<UUID, Action>());
         }
         mRunningActionMap.get(type).put(uuid, action);
-        return action;
+        action.execute(gattWrapper);
     }
 
     public Action close(Action.Type type) {

@@ -48,7 +48,7 @@ public class BleMessageThread extends Handler {
         if (mActionStore.isRunning(type, uuid)) {
             sendMessageDelayed(msg, DELAY_MILLIS);
         } else {
-            mActionStore.execute(type, uuid).handle(mGattWrapper);
+            mActionStore.execute(type, uuid, mGattWrapper);
         }
     }
 }

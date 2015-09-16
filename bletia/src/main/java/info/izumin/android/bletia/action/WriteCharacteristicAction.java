@@ -21,7 +21,7 @@ public class WriteCharacteristicAction extends CharacteristicAction {
     }
 
     @Override
-    public void handle(BluetoothGattWrapper gattWrapper) {
+    public void execute(BluetoothGattWrapper gattWrapper) {
         if (!gattWrapper.writeCharacteristic(getCharacteristic())) {
             getDeferred().reject(new BletiaException(BleErrorType.OPERATION_INITIATED_FAILURE, getCharacteristic()));
         }

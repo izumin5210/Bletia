@@ -26,7 +26,7 @@ public class EnableNotificationAction extends CharacteristicAction {
     }
 
     @Override
-    public void handle(BluetoothGattWrapper gattWrapper) {
+    public void execute(BluetoothGattWrapper gattWrapper) {
         if (gattWrapper.setCharacteristicNotification(getCharacteristic(), mEnabled)) {
             BluetoothGattDescriptor descriptor = NotificationUtils.getDescriptor(getCharacteristic(), mEnabled);
             if (!gattWrapper.writeDescriptor(descriptor)) {
