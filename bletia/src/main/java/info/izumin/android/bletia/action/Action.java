@@ -1,4 +1,4 @@
-package info.izumin.android.bletia.event;
+package info.izumin.android.bletia.action;
 
 import android.os.Bundle;
 import android.os.Message;
@@ -14,7 +14,7 @@ import info.izumin.android.bletia.wrapper.BluetoothGattWrapper;
 /**
  * Created by izumin on 9/15/15.
  */
-public abstract class Event<T> {
+public abstract class Action<T> {
     public enum Type {
         WRITE_CHARACTERISTIC(1),
         READ_CHARACTERISTIC(2),
@@ -45,7 +45,7 @@ public abstract class Event<T> {
 
     private final Deferred<T, BletiaException, Object> mDeferred;
 
-    public Event() {
+    public Action() {
         mDeferred = new DeferredObject<>();
     }
 

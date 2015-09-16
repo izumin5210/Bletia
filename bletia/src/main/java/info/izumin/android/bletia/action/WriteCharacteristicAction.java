@@ -1,4 +1,4 @@
-package info.izumin.android.bletia.event;
+package info.izumin.android.bletia.action;
 
 import android.bluetooth.BluetoothGattCharacteristic;
 
@@ -9,9 +9,9 @@ import info.izumin.android.bletia.wrapper.BluetoothGattWrapper;
 /**
  * Created by izumin on 9/15/15.
  */
-public class WriteCharacteristicEvent extends CharacteristicEvent {
+public class WriteCharacteristicAction extends CharacteristicAction {
 
-    public WriteCharacteristicEvent(BluetoothGattCharacteristic characteristic) {
+    public WriteCharacteristicAction(BluetoothGattCharacteristic characteristic) {
         super(characteristic);
     }
 

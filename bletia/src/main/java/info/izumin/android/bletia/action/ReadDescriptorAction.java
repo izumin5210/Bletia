@@ -1,4 +1,4 @@
-package info.izumin.android.bletia.event;
+package info.izumin.android.bletia.action;
 
 import android.bluetooth.BluetoothGattDescriptor;
 
@@ -9,20 +9,20 @@ import info.izumin.android.bletia.wrapper.BluetoothGattWrapper;
 /**
  * Created by izumin on 9/15/15.
  */
-public class WriteDescriptorEvent extends DescriptorEvent {
+public class ReadDescriptorAction extends DescriptorAction {
 
-    public WriteDescriptorEvent(BluetoothGattDescriptor descriptor) {
+    public ReadDescriptorAction(BluetoothGattDescriptor descriptor) {
         super(descriptor);
     }
 
     @Override
     public Type getType() {
-        return Type.WRITE_DESCRIPTOR;
+        return Type.READ_DESCRIPTOR;
     }
 
     @Override
     public void handle(BluetoothGattWrapper gattWrapper) {
-        if (!gattWrapper.writeDescriptor(getDescriptor())) {
+        if (!gattWrapper.readDescriptor(getDescriptor())) {
             getDeferred().reject(new BletiaException(BleErrorType.OPERATION_INITIATED_FAILURE, getDescriptor()));
         }
     }
