@@ -1,4 +1,4 @@
-package info.izumin.android.bletia.event;
+package info.izumin.android.bletia.action;
 
 import android.bluetooth.BluetoothGattCharacteristic;
 
@@ -9,20 +9,20 @@ import info.izumin.android.bletia.wrapper.BluetoothGattWrapper;
 /**
  * Created by izumin on 9/15/15.
  */
-public class WriteCharacteristicEvent extends CharacteristicEvent {
+public class ReadCharacteristicAction extends CharacteristicAction {
 
-    public WriteCharacteristicEvent(BluetoothGattCharacteristic characteristic) {
+    public ReadCharacteristicAction(BluetoothGattCharacteristic characteristic) {
         super(characteristic);
     }
 
     @Override
     public Type getType() {
-        return Type.WRITE_CHARACTERISTIC;
+        return Type.READ_CHARACTERISTIC;
     }
 
     @Override
-    public void handle(BluetoothGattWrapper gattWrapper) {
-        if (!gattWrapper.writeCharacteristic(getCharacteristic())) {
+    public void execute(BluetoothGattWrapper gattWrapper) {
+        if (!gattWrapper.readCharacteristic(getCharacteristic())) {
             getDeferred().reject(new BletiaException(BleErrorType.OPERATION_INITIATED_FAILURE, getCharacteristic()));
         }
     }
