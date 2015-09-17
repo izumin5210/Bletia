@@ -81,7 +81,7 @@ public class BluetoothGattCallbackHandler extends BluetoothGattCallbackWrapper {
 
     @Override
     public void onReadRemoteRssi(BluetoothGattWrapper gatt, int rssi, int status) {
-        ReadRemoteRssiAction action = (ReadRemoteRssiAction) mActionStore.close(Action.Type.READ_REMOTE_RSSI, null);
+        ReadRemoteRssiAction action = (ReadRemoteRssiAction) mActionStore.dequeue(Action.Type.READ_REMOTE_RSSI);
         if (status == BluetoothGatt.GATT_SUCCESS) {
             action.getDeferred().resolve(rssi);
         } else {
@@ -95,7 +95,7 @@ public class BluetoothGattCallbackHandler extends BluetoothGattCallbackWrapper {
     }
 
     private void handleBleAction(Action.Type type, BluetoothGattCharacteristic characteristic, BluetoothGattDescriptor descriptor, int status) {
-        EnableNotificationAction action = (EnableNotificationAction) mActionStore.close(type, characteristic.getUuid());
+        EnableNotificationAction action = (EnableNotificationAction) mActionStore.dequeue(type);
         if (status == BluetoothGatt.GATT_SUCCESS) {
             action.getDeferred().resolve(characteristic);
         } else {
@@ -104,7 +104,7 @@ public class BluetoothGattCallbackHandler extends BluetoothGattCallbackWrapper {
     }
 
     private void handleBleAction(Action.Type type, BluetoothGattCharacteristic characteristic, int status) {
-        CharacteristicAction action = (CharacteristicAction) mActionStore.close(type, characteristic.getUuid());
+        CharacteristicAction action = (CharacteristicAction) mActionStore.dequeue(type);
         if (status == BluetoothGatt.GATT_SUCCESS) {
             action.getDeferred().resolve(characteristic);
         } else {
@@ -113,7 +113,7 @@ public class BluetoothGattCallbackHandler extends BluetoothGattCallbackWrapper {
     }
 
     private void handleBleAction(Action.Type type, BluetoothGattDescriptor descriptor, int status) {
-        DescriptorAction action = (DescriptorAction) mActionStore.close(type, descriptor.getUuid());
+        DescriptorAction action = (DescriptorAction) mActionStore.dequeue(type);
         if (status == BluetoothGatt.GATT_SUCCESS) {
             action.getDeferred().resolve(descriptor);
         } else {
