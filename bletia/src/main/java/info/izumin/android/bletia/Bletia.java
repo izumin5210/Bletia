@@ -11,13 +11,13 @@ import org.jdeferred.Promise;
 
 import java.util.UUID;
 
-import info.izumin.android.bletia.event.EnableNotificationEvent;
-import info.izumin.android.bletia.event.Event;
-import info.izumin.android.bletia.event.ReadCharacteristicEvent;
-import info.izumin.android.bletia.event.ReadDescriptorEvent;
-import info.izumin.android.bletia.event.ReadRemoteRssiEvent;
-import info.izumin.android.bletia.event.WriteCharacteristicEvent;
-import info.izumin.android.bletia.event.WriteDescriptorEvent;
+import info.izumin.android.bletia.action.Action;
+import info.izumin.android.bletia.action.EnableNotificationAction;
+import info.izumin.android.bletia.action.ReadCharacteristicAction;
+import info.izumin.android.bletia.action.ReadDescriptorAction;
+import info.izumin.android.bletia.action.ReadRemoteRssiAction;
+import info.izumin.android.bletia.action.WriteCharacteristicAction;
+import info.izumin.android.bletia.action.WriteDescriptorAction;
 import info.izumin.android.bletia.helper.ConnectionHelper;
 import info.izumin.android.bletia.wrapper.BluetoothDeviceWrapper;
 import info.izumin.android.bletia.wrapper.BluetoothGattWrapper;
@@ -38,7 +38,7 @@ public class Bletia implements BluetoothGattCallbackHandler.Callback {
     private ConnectionHelper mConnectionHelper;
 
     private EventEmitter mEmitter;
-    private BleEventStore mEventStore;
+    private BleActionStore mActionStore;
     private BluetoothGattCallbackHandler mCallbackHandler;
     private BleMessageThread mMessageThread;
 
@@ -46,8 +46,8 @@ public class Bletia implements BluetoothGattCallbackHandler.Callback {
         mContext = context;
         mConnectionHelper = new ConnectionHelper(mContext);
         mEmitter = new EventEmitter(this);
-        mEventStore = new BleEventStore();
-        mCallbackHandler = new BluetoothGattCallbackHandler(this, mEventStore);
+        mActionStore = new BleActionStore();
+        mCallbackHandler = new BluetoothGattCallbackHandler(this, mActionStore);
     }
 
     public BleState getState() {
@@ -68,7 +68,7 @@ public class Bletia implements BluetoothGattCallbackHandler.Callback {
 
         HandlerThread thread = new HandlerThread(device.getName());
         thread.start();
-        mMessageThread = new BleMessageThread(thread, mGattWrapper, mEventStore);
+        mMessageThread = new BleMessageThread(thread, mGattWrapper, mActionStore);
     }
 
     public void disconenct() {
@@ -86,56 +86,32 @@ public class Bletia implements BluetoothGattCallbackHandler.Callback {
         return mGattWrapper.getService(uuid);
     }
 
-    public <T> Promise<T, BletiaException, Object> execute(Event<T> event) {
-        return mMessageThread.execute(event);
-    }
-
-    public WriteCharacteristicEvent getWriteCharacteristicEvent(BluetoothGattCharacteristic characteristic) {
-        return new WriteCharacteristicEvent(characteristic);
+    public <T> Promise<T, BletiaException, Object> execute(Action<T> action) {
+        return mMessageThread.execute(action);
     }
 
     public Promise<BluetoothGattCharacteristic, BletiaException, Object> writeCharacteristic(BluetoothGattCharacteristic characteristic) {
-        return execute(getWriteCharacteristicEvent(characteristic));
-    }
-
-    public ReadCharacteristicEvent getReadCharacteristicEvent(BluetoothGattCharacteristic characteristic) {
-        return new ReadCharacteristicEvent(characteristic);
+        return execute(new WriteCharacteristicAction(characteristic));
     }
 
     public Promise<BluetoothGattCharacteristic, BletiaException, Object> readCharacteristic(BluetoothGattCharacteristic characteristic) {
-        return execute(getReadCharacteristicEvent(characteristic));
-    }
-
-    public WriteDescriptorEvent getWriteDescriptorEvent(BluetoothGattDescriptor descriptor) {
-        return new WriteDescriptorEvent(descriptor);
+        return execute(new ReadCharacteristicAction(characteristic));
     }
 
     public Promise<BluetoothGattDescriptor, BletiaException, Object> writeDescriptor(BluetoothGattDescriptor descriptor) {
-        return execute(getWriteDescriptorEvent(descriptor));
-    }
-
-    public ReadDescriptorEvent getReadDescriptorEvent(BluetoothGattDescriptor descriptor) {
-        return new ReadDescriptorEvent(descriptor);
+        return execute(new WriteDescriptorAction(descriptor));
     }
 
     public Promise<BluetoothGattDescriptor, BletiaException, Object> readDescriptor(BluetoothGattDescriptor descriptor) {
-        return execute(getReadDescriptorEvent(descriptor));
-    }
-
-    public EnableNotificationEvent getEnableNotificationEvent(BluetoothGattCharacteristic characteristic, boolean enabled) {
-        return new EnableNotificationEvent(characteristic, enabled);
+        return execute(new ReadDescriptorAction(descriptor));
     }
 
     public Promise<BluetoothGattCharacteristic, BletiaException, Object> enableNotification(BluetoothGattCharacteristic characteristic, boolean enabled) {
-        return execute(getEnableNotificationEvent(characteristic, enabled));
-    }
-
-    public ReadRemoteRssiEvent getReadRemoteRssiEvent() {
-        return new ReadRemoteRssiEvent();
+        return execute(new EnableNotificationAction(characteristic, enabled));
     }
 
     public Promise<Integer, BletiaException, Object> readRemoteRssi() {
-        return execute(getReadRemoteRssiEvent());
+        return execute(new ReadRemoteRssiAction());
     }
 
     @Override

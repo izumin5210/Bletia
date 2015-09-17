@@ -44,7 +44,7 @@ public class BletiaTest extends AndroidTestCase {
     @Mock private BluetoothGattDescriptor mDescriptor;
     @Mock private BluetoothGattWrapper mBluetoothGattWrapper;
 
-    private BleEventStore mEventStore;
+    private BleActionStore mActionStore;
     private BleMessageThread mMessageThread;
     private BluetoothGattCallbackHandler mCallbackHandler;
     private Bletia mBletia;
@@ -58,11 +58,11 @@ public class BletiaTest extends AndroidTestCase {
         mContext = getContext();
         mBletia = new Bletia(mContext);
 
-        mEventStore = (BleEventStore) Whitebox.getInternalState(mBletia, "mEventStore");
+        mActionStore = (BleActionStore) Whitebox.getInternalState(mBletia, "mActionStore");
         mCallbackHandler = (BluetoothGattCallbackHandler) Whitebox.getInternalState(mBletia, "mCallbackHandler");
         HandlerThread thread = new HandlerThread("test");
         thread.start();
-        mMessageThread = new BleMessageThread(thread, mBluetoothGattWrapper, mEventStore);
+        mMessageThread = new BleMessageThread(thread, mBluetoothGattWrapper, mActionStore);
         Whitebox.setInternalState(mBletia, "mMessageThread", mMessageThread);
         Whitebox.setInternalState(mBletia, "mGattWrapper", mBluetoothGattWrapper);
 

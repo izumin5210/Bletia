@@ -1,4 +1,4 @@
-package info.izumin.android.bletia.event;
+package info.izumin.android.bletia.action;
 
 import android.bluetooth.BluetoothGattDescriptor;
 import android.os.Bundle;
@@ -8,11 +8,11 @@ import java.util.UUID;
 /**
  * Created by izumin on 9/15/15.
  */
-public abstract class DescriptorEvent extends Event<BluetoothGattDescriptor> {
+public abstract class DescriptorAction extends Action<BluetoothGattDescriptor> {
 
     private final BluetoothGattDescriptor mDescriptor;
 
-    public DescriptorEvent(BluetoothGattDescriptor descriptor) {
+    public DescriptorAction(BluetoothGattDescriptor descriptor) {
         super();
         mDescriptor = descriptor;
     }

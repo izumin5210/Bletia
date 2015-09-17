@@ -1,4 +1,4 @@
-package info.izumin.android.bletia.event;
+package info.izumin.android.bletia.action;
 
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.os.Bundle;
@@ -8,11 +8,11 @@ import java.util.UUID;
 /**
  * Created by izumin on 9/15/15.
  */
-public abstract class CharacteristicEvent extends Event<BluetoothGattCharacteristic> {
+public abstract class CharacteristicAction extends Action<BluetoothGattCharacteristic> {
 
     private final BluetoothGattCharacteristic mCharacteristic;
 
-    public CharacteristicEvent(BluetoothGattCharacteristic characteristic) {
+    public CharacteristicAction(BluetoothGattCharacteristic characteristic) {
         super();
         mCharacteristic = characteristic;
     }

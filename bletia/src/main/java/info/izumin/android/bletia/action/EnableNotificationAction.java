@@ -1,4 +1,4 @@
-package info.izumin.android.bletia.event;
+package info.izumin.android.bletia.action;
 
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattDescriptor;
@@ -11,11 +11,11 @@ import info.izumin.android.bletia.wrapper.BluetoothGattWrapper;
 /**
  * Created by izumin on 9/15/15.
  */
-public class EnableNotificationEvent extends CharacteristicEvent {
+public class EnableNotificationAction extends CharacteristicAction {
 
     private final boolean mEnabled;
 
-    public EnableNotificationEvent(BluetoothGattCharacteristic characteristic, boolean enabled) {
+    public EnableNotificationAction(BluetoothGattCharacteristic characteristic, boolean enabled) {
         super(characteristic);
         mEnabled = enabled;
     }
@@ -26,7 +26,7 @@ public class EnableNotificationEvent extends CharacteristicEvent {
     }
 
     @Override
-    public void handle(BluetoothGattWrapper gattWrapper) {
+    public void execute(BluetoothGattWrapper gattWrapper) {
         if (gattWrapper.setCharacteristicNotification(getCharacteristic(), mEnabled)) {
             BluetoothGattDescriptor descriptor = NotificationUtils.getDescriptor(getCharacteristic(), mEnabled);
             if (!gattWrapper.writeDescriptor(descriptor)) {
