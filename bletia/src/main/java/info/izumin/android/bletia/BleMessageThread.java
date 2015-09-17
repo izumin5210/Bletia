@@ -6,8 +6,6 @@ import android.os.Message;
 
 import org.jdeferred.Promise;
 
-import java.util.UUID;
-
 import info.izumin.android.bletia.action.Action;
 import info.izumin.android.bletia.wrapper.BluetoothGattWrapper;
 
@@ -16,7 +14,7 @@ import info.izumin.android.bletia.wrapper.BluetoothGattWrapper;
  */
 public class BleMessageThread extends Handler {
 
-    private static final int DELAY_MILLIS = 300;
+    private static final int DELAY_MILLIS = 10;
 
     private final HandlerThread mHandlerThread;
     private final BluetoothGattWrapper mGattWrapper;
@@ -34,7 +32,7 @@ public class BleMessageThread extends Handler {
     }
 
     public <T> Promise<T, BletiaException, Object> execute(Action<T> action) {
-        mActionStore.add(action);
+        mActionStore.enqueue(action);
         dispatchMessage(action.obtainMessage());
 
         return action.getDeferred().promise();
@@ -42,13 +40,12 @@ public class BleMessageThread extends Handler {
 
     @Override
     public void handleMessage(Message msg) {
-        UUID uuid = (UUID) msg.getData().getSerializable(Action.KEY_UUID);
         Action.Type type = Action.Type.valueOf(msg.what);
 
-        if (mActionStore.isRunning(type, uuid)) {
+        if (mActionStore.isRunning(type)) {
             sendMessageDelayed(msg, DELAY_MILLIS);
         } else {
-            mActionStore.execute(type, uuid, mGattWrapper);
+            mActionStore.execute(type, mGattWrapper);
         }
     }
 }
