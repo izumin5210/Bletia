@@ -21,8 +21,8 @@ build:
         name: inspect build result
         code: |
           pwd
-          ls -la ./Bletia/build/outputs/
-          cp -r ./Bletia/build/outputs/* ${WERCKER_REPORT_ARTIFACTS_DIR}
+          ls -la ./bletia/build/outputs/
+          cp -r ./bletia/build/outputs/* ${WERCKER_REPORT_ARTIFACTS_DIR}
 deploy:
   steps:
     - script:
