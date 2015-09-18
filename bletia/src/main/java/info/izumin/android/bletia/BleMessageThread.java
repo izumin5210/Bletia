@@ -43,7 +43,9 @@ public class BleMessageThread extends Handler {
         Action.Type type = Action.Type.valueOf(msg.what);
 
         if (mActionStore.isRunning(type)) {
-            sendMessageDelayed(msg, DELAY_MILLIS);
+            Message delayed = obtainMessage();
+            delayed.copyFrom(msg);
+            sendMessageDelayed(delayed, DELAY_MILLIS);
         } else {
             mActionStore.execute(type, mGattWrapper);
         }
