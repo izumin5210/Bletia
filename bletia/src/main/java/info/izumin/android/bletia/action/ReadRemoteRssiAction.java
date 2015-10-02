@@ -16,7 +16,7 @@ public class ReadRemoteRssiAction extends Action<Integer> {
     @Override
     public void execute(BluetoothGattWrapper gattWrapper) {
         if (!gattWrapper.readRemoteRssi()) {
-            getDeferred().reject(new BletiaException(BleErrorType.REQUEST_FAILURE));
+            getDeferred().reject(new BletiaException(this, BleErrorType.REQUEST_FAILURE));
         }
     }
 }
