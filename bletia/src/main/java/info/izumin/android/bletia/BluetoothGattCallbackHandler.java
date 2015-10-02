@@ -85,7 +85,7 @@ public class BluetoothGattCallbackHandler extends BluetoothGattCallbackWrapper {
         if (status == BluetoothGatt.GATT_SUCCESS) {
             action.getDeferred().resolve(rssi);
         } else {
-            action.getDeferred().reject(new BletiaException(BleErrorType.valueOf(status)));
+            action.getDeferred().reject(new BletiaException(action, BleErrorType.valueOf(status)));
         }
     }
 
