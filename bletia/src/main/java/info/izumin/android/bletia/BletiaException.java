@@ -1,49 +1,59 @@
 package info.izumin.android.bletia;
 
-import android.bluetooth.BluetoothGattCharacteristic;
-import android.bluetooth.BluetoothGattDescriptor;
+import info.izumin.android.bletia.action.Action;
 
 /**
  * Created by izumin on 9/14/15.
  */
 public class BletiaException extends Exception {
 
+    private final String mTag;
     private final BletiaErrorType mType;
-    private BluetoothGattCharacteristic mCharacteristic;
-    private BluetoothGattDescriptor mDescriptor;
+    private Action mAction = null;
 
-    public BletiaException(BletiaErrorType type) {
-        this(type.getName(), type);
+    public BletiaException(Action action, BletiaErrorType type) {
+        this(action, type.getName(), type);
     }
 
-    public BletiaException(BletiaErrorType type, BluetoothGattCharacteristic characteristic) {
-        this(type, characteristic, null);
+    public BletiaException(Action action, String detailMessage, BletiaErrorType type) {
+        this(action.getClass().getSimpleName(), detailMessage, type);
+        mAction = action;
     }
 
-    public BletiaException(BletiaErrorType type, BluetoothGattDescriptor descriptor) {
-        this(type, null, descriptor);
+    public BletiaException(BleErrorType type) {
+        super();
+        mType = type;
+        mTag = getStackTrace()[0].getMethodName();
     }
 
-    public BletiaException(BletiaErrorType type, BluetoothGattCharacteristic characteristic, BluetoothGattDescriptor descriptor) {
-        this(type);
-        mCharacteristic = characteristic;
-        mDescriptor = descriptor;
+    public BletiaException(String tag, BletiaErrorType type) {
+        this(tag, type.getName(), type);
     }
 
-    public BletiaException(String detailMessage, BletiaErrorType type) {
+    public BletiaException(String tag, String detailMessage, BletiaErrorType type) {
         super(detailMessage);
-        this.mType = type;
+        mType = type;
+        mTag = tag;
+    }
+
+    @Override
+    public String getMessage() {
+        return "[" + mTag + "] " + super.getMessage();
+    }
+
+    public String getTag() {
+        return mTag;
     }
 
     public BletiaErrorType getType() {
         return mType;
     }
 
-    public BluetoothGattCharacteristic getCharacteristic() {
-        return mCharacteristic;
+    public Action getAction() {
+        return mAction;
     }
 
-    public BluetoothGattDescriptor getDescriptor() {
-        return mDescriptor;
+    public boolean doCauseByAction() {
+        return mAction != null;
     }
 }
