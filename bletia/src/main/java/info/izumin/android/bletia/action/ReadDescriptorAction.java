@@ -23,7 +23,7 @@ public class ReadDescriptorAction extends DescriptorAction {
     @Override
     public void execute(BluetoothGattWrapper gattWrapper) {
         if (!gattWrapper.readDescriptor(getDescriptor())) {
-            getDeferred().reject(new BletiaException(BleErrorType.OPERATION_INITIATED_FAILURE, getDescriptor()));
+            getDeferred().reject(new BletiaException(this, BleErrorType.OPERATION_INITIATED_FAILURE));
         }
     }
 }

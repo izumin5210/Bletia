@@ -99,7 +99,7 @@ public class BluetoothGattCallbackHandler extends BluetoothGattCallbackWrapper {
         if (status == BluetoothGatt.GATT_SUCCESS) {
             action.getDeferred().resolve(characteristic);
         } else {
-            action.getDeferred().reject(new BletiaException(BleErrorType.valueOf(status), characteristic, descriptor));
+            action.getDeferred().reject(new BletiaException(action, BleErrorType.valueOf(status)));
         }
     }
 
@@ -108,7 +108,7 @@ public class BluetoothGattCallbackHandler extends BluetoothGattCallbackWrapper {
         if (status == BluetoothGatt.GATT_SUCCESS) {
             action.getDeferred().resolve(characteristic);
         } else {
-            action.getDeferred().reject(new BletiaException(BleErrorType.valueOf(status), characteristic));
+            action.getDeferred().reject(new BletiaException(action, BleErrorType.valueOf(status)));
         }
     }
 
@@ -117,7 +117,7 @@ public class BluetoothGattCallbackHandler extends BluetoothGattCallbackWrapper {
         if (status == BluetoothGatt.GATT_SUCCESS) {
             action.getDeferred().resolve(descriptor);
         } else {
-            action.getDeferred().reject(new BletiaException(BleErrorType.valueOf(status), descriptor));
+            action.getDeferred().reject(new BletiaException(action, BleErrorType.valueOf(status)));
         }
     }
 
