@@ -51,9 +51,9 @@ public class BluetoothGattCallbackHandlerTest {
     @Mock private EnableNotificationAction mNotificationAction;
     @Mock private ReadRemoteRssiAction mRssiAction;
 
-    @Mock private Deferred<BluetoothGattCharacteristic, BletiaException, Object> mCharacteristicDeferred;
-    @Mock private Deferred<BluetoothGattDescriptor, BletiaException, Object> mDescriptorDeferred;
-    @Mock private Deferred<Integer, BletiaException, Object> mIntegerDeferred;
+    @Mock private Deferred<BluetoothGattCharacteristic, BletiaException, Void> mCharacteristicDeferred;
+    @Mock private Deferred<BluetoothGattDescriptor, BletiaException, Void> mDescriptorDeferred;
+    @Mock private Deferred<Integer, BletiaException, Void> mIntegerDeferred;
 
     private ArgumentCaptor<BletiaException> mExceptionCaptor;
 
