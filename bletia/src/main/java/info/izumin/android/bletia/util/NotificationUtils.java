@@ -16,8 +16,8 @@ public final class NotificationUtils {
         throw new AssertionError("constructor of the utility class should not be called");
     }
 
-    public static UUID DESCRIPTOR_UUID = Bletia.CLIENT_CHARCTERISTIC_CONFIG;
-    public static int DESCRIPTOR_PERMISSION = BluetoothGattDescriptor.PERMISSION_WRITE;
+    public final static UUID DESCRIPTOR_UUID = Bletia.CLIENT_CHARCTERISTIC_CONFIG;
+    public final static int DESCRIPTOR_PERMISSION = BluetoothGattDescriptor.PERMISSION_WRITE;
 
     public static BluetoothGattDescriptor getDescriptor(BluetoothGattCharacteristic characteristic, boolean enabled) {
         byte[] value = enabled ? BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE : BluetoothGattDescriptor.DISABLE_NOTIFICATION_VALUE;

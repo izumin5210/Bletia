@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * Created by izumin on 9/10/15.
  */
-public class EventEmitter {
+class EventEmitter {
 
     private final Bletia mBletia;
     private final List<BletiaListener> mListeners;

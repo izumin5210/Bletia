@@ -12,27 +12,27 @@ import info.izumin.android.bletia.wrapper.BluetoothGattWrapper;
 /**
  * Created by izumin on 9/14/15.
  */
-public class BleMessageThread extends Handler {
+class BleMessageThread extends Handler {
 
     private static final int DELAY_MILLIS = 10;
 
     private final HandlerThread mHandlerThread;
     private final BluetoothGattWrapper mGattWrapper;
-    private final BleActionStore mActionStore;
+    private final ActionQueueContainer mQueueContainer;
 
-    public BleMessageThread(HandlerThread handlerThread, BluetoothGattWrapper gattWrapper, BleActionStore actionStore) {
+    public BleMessageThread(HandlerThread handlerThread, BluetoothGattWrapper gattWrapper, ActionQueueContainer queueContainer) {
         super(handlerThread.getLooper());
         mHandlerThread = handlerThread;
         mGattWrapper = gattWrapper;
-        mActionStore = actionStore;
+        mQueueContainer = queueContainer;
     }
 
     public void stop() {
         mHandlerThread.quitSafely();
     }
 
-    public <T> Promise<T, BletiaException, Object> execute(Action<T> action) {
-        mActionStore.enqueue(action);
+    public <T> Promise<T, BletiaException, Void> execute(Action<T, ?> action) {
+        ActionMessageHandler.valueOf(action.getType()).enqueue(action, mQueueContainer);
         dispatchMessage(action.obtainMessage());
 
         return action.getDeferred().promise();
@@ -40,14 +40,10 @@ public class BleMessageThread extends Handler {
 
     @Override
     public void handleMessage(Message msg) {
-        Action.Type type = Action.Type.valueOf(msg.what);
-
-        if (mActionStore.isRunning(type)) {
+        if (!ActionMessageHandler.valueOf(msg.what).execute(msg, mQueueContainer, mGattWrapper)) {
             Message delayed = obtainMessage();
             delayed.copyFrom(msg);
             sendMessageDelayed(delayed, DELAY_MILLIS);
-        } else {
-            mActionStore.execute(type, mGattWrapper);
         }
     }
 }

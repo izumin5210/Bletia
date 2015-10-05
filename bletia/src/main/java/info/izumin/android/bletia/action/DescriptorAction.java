@@ -8,22 +8,17 @@ import java.util.UUID;
 /**
  * Created by izumin on 9/15/15.
  */
-public abstract class DescriptorAction extends Action<BluetoothGattDescriptor> {
+public abstract class DescriptorAction extends Action<BluetoothGattDescriptor, UUID> {
 
     private final BluetoothGattDescriptor mDescriptor;
 
     public DescriptorAction(BluetoothGattDescriptor descriptor) {
-        super();
+        super(descriptor.getUuid());
         mDescriptor = descriptor;
     }
 
     public BluetoothGattDescriptor getDescriptor() {
         return mDescriptor;
-    }
-
-    @Override
-    public UUID getUuid() {
-        return mDescriptor.getUuid();
     }
 
     @Override
