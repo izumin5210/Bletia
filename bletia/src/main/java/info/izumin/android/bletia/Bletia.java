@@ -85,31 +85,31 @@ public class Bletia implements BluetoothGattCallbackHandler.Callback {
         return mGattWrapper.getService(uuid);
     }
 
-    public <T> Promise<T, BletiaException, Object> execute(Action<T, ?> action) {
+    public <T> Promise<T, BletiaException, Void> execute(Action<T, ?> action) {
         return mMessageThread.execute(action);
     }
 
-    public Promise<BluetoothGattCharacteristic, BletiaException, Object> writeCharacteristic(BluetoothGattCharacteristic characteristic) {
+    public Promise<BluetoothGattCharacteristic, BletiaException, Void> writeCharacteristic(BluetoothGattCharacteristic characteristic) {
         return execute(new WriteCharacteristicAction(characteristic));
     }
 
-    public Promise<BluetoothGattCharacteristic, BletiaException, Object> readCharacteristic(BluetoothGattCharacteristic characteristic) {
+    public Promise<BluetoothGattCharacteristic, BletiaException, Void> readCharacteristic(BluetoothGattCharacteristic characteristic) {
         return execute(new ReadCharacteristicAction(characteristic));
     }
 
-    public Promise<BluetoothGattDescriptor, BletiaException, Object> writeDescriptor(BluetoothGattDescriptor descriptor) {
+    public Promise<BluetoothGattDescriptor, BletiaException, Void> writeDescriptor(BluetoothGattDescriptor descriptor) {
         return execute(new WriteDescriptorAction(descriptor));
     }
 
-    public Promise<BluetoothGattDescriptor, BletiaException, Object> readDescriptor(BluetoothGattDescriptor descriptor) {
+    public Promise<BluetoothGattDescriptor, BletiaException, Void> readDescriptor(BluetoothGattDescriptor descriptor) {
         return execute(new ReadDescriptorAction(descriptor));
     }
 
-    public Promise<BluetoothGattCharacteristic, BletiaException, Object> enableNotification(BluetoothGattCharacteristic characteristic, boolean enabled) {
+    public Promise<BluetoothGattCharacteristic, BletiaException, Void> enableNotification(BluetoothGattCharacteristic characteristic, boolean enabled) {
         return execute(new EnableNotificationAction(characteristic, enabled));
     }
 
-    public Promise<Integer, BletiaException, Object> readRemoteRssi() {
+    public Promise<Integer, BletiaException, Void> readRemoteRssi() {
         return execute(new ReadRemoteRssiAction());
     }
 

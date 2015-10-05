@@ -31,7 +31,7 @@ class BleMessageThread extends Handler {
         mHandlerThread.quitSafely();
     }
 
-    public <T> Promise<T, BletiaException, Object> execute(Action<T, ?> action) {
+    public <T> Promise<T, BletiaException, Void> execute(Action<T, ?> action) {
         ActionMessageHandler.valueOf(action.getType()).enqueue(action, mQueueContainer);
         dispatchMessage(action.obtainMessage());
 

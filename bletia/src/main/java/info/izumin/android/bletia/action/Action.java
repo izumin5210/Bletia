@@ -42,14 +42,14 @@ public abstract class Action<T, I> {
     public static final String KEY_UUID = "key_uuid";
 
     private final I mIdentity;
-    private final Deferred<T, BletiaException, Object> mDeferred;
+    private final Deferred<T, BletiaException, Void> mDeferred;
 
     public Action(I identity) {
         mIdentity = identity;
         mDeferred = new DeferredObject<>();
     }
 
-    public Deferred<T, BletiaException, Object> getDeferred() {
+    public Deferred<T, BletiaException, Void> getDeferred() {
         return mDeferred;
     }
 
