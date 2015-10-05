@@ -8,22 +8,17 @@ import java.util.UUID;
 /**
  * Created by izumin on 9/15/15.
  */
-public abstract class CharacteristicAction extends Action<BluetoothGattCharacteristic> {
+public abstract class CharacteristicAction extends Action<BluetoothGattCharacteristic, UUID> {
 
     private final BluetoothGattCharacteristic mCharacteristic;
 
     public CharacteristicAction(BluetoothGattCharacteristic characteristic) {
-        super();
+        super(characteristic.getUuid());
         mCharacteristic = characteristic;
     }
 
     public BluetoothGattCharacteristic getCharacteristic() {
         return mCharacteristic;
-    }
-
-    @Override
-    public UUID getUuid() {
-        return mCharacteristic.getUuid();
     }
 
     @Override
