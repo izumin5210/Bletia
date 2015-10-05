@@ -12,7 +12,7 @@ import info.izumin.android.bletia.wrapper.BluetoothGattWrapper;
 /**
  * Created by izumin on 9/14/15.
  */
-public class BleMessageThread extends Handler {
+class BleMessageThread extends Handler {
 
     private static final int DELAY_MILLIS = 10;
 

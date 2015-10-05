@@ -12,7 +12,7 @@ import info.izumin.android.bletia.wrapper.BluetoothGattWrapper;
 /**
  * Created by izumin on 9/7/15.
  */
-public class BluetoothGattCallbackHandler extends BluetoothGattCallbackWrapper {
+class BluetoothGattCallbackHandler extends BluetoothGattCallbackWrapper {
 
     private Callback mCallback;
     private ActionQueueContainer mQueueContainer;
