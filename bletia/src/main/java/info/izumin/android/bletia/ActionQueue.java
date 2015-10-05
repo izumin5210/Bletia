@@ -11,7 +11,7 @@ import info.izumin.android.bletia.wrapper.BluetoothGattWrapper;
 /**
  * Created by izumin on 10/3/15.
  */
-class ActionQueue<A extends Action<?, I>, I> {
+public class ActionQueue<A extends Action<?, I>, I> {
 
     private List<A> mWaitingActionList;
     private Map<I, A> mRunningActionMap;
