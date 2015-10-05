@@ -24,12 +24,11 @@ public class BluetoothGattCallbackHandler extends BluetoothGattCallbackWrapper {
 
     @Override
     public void onConnectionStateChange(BluetoothGattWrapper gatt, int status, int newState) {
-        if (status == BluetoothGatt.GATT_SUCCESS) {
+        if (newState == BluetoothGatt.STATE_DISCONNECTED) {
+            mCallback.onDisconnect(gatt);
+        } else if (status == BluetoothGatt.GATT_SUCCESS) {
             if (newState == BluetoothGatt.STATE_CONNECTED) {
                 mCallback.onConnect(gatt);
-            }
-            if (newState == BluetoothGatt.STATE_DISCONNECTED) {
-                mCallback.onDisconnect(gatt);
             }
         } else {
             mCallback.onError(new BletiaException(BleErrorType.valueOf(status)));
