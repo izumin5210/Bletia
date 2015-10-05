@@ -6,8 +6,6 @@ import android.os.Message;
 import org.jdeferred.Deferred;
 import org.jdeferred.impl.DeferredObject;
 
-import java.util.UUID;
-
 import info.izumin.android.bletia.BletiaException;
 import info.izumin.android.bletia.wrapper.BluetoothGattWrapper;
 

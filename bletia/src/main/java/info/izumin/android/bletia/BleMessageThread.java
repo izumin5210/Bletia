@@ -6,21 +6,13 @@ import android.os.Message;
 
 import org.jdeferred.Promise;
 
-import java.util.UUID;
-
 import info.izumin.android.bletia.action.Action;
-import info.izumin.android.bletia.action.EnableNotificationAction;
-import info.izumin.android.bletia.action.ReadCharacteristicAction;
-import info.izumin.android.bletia.action.ReadDescriptorAction;
-import info.izumin.android.bletia.action.ReadRemoteRssiAction;
-import info.izumin.android.bletia.action.WriteCharacteristicAction;
-import info.izumin.android.bletia.action.WriteDescriptorAction;
 import info.izumin.android.bletia.wrapper.BluetoothGattWrapper;
 
 /**
  * Created by izumin on 9/14/15.
  */
-public class BleMessageThread extends Handler {
+class BleMessageThread extends Handler {
 
     private static final int DELAY_MILLIS = 10;
 
