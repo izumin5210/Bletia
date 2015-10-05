@@ -38,7 +38,7 @@ public class Bletia implements BluetoothGattCallbackHandler.Callback {
     private ConnectionHelper mConnectionHelper;
 
     private EventEmitter mEmitter;
-    private BleActionStore mActionStore;
+    private ActionQueueContainer mQueueContainer;
     private BluetoothGattCallbackHandler mCallbackHandler;
     private BleMessageThread mMessageThread;
 
@@ -46,8 +46,8 @@ public class Bletia implements BluetoothGattCallbackHandler.Callback {
         mContext = context;
         mConnectionHelper = new ConnectionHelper(mContext);
         mEmitter = new EventEmitter(this);
-        mActionStore = new BleActionStore();
-        mCallbackHandler = new BluetoothGattCallbackHandler(this, mActionStore);
+        mQueueContainer = new ActionQueueContainer();
+        mCallbackHandler = new BluetoothGattCallbackHandler(this, mQueueContainer);
     }
 
     public BleState getState() {
@@ -68,7 +68,7 @@ public class Bletia implements BluetoothGattCallbackHandler.Callback {
 
         HandlerThread thread = new HandlerThread(device.getName());
         thread.start();
-        mMessageThread = new BleMessageThread(thread, mGattWrapper, mActionStore);
+        mMessageThread = new BleMessageThread(thread, mGattWrapper, mQueueContainer);
     }
 
     public void disconenct() {
@@ -86,7 +86,7 @@ public class Bletia implements BluetoothGattCallbackHandler.Callback {
         return mGattWrapper.getService(uuid);
     }
 
-    public <T> Promise<T, BletiaException, Object> execute(Action<T> action) {
+    public <T> Promise<T, BletiaException, Object> execute(Action<T, ?> action) {
         return mMessageThread.execute(action);
     }
 
