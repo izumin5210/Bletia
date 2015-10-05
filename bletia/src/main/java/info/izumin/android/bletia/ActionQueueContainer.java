@@ -8,7 +8,6 @@ import info.izumin.android.bletia.action.ReadDescriptorAction;
 import info.izumin.android.bletia.action.ReadRemoteRssiAction;
 import info.izumin.android.bletia.action.WriteCharacteristicAction;
 import info.izumin.android.bletia.action.WriteDescriptorAction;
-import info.izumin.android.bletia.wrapper.BluetoothGattWrapper;
 
 /**
  * Created by izumin on 10/3/15.
@@ -21,13 +20,13 @@ class ActionQueueContainer {
     private ActionQueue<EnableNotificationAction, UUID> mEnableNotificationActionQueue;
     private ActionQueue<ReadRemoteRssiAction, Void> mReadRemoteRssiActionQueue;
 
-    public ActionQueueContainer(BluetoothGattWrapper gattWrapper) {
-        mReadCharacteristicActionQueue = new ActionQueue<>(gattWrapper);
-        mWriteCharacteristicActionQueue = new ActionQueue<>(gattWrapper);
-        mReadDescriptorActionQueue = new ActionQueue<>(gattWrapper);
-        mWriteDescriptorActionQueue = new ActionQueue<>(gattWrapper);
-        mEnableNotificationActionQueue = new ActionQueue<>(gattWrapper);
-        mReadRemoteRssiActionQueue = new ActionQueue<>(gattWrapper);
+    public ActionQueueContainer() {
+        mReadCharacteristicActionQueue = new ActionQueue<>();
+        mWriteCharacteristicActionQueue = new ActionQueue<>();
+        mReadDescriptorActionQueue = new ActionQueue<>();
+        mWriteDescriptorActionQueue = new ActionQueue<>();
+        mEnableNotificationActionQueue = new ActionQueue<>();
+        mReadRemoteRssiActionQueue = new ActionQueue<>();
     }
 
     public ActionQueue<ReadCharacteristicAction, UUID> getReadCharacteristicActionQueue() {

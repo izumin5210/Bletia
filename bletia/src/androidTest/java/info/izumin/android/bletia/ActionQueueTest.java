@@ -50,7 +50,7 @@ public class ActionQueueTest {
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        mQueue = new ActionQueue<>(mGattWrapper);
+        mQueue = new ActionQueue<>();
         when(mAction.getIdentity()).thenReturn("test");
         Whitebox.setInternalState(mQueue, "mWaitingActionList", mWaitingActionList);
         Whitebox.setInternalState(mQueue, "mRunningActionMap", mRunningActionMap);
@@ -67,7 +67,7 @@ public class ActionQueueTest {
     @Test
     public void execute_WhenActionThatHasTheSameIdentityIsRunning() throws Exception {
         when(mQueue.isRunning("test")).thenReturn(true);
-        assertThat(mQueue.execute("test")).isFalse();
+        assertThat(mQueue.execute("test", mGattWrapper)).isFalse();
         verify(mAction, never()).execute(mGattWrapper);
         verify(mWaitingActionList, never()).remove(mAction);
         verify(mRunningActionMap, never()).put("test", mAction);
@@ -75,7 +75,7 @@ public class ActionQueueTest {
 
     @Test
     public void execute_WhenActionThatHasTheSameIdentityIsNotRunning() throws Exception {
-        assertThat(mQueue.execute("test")).isTrue();
+        assertThat(mQueue.execute("test", mGattWrapper)).isTrue();
         verify(mAction, times(1)).execute(mGattWrapper);
         verify(mWaitingActionList, times(1)).remove(mAction);
         verify(mRunningActionMap, times(1)).put("test", mAction);

@@ -1,5 +1,6 @@
 package info.izumin.android.bletia;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,24 +15,23 @@ class ActionQueue<A extends Action<?, I>, I> {
 
     private List<A> mWaitingActionList;
     private Map<I, A> mRunningActionMap;
-    private BluetoothGattWrapper mGattWrapper;
 
-    public ActionQueue(BluetoothGattWrapper gattWrapper) {
+    public ActionQueue() {
+        mWaitingActionList = new ArrayList<>();
         mRunningActionMap = new HashMap<>();
-        mGattWrapper = gattWrapper;
     }
 
     public synchronized boolean enqueue(A action) {
         return mWaitingActionList.add(action);
     }
 
-    public synchronized boolean execute(I identity) {
+    public synchronized boolean execute(I identity, BluetoothGattWrapper gattWrapper) {
         if (isRunning(identity)) {
             return false;
         } else {
             for (A action : mWaitingActionList) {
                 if ((identity == null) ? (action.getIdentity() == null) : (identity.equals(action.getIdentity()))) {
-                    action.execute(mGattWrapper);
+                    action.execute(gattWrapper);
                     mWaitingActionList.remove(action);
                     mRunningActionMap.put(action.getIdentity(), action);
                     return true;
