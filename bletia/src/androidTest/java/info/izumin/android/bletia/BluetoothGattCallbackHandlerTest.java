@@ -11,18 +11,21 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import java.util.UUID;
 
-import info.izumin.android.bletia.action.Action;
-import info.izumin.android.bletia.action.CharacteristicAction;
-import info.izumin.android.bletia.action.DescriptorAction;
 import info.izumin.android.bletia.action.EnableNotificationAction;
+import info.izumin.android.bletia.action.ReadCharacteristicAction;
+import info.izumin.android.bletia.action.ReadDescriptorAction;
 import info.izumin.android.bletia.action.ReadRemoteRssiAction;
+import info.izumin.android.bletia.action.WriteCharacteristicAction;
+import info.izumin.android.bletia.action.WriteDescriptorAction;
 import info.izumin.android.bletia.wrapper.BluetoothGattWrapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -34,16 +37,20 @@ import static org.mockito.Mockito.when;
 public class BluetoothGattCallbackHandlerTest {
 
     private BluetoothGattCallbackHandler mCallbackHandler;
+    private ActionQueueContainer mQueueContainer;
 
     @Mock private BluetoothGattCallbackHandler.Callback mCallback;
-    @Mock private BleActionStore mActionStore;
     @Mock private BluetoothGattWrapper mGattWrapper;
     @Mock private BluetoothGattCharacteristic mCharacteristic;
     @Mock private BluetoothGattDescriptor mDescriptor;
-    @Mock private CharacteristicAction mCharacteristicAction;
-    @Mock private DescriptorAction mDescriptorAction;
+
+    @Mock private ReadCharacteristicAction mReadCharacteristicAction;
+    @Mock private WriteCharacteristicAction mWriteCharacteristicAction;
+    @Mock private ReadDescriptorAction mReadDescriptorAction;
+    @Mock private WriteDescriptorAction mWriteDescriptorAction;
     @Mock private EnableNotificationAction mNotificationAction;
     @Mock private ReadRemoteRssiAction mRssiAction;
+
     @Mock private Deferred<BluetoothGattCharacteristic, BletiaException, Object> mCharacteristicDeferred;
     @Mock private Deferred<BluetoothGattDescriptor, BletiaException, Object> mDescriptorDeferred;
     @Mock private Deferred<Integer, BletiaException, Object> mIntegerDeferred;
@@ -53,17 +60,20 @@ public class BluetoothGattCallbackHandlerTest {
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        mCallbackHandler = new BluetoothGattCallbackHandler(mCallback, mActionStore);
-        when(mCharacteristicAction.getDeferred()).thenReturn(mCharacteristicDeferred);
-        when(mDescriptorAction.getDeferred()).thenReturn(mDescriptorDeferred);
+        mQueueContainer = Mockito.mock(ActionQueueContainer.class, Mockito.RETURNS_DEEP_STUBS);
+        mCallbackHandler = new BluetoothGattCallbackHandler(mCallback, mQueueContainer);
+        when(mReadCharacteristicAction.getDeferred()).thenReturn(mCharacteristicDeferred);
+        when(mWriteCharacteristicAction.getDeferred()).thenReturn(mCharacteristicDeferred);
+        when(mReadDescriptorAction.getDeferred()).thenReturn(mDescriptorDeferred);
+        when(mWriteDescriptorAction.getDeferred()).thenReturn(mDescriptorDeferred);
         when(mNotificationAction.getDeferred()).thenReturn(mCharacteristicDeferred);
         when(mRssiAction.getDeferred()).thenReturn(mIntegerDeferred);
-        when(mActionStore.dequeue(Action.Type.READ_CHARACTERISTIC)).thenReturn(mCharacteristicAction);
-        when(mActionStore.dequeue(Action.Type.WRITE_CHARACTERISTIC)).thenReturn(mCharacteristicAction);
-        when(mActionStore.dequeue(Action.Type.READ_DESCRIPTOR)).thenReturn(mDescriptorAction);
-        when(mActionStore.dequeue(Action.Type.WRITE_DESCRIPTOR)).thenReturn(mDescriptorAction);
-        when(mActionStore.dequeue(Action.Type.ENABLE_NOTIFICATION)).thenReturn(mNotificationAction);
-        when(mActionStore.dequeue(Action.Type.READ_REMOTE_RSSI)).thenReturn(mRssiAction);
+        when(mQueueContainer.getReadCharacteristicActionQueue().dequeue(any(UUID.class))).thenReturn(mReadCharacteristicAction);
+        when(mQueueContainer.getWriteCharacteristicActionQueue().dequeue(any(UUID.class))).thenReturn(mWriteCharacteristicAction);
+        when(mQueueContainer.getReadDescriptorActionQueue().dequeue(any(UUID.class))).thenReturn(mReadDescriptorAction);
+        when(mQueueContainer.getWriteDescriptorActionQueue().dequeue(any(UUID.class))).thenReturn(mWriteDescriptorAction);
+        when(mQueueContainer.getEnableNotificationActionQueue().dequeue(any(UUID.class))).thenReturn(mNotificationAction);
+        when(mQueueContainer.getReadRemoteRssiActionQueue().dequeue(null)).thenReturn(mRssiAction);
         when(mDescriptor.getUuid()).thenReturn(UUID.randomUUID());
         when(mDescriptor.getCharacteristic()).thenReturn(mCharacteristic);
         mExceptionCaptor = ArgumentCaptor.forClass(BletiaException.class);
@@ -118,7 +128,7 @@ public class BluetoothGattCallbackHandlerTest {
         mCallbackHandler.onCharacteristicRead(mGattWrapper, mCharacteristic, BluetoothGatt.GATT_FAILURE);
         verify(mCharacteristicDeferred, times(1)).reject(mExceptionCaptor.capture());
         BletiaException e = mExceptionCaptor.getValue();
-        assertThat(e.getAction()).isEqualTo(mCharacteristicAction);
+        assertThat(e.getAction()).isEqualTo(mReadCharacteristicAction);
         assertThat(e.getType()).isEqualTo(BleErrorType.FAILURE);
     }
 
@@ -133,7 +143,7 @@ public class BluetoothGattCallbackHandlerTest {
         mCallbackHandler.onCharacteristicWrite(mGattWrapper, mCharacteristic, BluetoothGatt.GATT_FAILURE);
         verify(mCharacteristicDeferred, times(1)).reject(mExceptionCaptor.capture());
         BletiaException e = mExceptionCaptor.getValue();
-        assertThat(e.getAction()).isEqualTo(mCharacteristicAction);
+        assertThat(e.getAction()).isEqualTo(mWriteCharacteristicAction);
         assertThat(e.getType()).isEqualTo(BleErrorType.FAILURE);
     }
 
@@ -154,7 +164,7 @@ public class BluetoothGattCallbackHandlerTest {
         mCallbackHandler.onDescriptorRead(mGattWrapper, mDescriptor, BluetoothGatt.GATT_FAILURE);
         verify(mDescriptorDeferred, times(1)).reject(mExceptionCaptor.capture());
         BletiaException e = mExceptionCaptor.getValue();
-        assertThat(e.getAction()).isEqualTo(mDescriptorAction);
+        assertThat(e.getAction()).isEqualTo(mReadDescriptorAction);
         assertThat(e.getType()).isEqualTo(BleErrorType.FAILURE);
     }
 
@@ -169,7 +179,7 @@ public class BluetoothGattCallbackHandlerTest {
         mCallbackHandler.onDescriptorWrite(mGattWrapper, mDescriptor, BluetoothGatt.GATT_FAILURE);
         verify(mDescriptorDeferred, times(1)).reject(mExceptionCaptor.capture());
         BletiaException e = mExceptionCaptor.getValue();
-        assertThat(e.getAction()).isEqualTo(mDescriptorAction);
+        assertThat(e.getAction()).isEqualTo(mWriteDescriptorAction);
         assertThat(e.getType()).isEqualTo(BleErrorType.FAILURE);
     }
 

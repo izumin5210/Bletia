@@ -5,10 +5,6 @@ import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattDescriptor;
 
 import info.izumin.android.bletia.action.Action;
-import info.izumin.android.bletia.action.CharacteristicAction;
-import info.izumin.android.bletia.action.DescriptorAction;
-import info.izumin.android.bletia.action.EnableNotificationAction;
-import info.izumin.android.bletia.action.ReadRemoteRssiAction;
 import info.izumin.android.bletia.util.NotificationUtils;
 import info.izumin.android.bletia.wrapper.BluetoothGattCallbackWrapper;
 import info.izumin.android.bletia.wrapper.BluetoothGattWrapper;
@@ -19,11 +15,11 @@ import info.izumin.android.bletia.wrapper.BluetoothGattWrapper;
 public class BluetoothGattCallbackHandler extends BluetoothGattCallbackWrapper {
 
     private Callback mCallback;
-    private BleActionStore mActionStore;
+    private ActionQueueContainer mQueueContainer;
 
-    public BluetoothGattCallbackHandler(Callback callback, BleActionStore actionStore) {
+    public BluetoothGattCallbackHandler(Callback callback, ActionQueueContainer queueContainer) {
         mCallback = callback;
-        mActionStore = actionStore;
+        mQueueContainer = queueContainer;
     }
 
     @Override
@@ -46,12 +42,12 @@ public class BluetoothGattCallbackHandler extends BluetoothGattCallbackWrapper {
 
     @Override
     public void onCharacteristicRead(BluetoothGattWrapper gatt, BluetoothGattCharacteristic characteristic, int status) {
-        handleBleAction(Action.Type.READ_CHARACTERISTIC, characteristic, status);
+        handleAction(mQueueContainer.getReadCharacteristicActionQueue(), characteristic, characteristic.getUuid(), status);
     }
 
     @Override
     public void onCharacteristicWrite(BluetoothGattWrapper gatt, BluetoothGattCharacteristic characteristic, int status) {
-        handleBleAction(Action.Type.WRITE_CHARACTERISTIC, characteristic, status);
+        handleAction(mQueueContainer.getWriteCharacteristicActionQueue(), characteristic, characteristic.getUuid(), status);
     }
 
     @Override
@@ -61,15 +57,16 @@ public class BluetoothGattCallbackHandler extends BluetoothGattCallbackWrapper {
 
     @Override
     public void onDescriptorRead(BluetoothGattWrapper gatt, BluetoothGattDescriptor descriptor, int status) {
-        handleBleAction(Action.Type.READ_DESCRIPTOR, descriptor, status);
+        handleAction(mQueueContainer.getReadDescriptorActionQueue(), descriptor, descriptor.getUuid(), status);
     }
 
     @Override
     public void onDescriptorWrite(BluetoothGattWrapper gatt, BluetoothGattDescriptor descriptor, int status) {
         if (NotificationUtils.isEnableNotificationDescriptor(descriptor)) {
-            handleBleAction(Action.Type.ENABLE_NOTIFICATION, descriptor.getCharacteristic(), descriptor, status);
+            BluetoothGattCharacteristic characteristic = descriptor.getCharacteristic();
+            handleAction(mQueueContainer.getEnableNotificationActionQueue(), characteristic, characteristic.getUuid(), status);
         } else {
-            handleBleAction(Action.Type.WRITE_DESCRIPTOR, descriptor, status);
+            handleAction(mQueueContainer.getWriteDescriptorActionQueue(), descriptor, descriptor.getUuid(), status);
         }
     }
 
@@ -80,12 +77,7 @@ public class BluetoothGattCallbackHandler extends BluetoothGattCallbackWrapper {
 
     @Override
     public void onReadRemoteRssi(BluetoothGattWrapper gatt, int rssi, int status) {
-        ReadRemoteRssiAction action = (ReadRemoteRssiAction) mActionStore.dequeue(Action.Type.READ_REMOTE_RSSI);
-        if (status == BluetoothGatt.GATT_SUCCESS) {
-            action.getDeferred().resolve(rssi);
-        } else {
-            action.getDeferred().reject(new BletiaException(action, BleErrorType.valueOf(status)));
-        }
+        handleAction(mQueueContainer.getReadRemoteRssiActionQueue(), rssi, null, status);
     }
 
     @Override
@@ -93,28 +85,10 @@ public class BluetoothGattCallbackHandler extends BluetoothGattCallbackWrapper {
         // TODO: Not yet implemented.
     }
 
-    private void handleBleAction(Action.Type type, BluetoothGattCharacteristic characteristic, BluetoothGattDescriptor descriptor, int status) {
-        EnableNotificationAction action = (EnableNotificationAction) mActionStore.dequeue(type);
+    private <A extends Action<T, I>, T, I> void handleAction(ActionQueue<A, I> queue, T result, I identity, int status) {
+        A action = queue.dequeue(identity);
         if (status == BluetoothGatt.GATT_SUCCESS) {
-            action.getDeferred().resolve(characteristic);
-        } else {
-            action.getDeferred().reject(new BletiaException(action, BleErrorType.valueOf(status)));
-        }
-    }
-
-    private void handleBleAction(Action.Type type, BluetoothGattCharacteristic characteristic, int status) {
-        CharacteristicAction action = (CharacteristicAction) mActionStore.dequeue(type);
-        if (status == BluetoothGatt.GATT_SUCCESS) {
-            action.getDeferred().resolve(characteristic);
-        } else {
-            action.getDeferred().reject(new BletiaException(action, BleErrorType.valueOf(status)));
-        }
-    }
-
-    private void handleBleAction(Action.Type type, BluetoothGattDescriptor descriptor, int status) {
-        DescriptorAction action = (DescriptorAction) mActionStore.dequeue(type);
-        if (status == BluetoothGatt.GATT_SUCCESS) {
-            action.getDeferred().resolve(descriptor);
+            action.getDeferred().resolve(result);
         } else {
             action.getDeferred().reject(new BletiaException(action, BleErrorType.valueOf(status)));
         }

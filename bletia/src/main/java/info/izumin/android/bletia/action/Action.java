@@ -14,7 +14,7 @@ import info.izumin.android.bletia.wrapper.BluetoothGattWrapper;
 /**
  * Created by izumin on 9/15/15.
  */
-public abstract class Action<T> {
+public abstract class Action<T, I> {
     public enum Type {
         WRITE_CHARACTERISTIC(1),
         READ_CHARACTERISTIC(2),
@@ -43,9 +43,11 @@ public abstract class Action<T> {
 
     public static final String KEY_UUID = "key_uuid";
 
+    private final I mIdentity;
     private final Deferred<T, BletiaException, Object> mDeferred;
 
-    public Action() {
+    public Action(I identity) {
+        mIdentity = identity;
         mDeferred = new DeferredObject<>();
     }
 
@@ -53,8 +55,8 @@ public abstract class Action<T> {
         return mDeferred;
     }
 
-    public UUID getUuid() {
-        return null;
+    public I getIdentity() {
+        return mIdentity;
     }
 
     public Message obtainMessage() {
