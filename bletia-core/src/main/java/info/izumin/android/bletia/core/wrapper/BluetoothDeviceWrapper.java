@@ -1,8 +1,7 @@
-package info.izumin.android.bletia.wrapper;
+package info.izumin.android.bletia.core.wrapper;
 
 import android.bluetooth.BluetoothClass;
 import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCallback;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;

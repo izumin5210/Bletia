@@ -1,4 +1,4 @@
-package info.izumin.android.bletia;
+package info.izumin.android.bletia.core;
 
 /**
  * Created by izumin on 9/7/15.
