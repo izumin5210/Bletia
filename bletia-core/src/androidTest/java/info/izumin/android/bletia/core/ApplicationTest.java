@@ -1,4 +1,4 @@
-package info.izumin.android.bletia;
+package info.izumin.android.bletia.core;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;
