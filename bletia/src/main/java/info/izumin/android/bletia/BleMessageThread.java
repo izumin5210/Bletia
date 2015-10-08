@@ -7,7 +7,7 @@ import android.os.Message;
 import org.jdeferred.Promise;
 
 import info.izumin.android.bletia.action.Action;
-import info.izumin.android.bletia.wrapper.BluetoothGattWrapper;
+import info.izumin.android.bletia.core.wrapper.BluetoothGattWrapper;
 
 /**
  * Created by izumin on 9/14/15.

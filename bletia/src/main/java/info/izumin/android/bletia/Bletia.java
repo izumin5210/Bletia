@@ -18,9 +18,10 @@ import info.izumin.android.bletia.action.ReadDescriptorAction;
 import info.izumin.android.bletia.action.ReadRemoteRssiAction;
 import info.izumin.android.bletia.action.WriteCharacteristicAction;
 import info.izumin.android.bletia.action.WriteDescriptorAction;
+import info.izumin.android.bletia.core.BleState;
 import info.izumin.android.bletia.helper.ConnectionHelper;
-import info.izumin.android.bletia.wrapper.BluetoothDeviceWrapper;
-import info.izumin.android.bletia.wrapper.BluetoothGattWrapper;
+import info.izumin.android.bletia.core.wrapper.BluetoothDeviceWrapper;
+import info.izumin.android.bletia.core.wrapper.BluetoothGattWrapper;
 
 /**
  * Created by izumin on 9/7/15.

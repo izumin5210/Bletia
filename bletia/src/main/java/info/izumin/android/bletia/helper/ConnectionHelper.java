@@ -3,8 +3,8 @@ package info.izumin.android.bletia.helper;
 import android.bluetooth.BluetoothGattCallback;
 import android.content.Context;
 
-import info.izumin.android.bletia.wrapper.BluetoothDeviceWrapper;
-import info.izumin.android.bletia.wrapper.BluetoothGattWrapper;
+import info.izumin.android.bletia.core.wrapper.BluetoothDeviceWrapper;
+import info.izumin.android.bletia.core.wrapper.BluetoothGattWrapper;
 
 /**
  * Created by izumin on 9/10/15.

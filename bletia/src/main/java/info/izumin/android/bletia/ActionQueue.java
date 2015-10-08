@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import info.izumin.android.bletia.action.Action;
-import info.izumin.android.bletia.wrapper.BluetoothGattWrapper;
+import info.izumin.android.bletia.core.wrapper.BluetoothGattWrapper;
 
 /**
  * Created by izumin on 10/3/15.

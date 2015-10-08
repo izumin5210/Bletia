@@ -1,6 +1,8 @@
 package info.izumin.android.bletia;
 
 import info.izumin.android.bletia.action.Action;
+import info.izumin.android.bletia.core.BleErrorType;
+import info.izumin.android.bletia.core.BletiaErrorType;
 
 /**
  * Created by izumin on 9/14/15.

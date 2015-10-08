@@ -7,7 +7,7 @@ import org.jdeferred.Deferred;
 import org.jdeferred.impl.DeferredObject;
 
 import info.izumin.android.bletia.BletiaException;
-import info.izumin.android.bletia.wrapper.BluetoothGattWrapper;
+import info.izumin.android.bletia.core.wrapper.BluetoothGattWrapper;
 
 /**
  * Created by izumin on 9/15/15.

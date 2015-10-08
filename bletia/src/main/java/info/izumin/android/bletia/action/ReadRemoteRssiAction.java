@@ -1,8 +1,8 @@
 package info.izumin.android.bletia.action;
 
-import info.izumin.android.bletia.BleErrorType;
+import info.izumin.android.bletia.core.BleErrorType;
 import info.izumin.android.bletia.BletiaException;
-import info.izumin.android.bletia.wrapper.BluetoothGattWrapper;
+import info.izumin.android.bletia.core.wrapper.BluetoothGattWrapper;
 
 /**
  * Created by izumin on 9/15/15.

@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 import info.izumin.android.bletia.action.Action;
-import info.izumin.android.bletia.wrapper.BluetoothGattWrapper;
+import info.izumin.android.bletia.core.wrapper.BluetoothGattWrapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.never;
