@@ -1,17 +1,17 @@
-package info.izumin.android.bletia;
+package info.izumin.android.bletia.core.action;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import info.izumin.android.bletia.action.Action;
+import info.izumin.android.bletia.core.action.Action;
 import info.izumin.android.bletia.core.wrapper.BluetoothGattWrapper;
 
 /**
  * Created by izumin on 10/3/15.
  */
-public class ActionQueue<A extends Action<?, I>, I> {
+public class ActionQueue<A extends Action<I>, I> {
 
     private List<A> mWaitingActionList;
     private Map<I, A> mRunningActionMap;

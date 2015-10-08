@@ -1,4 +1,4 @@
-package info.izumin.android.bletia;
+package info.izumin.android.bletia.core.action;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -12,7 +12,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import info.izumin.android.bletia.action.Action;
 import info.izumin.android.bletia.core.wrapper.BluetoothGattWrapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -25,7 +24,7 @@ import static org.mockito.Mockito.when;
  * Created by izumin on 10/5/15.
  */
 public class ActionQueueTest {
-    public class ActionImpl extends Action<Integer, String> {
+    public class ActionImpl extends Action<String> {
         public ActionImpl(String identity) {
             super(identity);
         }
