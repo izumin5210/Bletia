@@ -31,10 +31,13 @@ public class ActionQueue<A extends Action<?, I>, I> {
         } else {
             for (A action : mWaitingActionList) {
                 if ((identity == null) ? (action.getIdentity() == null) : (identity.equals(action.getIdentity()))) {
-                    action.execute(gattWrapper);
                     mWaitingActionList.remove(action);
-                    mRunningActionMap.put(action.getIdentity(), action);
-                    return true;
+                    if (action.execute(gattWrapper)) {
+                        mRunningActionMap.put(action.getIdentity(), action);
+                        return true;
+                    } else {
+                        return false;
+                    }
                 }
             }
             throw new IllegalArgumentException();
