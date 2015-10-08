@@ -21,9 +21,11 @@ public class ReadCharacteristicAction extends CharacteristicAction {
     }
 
     @Override
-    public void execute(BluetoothGattWrapper gattWrapper) {
+    public boolean execute(BluetoothGattWrapper gattWrapper) {
         if (!gattWrapper.readCharacteristic(getCharacteristic())) {
             getDeferred().reject(new BletiaException(this, BleErrorType.OPERATION_INITIATED_FAILURE));
+            return false;
         }
+        return true;
     }
 }

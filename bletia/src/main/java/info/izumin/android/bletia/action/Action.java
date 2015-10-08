@@ -69,5 +69,5 @@ public abstract class Action<T, I> {
     }
 
     public abstract Type getType();
-    public abstract void execute(BluetoothGattWrapper gattWrapper);
+    public abstract boolean execute(BluetoothGattWrapper gattWrapper);
 }

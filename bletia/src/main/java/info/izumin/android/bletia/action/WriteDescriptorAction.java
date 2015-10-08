@@ -21,9 +21,11 @@ public class WriteDescriptorAction extends DescriptorAction {
     }
 
     @Override
-    public void execute(BluetoothGattWrapper gattWrapper) {
+    public boolean execute(BluetoothGattWrapper gattWrapper) {
         if (!gattWrapper.writeDescriptor(getDescriptor())) {
             getDeferred().reject(new BletiaException(this, BleErrorType.OPERATION_INITIATED_FAILURE));
+            return false;
         }
+        return true;
     }
 }

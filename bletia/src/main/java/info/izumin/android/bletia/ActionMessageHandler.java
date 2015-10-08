@@ -20,72 +20,141 @@ enum ActionMessageHandler {
     READ_CHARACTERISTIC(Action.Type.READ_CHARACTERISTIC) {
         @Override
         public void enqueue(Action action, ActionQueueContainer container) {
-            container.getReadCharacteristicActionQueue().enqueue((ReadCharacteristicAction) action);
+            getQueueFromContainer(container).enqueue((ReadCharacteristicAction) action);
         }
 
         @Override
         public boolean execute(Message msg, ActionQueueContainer container, BluetoothGattWrapper gattWrapper) {
-            UUID uuid = (UUID) msg.getData().getSerializable(ReadCharacteristicAction.KEY_UUID);
-            return container.getReadCharacteristicActionQueue().execute(uuid, gattWrapper);
+            return getQueueFromContainer(container).execute(getIdentityFromMessage(msg), gattWrapper);
+        }
+
+        @Override
+        public boolean isRunning(Message msg, ActionQueueContainer container) {
+            return getQueueFromContainer(container).isRunning(getIdentityFromMessage(msg));
+        }
+
+        private UUID getIdentityFromMessage(Message msg) {
+            return (UUID) msg.getData().getSerializable(ReadCharacteristicAction.KEY_UUID);
+        }
+
+        private ActionQueue<ReadCharacteristicAction, UUID> getQueueFromContainer(ActionQueueContainer container) {
+            return container.getReadCharacteristicActionQueue();
         }
     },
     WRITE_CHARACTERISTIC(Action.Type.WRITE_CHARACTERISTIC) {
         @Override
         public void enqueue(Action action, ActionQueueContainer container) {
-            container.getWriteCharacteristicActionQueue().enqueue((WriteCharacteristicAction) action);
+            getQueueFromContainer(container).enqueue((WriteCharacteristicAction) action);
         }
 
         @Override
         public boolean execute(Message msg, ActionQueueContainer container, BluetoothGattWrapper gattWrapper) {
-            UUID uuid = (UUID) msg.getData().getSerializable(WriteCharacteristicAction.KEY_UUID);
-            return container.getWriteCharacteristicActionQueue().execute(uuid, gattWrapper);
+            return getQueueFromContainer(container).execute(getIdentityFromMessage(msg), gattWrapper);
+        }
+
+        @Override
+        public boolean isRunning(Message msg, ActionQueueContainer container) {
+            return getQueueFromContainer(container).isRunning(getIdentityFromMessage(msg));
+        }
+
+        private UUID getIdentityFromMessage(Message msg) {
+            return (UUID) msg.getData().getSerializable(WriteCharacteristicAction.KEY_UUID);
+        }
+
+        private ActionQueue<WriteCharacteristicAction, UUID> getQueueFromContainer(ActionQueueContainer container) {
+            return container.getWriteCharacteristicActionQueue();
         }
     },
     READ_DESCRIPTOR(Action.Type.READ_DESCRIPTOR) {
         @Override
         public void enqueue(Action action, ActionQueueContainer container) {
-            container.getReadDescriptorActionQueue().enqueue((ReadDescriptorAction) action);
+            getQueueFromContainer(container).enqueue((ReadDescriptorAction) action);
         }
 
         @Override
         public boolean execute(Message msg, ActionQueueContainer container, BluetoothGattWrapper gattWrapper) {
-            UUID uuid = (UUID) msg.getData().getSerializable(ReadDescriptorAction.KEY_UUID);
-            return container.getReadDescriptorActionQueue().execute(uuid, gattWrapper);
+            return getQueueFromContainer(container).execute(getIdentityFromMessage(msg), gattWrapper);
+        }
+
+        @Override
+        public boolean isRunning(Message msg, ActionQueueContainer container) {
+            return getQueueFromContainer(container).isRunning(getIdentityFromMessage(msg));
+        }
+
+        private UUID getIdentityFromMessage(Message msg) {
+            return (UUID) msg.getData().getSerializable(ReadDescriptorAction.KEY_UUID);
+        }
+
+        private ActionQueue<ReadDescriptorAction, UUID> getQueueFromContainer(ActionQueueContainer container) {
+            return container.getReadDescriptorActionQueue();
         }
     },
     WRITE_DESCRIPTOR(Action.Type.WRITE_DESCRIPTOR) {
         @Override
         public void enqueue(Action action, ActionQueueContainer container) {
-            container.getWriteDescriptorActionQueue().enqueue((WriteDescriptorAction) action);
+            getQueueFromContainer(container).enqueue((WriteDescriptorAction) action);
         }
 
         @Override
         public boolean execute(Message msg, ActionQueueContainer container, BluetoothGattWrapper gattWrapper) {
-            UUID uuid = (UUID) msg.getData().getSerializable(WriteDescriptorAction.KEY_UUID);
-            return container.getWriteDescriptorActionQueue().execute(uuid, gattWrapper);
+            return getQueueFromContainer(container).execute(getIdentityFromMessage(msg), gattWrapper);
+        }
+
+        @Override
+        public boolean isRunning(Message msg, ActionQueueContainer container) {
+            return getQueueFromContainer(container).isRunning(getIdentityFromMessage(msg));
+        }
+
+        private UUID getIdentityFromMessage(Message msg) {
+            return (UUID) msg.getData().getSerializable(WriteDescriptorAction.KEY_UUID);
+        }
+
+        private ActionQueue<WriteDescriptorAction, UUID> getQueueFromContainer(ActionQueueContainer container) {
+            return container.getWriteDescriptorActionQueue();
         }
     },
     ENABLE_NOTIFICATION(Action.Type.ENABLE_NOTIFICATION) {
         @Override
         public void enqueue(Action action, ActionQueueContainer container) {
-            container.getEnableNotificationActionQueue().enqueue((EnableNotificationAction) action);
+            getQueueFromContainer(container).enqueue((EnableNotificationAction) action);
         }
 
         @Override
         public boolean execute(Message msg, ActionQueueContainer container, BluetoothGattWrapper gattWrapper) {
-            UUID uuid = (UUID) msg.getData().getSerializable(EnableNotificationAction.KEY_UUID);
-            return container.getEnableNotificationActionQueue().execute(uuid, gattWrapper);
+            return getQueueFromContainer(container).execute(getIdentityFromMessage(msg), gattWrapper);
+        }
+
+        @Override
+        public boolean isRunning(Message msg, ActionQueueContainer container) {
+            return getQueueFromContainer(container).isRunning(getIdentityFromMessage(msg));
+        }
+
+        private UUID getIdentityFromMessage(Message msg) {
+            return (UUID) msg.getData().getSerializable(EnableNotificationAction.KEY_UUID);
+        }
+
+        private ActionQueue<EnableNotificationAction, UUID> getQueueFromContainer(ActionQueueContainer container) {
+            return container.getEnableNotificationActionQueue();
         }
     },
     READ_REMOTE_RSSI(Action.Type.READ_REMOTE_RSSI) {
         @Override
         public void enqueue(Action action, ActionQueueContainer container) {
-            container.getReadRemoteRssiActionQueue().enqueue((ReadRemoteRssiAction) action);
+            getQueueFromContainer(container).enqueue((ReadRemoteRssiAction) action);
         }
 
         @Override
         public boolean execute(Message msg, ActionQueueContainer container, BluetoothGattWrapper gattWrapper) {
-            return container.getReadRemoteRssiActionQueue().execute(null, gattWrapper);
+            return getQueueFromContainer(container).execute(null, gattWrapper);
+        }
+
+        @Override
+        public boolean isRunning(Message msg, ActionQueueContainer container) {
+            return getQueueFromContainer(container).isRunning(null);
+        }
+
+        private ActionQueue<ReadRemoteRssiAction, Void> getQueueFromContainer(ActionQueueContainer container) {
+            return container.getReadRemoteRssiActionQueue();
         }
     };
 
@@ -112,4 +181,5 @@ enum ActionMessageHandler {
 
     public abstract void enqueue(Action action, ActionQueueContainer container);
     public abstract boolean execute(Message msg, ActionQueueContainer container, BluetoothGattWrapper gattWrapper);
+    public abstract boolean isRunning(Message msg, ActionQueueContainer container);
 }

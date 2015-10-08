@@ -36,8 +36,8 @@ public class ActionQueueTest {
         }
 
         @Override
-        public void execute(BluetoothGattWrapper gattWrapper) {
-
+        public boolean execute(BluetoothGattWrapper gattWrapper) {
+            return true;
         }
     }
 
@@ -74,7 +74,17 @@ public class ActionQueueTest {
     }
 
     @Test
-    public void execute_WhenActionThatHasTheSameIdentityIsNotRunning() throws Exception {
+    public void execute_WhenActionExecuteReturnFalse() throws Exception {
+        when(mAction.execute(mGattWrapper)).thenReturn(false);
+        assertThat(mQueue.execute("test", mGattWrapper)).isFalse();
+        verify(mAction, times(1)).execute(mGattWrapper);
+        verify(mWaitingActionList, times(1)).remove(mAction);
+        verify(mRunningActionMap, never()).put("test", mAction);
+    }
+
+    @Test
+    public void execute_WhenActionExecuteReturnTrue() throws Exception {
+        when(mAction.execute(mGattWrapper)).thenReturn(true);
         assertThat(mQueue.execute("test", mGattWrapper)).isTrue();
         verify(mAction, times(1)).execute(mGattWrapper);
         verify(mWaitingActionList, times(1)).remove(mAction);

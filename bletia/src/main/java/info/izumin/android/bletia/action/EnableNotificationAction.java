@@ -26,15 +26,18 @@ public class EnableNotificationAction extends CharacteristicAction {
     }
 
     @Override
-    public void execute(BluetoothGattWrapper gattWrapper) {
+    public boolean execute(BluetoothGattWrapper gattWrapper) {
         if (gattWrapper.setCharacteristicNotification(getCharacteristic(), mEnabled)) {
             BluetoothGattDescriptor descriptor = NotificationUtils.getDescriptor(getCharacteristic(), mEnabled);
             if (!gattWrapper.writeDescriptor(descriptor)) {
                 getDeferred().reject(new BletiaException(this, BleErrorType.OPERATION_INITIATED_FAILURE));
+                return false;
             }
         } else {
             getDeferred().reject(new BletiaException(this, BleErrorType.REQUEST_FAILURE));
+            return false;
         }
+        return true;
     }
 
     public boolean getEnabled() {
