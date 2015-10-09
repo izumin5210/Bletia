@@ -3,7 +3,7 @@ package info.izumin.android.bletia.action;
 import org.jdeferred.Deferred;
 import org.jdeferred.impl.DeferredObject;
 
-import info.izumin.android.bletia.BletiaException;
+import info.izumin.android.bletia.core.BletiaException;
 
 /**
  * Created by izumin on 9/15/15.

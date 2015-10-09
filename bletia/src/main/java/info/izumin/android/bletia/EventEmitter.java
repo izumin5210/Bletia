@@ -5,6 +5,8 @@ import android.bluetooth.BluetoothGattCharacteristic;
 import java.util.ArrayList;
 import java.util.List;
 
+import info.izumin.android.bletia.core.BletiaException;
+
 /**
  * Created by izumin on 9/10/15.
  */

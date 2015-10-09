@@ -31,6 +31,7 @@ import info.izumin.android.bletia.action.ReadRemoteRssiAction;
 import info.izumin.android.bletia.action.WriteCharacteristicAction;
 import info.izumin.android.bletia.action.WriteDescriptorAction;
 import info.izumin.android.bletia.core.BleErrorType;
+import info.izumin.android.bletia.core.BletiaException;
 import info.izumin.android.bletia.core.wrapper.BluetoothGattWrapper;
 
 import static org.assertj.core.api.Assertions.assertThat;

@@ -5,6 +5,7 @@ import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattDescriptor;
 
 import info.izumin.android.bletia.action.Action;
+import info.izumin.android.bletia.core.BletiaException;
 import info.izumin.android.bletia.core.action.ActionQueue;
 import info.izumin.android.bletia.core.BleErrorType;
 import info.izumin.android.bletia.util.NotificationUtils;

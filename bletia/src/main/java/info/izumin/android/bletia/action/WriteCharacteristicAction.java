@@ -3,7 +3,7 @@ package info.izumin.android.bletia.action;
 import android.bluetooth.BluetoothGattCharacteristic;
 
 import info.izumin.android.bletia.core.BleErrorType;
-import info.izumin.android.bletia.BletiaException;
+import info.izumin.android.bletia.core.BletiaException;
 import info.izumin.android.bletia.core.wrapper.BluetoothGattWrapper;
 
 /**
