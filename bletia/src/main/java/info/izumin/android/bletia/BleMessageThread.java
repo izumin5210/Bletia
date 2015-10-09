@@ -44,7 +44,7 @@ class BleMessageThread extends Handler {
         if (handler.isRunning(msg, mQueueContainer)) {
             Message delayed = obtainMessage();
             delayed.copyFrom(msg);
-            sendMessageDelayed(msg, DELAY_MILLIS);
+            sendMessageDelayed(delayed, DELAY_MILLIS);
         } else {
             ActionMessageHandler.valueOf(msg.what).execute(msg, mQueueContainer, mGattWrapper);
         }
