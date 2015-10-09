@@ -1,8 +1,6 @@
-package info.izumin.android.bletia;
+package info.izumin.android.bletia.core;
 
-import info.izumin.android.bletia.action.Action;
-import info.izumin.android.bletia.core.BleErrorType;
-import info.izumin.android.bletia.core.BletiaErrorType;
+import info.izumin.android.bletia.core.action.Action;
 
 /**
  * Created by izumin on 9/14/15.
@@ -53,9 +51,5 @@ public class BletiaException extends Exception {
 
     public Action getAction() {
         return mAction;
-    }
-
-    public boolean doCauseByAction() {
-        return mAction != null;
     }
 }
