@@ -9,6 +9,7 @@ import android.os.HandlerThread;
 
 import org.jdeferred.Promise;
 
+import java.util.List;
 import java.util.UUID;
 
 import info.izumin.android.bletia.action.Action;
@@ -91,6 +92,10 @@ public class Bletia implements BluetoothGattCallbackHandler.Callback {
 
     public BluetoothGattService getService(UUID uuid) {
         return mGattWrapper.getService(uuid);
+    }
+
+    public List<BluetoothGattService> getServices() {
+        return mGattWrapper.getServices();
     }
 
     public <T> Promise<T, BletiaException, Void> execute(Action<T, ?> action) {
