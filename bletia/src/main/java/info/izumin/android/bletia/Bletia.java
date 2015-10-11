@@ -98,6 +98,10 @@ public class Bletia implements BluetoothGattCallbackHandler.Callback {
         return mGattWrapper.getServices();
     }
 
+    public BluetoothDevice getDevice() {
+        return (mGattWrapper == null) ? null : mGattWrapper.getDevice();
+    }
+
     public <T> Promise<T, BletiaException, Void> execute(Action<T, ?> action) {
         return mMessageThread.execute(action);
     }
