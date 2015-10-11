@@ -53,6 +53,14 @@ public class Bletia implements BluetoothGattCallbackHandler.Callback {
         return mState;
     }
 
+    public boolean isConnected() {
+        return (mState == BleState.CONNECTED) || (mState == BleState.SERVICE_DISCOVERING) || isReady();
+    }
+
+    public boolean isReady() {
+        return mState == BleState.SERVICE_DISCOVERED;
+    }
+
     public void addListener(BletiaListener listener) {
         mEmitter.addListener(listener);
     }
