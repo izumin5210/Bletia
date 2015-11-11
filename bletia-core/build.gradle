@@ -1,14 +1,23 @@
 apply plugin: 'com.android.library'
 
+def versionMajor = 1
+def versionMinor = 3
+def versionPatch = 3
+def versionBuild = 0
+
+def sdkVersionCode = versionMajor * 1000 + versionMinor * 100 + versionPatch * 10 + versionBuild
+def sdkVersionName = "${versionMajor}.${versionMinor}.${versionPatch}"
+
 android {
-    compileSdkVersion 23
-    buildToolsVersion "23.0.1"
+    compileSdkVersion rootProject.ext.compileSdkVersion
+    buildToolsVersion rootProject.ext.buildToolsVersion
 
     defaultConfig {
         minSdkVersion 18
         targetSdkVersion 23
-        versionCode 1
-        versionName "1.0"
+        versionCode sdkVersionCode
+        versionName sdkVersionName
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     packagingOptions {
         exclude 'NOTICE'
