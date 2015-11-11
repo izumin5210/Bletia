@@ -39,7 +39,7 @@ public class BluetoothGattCallbackHandlerTest {
     private BluetoothGattCallbackHandler mCallbackHandler;
     private ActionQueueContainer mQueueContainer;
 
-    @Mock private BluetoothGattCallbackHandler.Callback mCallback;
+    @Mock private AbstractBletia.BleEventListener mListener;
     @Mock private BluetoothGattWrapper mGattWrapper;
     @Mock private BluetoothGattCharacteristic mCharacteristic;
     @Mock private BluetoothGattDescriptor mDescriptor;
@@ -57,7 +57,7 @@ public class BluetoothGattCallbackHandlerTest {
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
         mQueueContainer = Mockito.mock(ActionQueueContainer.class, Mockito.RETURNS_DEEP_STUBS);
-        mCallbackHandler = new BluetoothGattCallbackHandler(mCallback, mQueueContainer);
+        mCallbackHandler = new BluetoothGattCallbackHandler(mListener, mQueueContainer);
         when(mQueueContainer.getReadCharacteristicActionQueue().dequeue(any(UUID.class))).thenReturn(mReadCharacteristicAction);
         when(mQueueContainer.getWriteCharacteristicActionQueue().dequeue(any(UUID.class))).thenReturn(mWriteCharacteristicAction);
         when(mQueueContainer.getReadDescriptorActionQueue().dequeue(any(UUID.class))).thenReturn(mReadDescriptorAction);
@@ -72,19 +72,19 @@ public class BluetoothGattCallbackHandlerTest {
     @Test
     public void onConnectionStateChange_WhenStatusIsSuccessAndNewStateIsConnected() throws Exception {
         mCallbackHandler.onConnectionStateChange(mGattWrapper, BluetoothGatt.GATT_SUCCESS, BluetoothGatt.STATE_CONNECTED);
-        verify(mCallback, times(1)).onConnect(mGattWrapper);
+        verify(mListener, times(1)).onConnect(mGattWrapper);
     }
 
     @Test
     public void onConnectionStateChange_WhenStatusIsSuccessAndNewStateIsDisconnected() throws Exception {
         mCallbackHandler.onConnectionStateChange(mGattWrapper, BluetoothGatt.GATT_SUCCESS, BluetoothGatt.STATE_DISCONNECTED);
-        verify(mCallback, times(1)).onDisconnect(mGattWrapper);
+        verify(mListener, times(1)).onDisconnect(mGattWrapper);
     }
 
     @Test
     public void onConnectionStateChange_WhenStatusIsFailureAndNewStateIsConnected() throws Exception {
         mCallbackHandler.onConnectionStateChange(mGattWrapper, BluetoothGatt.GATT_FAILURE, BluetoothGatt.STATE_CONNECTED);
-        verify(mCallback, times(1)).onError(mExceptionCaptor.capture());
+        verify(mListener, times(1)).onError(mExceptionCaptor.capture());
         BletiaException e = mExceptionCaptor.getValue();
         assertThat(e.getTag()).isEqualTo("onConnectionStateChange");
     }
@@ -92,19 +92,19 @@ public class BluetoothGattCallbackHandlerTest {
     @Test
     public void onConnectionStateChange_WhenStatusIsFailureAndNewStateIsDisconnected() throws Exception {
         mCallbackHandler.onConnectionStateChange(mGattWrapper, BluetoothGatt.GATT_FAILURE, BluetoothGatt.STATE_DISCONNECTED);
-        verify(mCallback, times(1)).onDisconnect(mGattWrapper);
+        verify(mListener, times(1)).onDisconnect(mGattWrapper);
     }
 
     @Test
     public void onServiceDiscovered_WhenStatusIsSuccess() throws Exception {
         mCallbackHandler.onServicesDiscovered(mGattWrapper, BluetoothGatt.GATT_SUCCESS);
-        verify(mCallback, times(1)).onServiceDiscovered(BluetoothGatt.GATT_SUCCESS);
+        verify(mListener, times(1)).onServiceDiscovered(BluetoothGatt.GATT_SUCCESS);
     }
 
     @Test
     public void onServiceDiscovered_WhenStatusIsFailure() throws Exception {
         mCallbackHandler.onServicesDiscovered(mGattWrapper, BluetoothGatt.GATT_FAILURE);
-        verify(mCallback, times(1)).onServiceDiscovered(BluetoothGatt.GATT_FAILURE);
+        verify(mListener, times(1)).onServiceDiscovered(BluetoothGatt.GATT_FAILURE);
     }
 
     @Test
@@ -140,7 +140,7 @@ public class BluetoothGattCallbackHandlerTest {
     @Test
     public void onCharacteristicChanged() throws Exception {
         mCallbackHandler.onCharacteristicChanged(mGattWrapper, mCharacteristic);
-        verify(mCallback, times(1)).onCharacteristicChanged(mCharacteristic);
+        verify(mListener, times(1)).onCharacteristicChanged(mCharacteristic);
     }
 
     @Test
