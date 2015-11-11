@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.UUID;
 
 import info.izumin.android.bletia.core.action.AbstractAction;
-import info.izumin.android.bletia.core.helper.ConnectionHelper;
 import info.izumin.android.bletia.core.wrapper.BluetoothDeviceWrapper;
 import info.izumin.android.bletia.core.wrapper.BluetoothGattWrapper;
 
@@ -25,8 +24,6 @@ public abstract class AbstractBletia {
 
     private BleState mState = BleState.DISCONNECTED;
 
-    private ConnectionHelper mConnectionHelper;
-
     private ActionQueueContainer mQueueContainer;
     private BluetoothGattCallbackHandler mCallbackHandler;
     private BleMessageThread mMessageThread;
@@ -35,7 +32,6 @@ public abstract class AbstractBletia {
 
     public AbstractBletia(Context context) {
         mContext = context;
-        mConnectionHelper = new ConnectionHelper(mContext);
         mQueueContainer = new ActionQueueContainer();
         mCallbackHandler = new BluetoothGattCallbackHandler(mListener, mQueueContainer);
     }
@@ -54,7 +50,7 @@ public abstract class AbstractBletia {
 
     public void connect(BluetoothDevice device) {
         mState = BleState.CONNECTING;
-        mGattWrapper = mConnectionHelper.connect(new BluetoothDeviceWrapper(device), mCallbackHandler);
+        mGattWrapper = new BluetoothDeviceWrapper(device).connectGatt(mContext, false, mCallbackHandler);
 
         HandlerThread thread = new HandlerThread(device.getName());
         thread.start();
@@ -63,7 +59,7 @@ public abstract class AbstractBletia {
 
     public void disconenct() {
         mState = BleState.DISCONNECTING;
-        mConnectionHelper.disconnect();
+        mGattWrapper.disconnect();
         mMessageThread.stop();
     }
 
@@ -108,7 +104,7 @@ public abstract class AbstractBletia {
         @Override
         public void onDisconnect(BluetoothGattWrapper gatt) {
             mState = BleState.DISCONNECTED;
-            mConnectionHelper.close();
+            mGattWrapper.close();
             if (mSubListener != null) {
                 mSubListener.onDisconnect(gatt);
             }
