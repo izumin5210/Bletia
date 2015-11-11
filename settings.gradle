@@ -1,2 +1,3 @@
+include ':bletia-core'
+include ':bletia'
 include ':sample'
-include 'bletia'

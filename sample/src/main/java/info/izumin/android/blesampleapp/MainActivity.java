@@ -28,7 +28,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnItemClick;
 import info.izumin.android.bletia.Bletia;
-import info.izumin.android.bletia.BletiaException;
+import info.izumin.android.bletia.core.BletiaException;
 import info.izumin.android.bletia.BletiaListener;
 
 public class MainActivity extends AppCompatActivity {
