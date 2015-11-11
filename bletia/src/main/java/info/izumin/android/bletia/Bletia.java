@@ -29,8 +29,6 @@ import info.izumin.android.bletia.core.wrapper.BluetoothGattWrapper;
  */
 public class Bletia implements BluetoothGattCallbackHandler.Callback {
 
-    public static UUID CLIENT_CHARCTERISTIC_CONFIG = UUID.fromString("00002902-0000-1000-8000-00805f9b34fb");
-
     private Context mContext;
     private BluetoothGattWrapper mGattWrapper;
 

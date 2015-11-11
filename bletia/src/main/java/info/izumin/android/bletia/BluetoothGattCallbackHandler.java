@@ -8,7 +8,7 @@ import info.izumin.android.bletia.action.Action;
 import info.izumin.android.bletia.core.BletiaException;
 import info.izumin.android.bletia.core.action.ActionQueue;
 import info.izumin.android.bletia.core.BleErrorType;
-import info.izumin.android.bletia.util.NotificationUtils;
+import info.izumin.android.bletia.core.util.NotificationUtils;
 import info.izumin.android.bletia.core.wrapper.BluetoothGattCallbackWrapper;
 import info.izumin.android.bletia.core.wrapper.BluetoothGattWrapper;
 
@@ -65,7 +65,7 @@ class BluetoothGattCallbackHandler extends BluetoothGattCallbackWrapper {
 
     @Override
     public void onDescriptorWrite(BluetoothGattWrapper gatt, BluetoothGattDescriptor descriptor, int status) {
-        if (NotificationUtils.isEnableNotificationDescriptor(descriptor)) {
+        if (NotificationUtils.isEnabledNotificationDescriptor(descriptor)) {
             BluetoothGattCharacteristic characteristic = descriptor.getCharacteristic();
             handleAction(mQueueContainer.getEnableNotificationActionQueue(), characteristic, characteristic.getUuid(), status);
         } else {

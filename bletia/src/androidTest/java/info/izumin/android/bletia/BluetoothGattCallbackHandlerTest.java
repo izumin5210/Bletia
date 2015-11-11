@@ -24,6 +24,7 @@ import info.izumin.android.bletia.action.WriteCharacteristicAction;
 import info.izumin.android.bletia.action.WriteDescriptorAction;
 import info.izumin.android.bletia.core.BleErrorType;
 import info.izumin.android.bletia.core.BletiaException;
+import info.izumin.android.bletia.core.util.NotificationUtils;
 import info.izumin.android.bletia.core.wrapper.BluetoothGattWrapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -187,7 +188,7 @@ public class BluetoothGattCallbackHandlerTest {
 
     @Test
     public void onDescriptorWrite_ThatIsNotificationDescriptor_WhenStatusIsSuccess() throws Exception {
-        when(mDescriptor.getUuid()).thenReturn(Bletia.CLIENT_CHARCTERISTIC_CONFIG);
+        when(mDescriptor.getUuid()).thenReturn(NotificationUtils.DESCRIPTOR_UUID);
         when(mDescriptor.getValue()).thenReturn(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
         mCallbackHandler.onDescriptorWrite(mGattWrapper, mDescriptor, BluetoothGatt.GATT_SUCCESS);
         verify(mCharacteristicDeferred, times(1)).resolve(mCharacteristic);
@@ -195,7 +196,7 @@ public class BluetoothGattCallbackHandlerTest {
 
     @Test
     public void onDescriptorWrite_ThatIsNotificationDescriptor_WhenStatusIsFailure() throws Exception {
-        when(mDescriptor.getUuid()).thenReturn(Bletia.CLIENT_CHARCTERISTIC_CONFIG);
+        when(mDescriptor.getUuid()).thenReturn(NotificationUtils.DESCRIPTOR_UUID);
         when(mDescriptor.getValue()).thenReturn(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
         mCallbackHandler.onDescriptorWrite(mGattWrapper, mDescriptor, BluetoothGatt.GATT_FAILURE);
         verify(mCharacteristicDeferred, times(1)).reject(mExceptionCaptor.capture());
