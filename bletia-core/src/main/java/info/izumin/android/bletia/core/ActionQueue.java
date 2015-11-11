@@ -1,10 +1,11 @@
-package info.izumin.android.bletia.core.action;
+package info.izumin.android.bletia.core;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import info.izumin.android.bletia.core.action.AbstractAction;
 import info.izumin.android.bletia.core.wrapper.BluetoothGattWrapper;
 
 /**

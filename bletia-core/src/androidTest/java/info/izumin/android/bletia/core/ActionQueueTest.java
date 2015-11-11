@@ -1,4 +1,4 @@
-package info.izumin.android.bletia.core.action;
+package info.izumin.android.bletia.core;
 
 import android.support.test.runner.AndroidJUnit4;
 
@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.Map;
 
 import info.izumin.android.bletia.core.action.AbstractAction;
-import info.izumin.android.bletia.core.action.ActionQueue;
 import info.izumin.android.bletia.core.wrapper.BluetoothGattWrapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
