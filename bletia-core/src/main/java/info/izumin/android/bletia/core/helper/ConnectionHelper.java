@@ -1,4 +1,4 @@
-package info.izumin.android.bletia.helper;
+package info.izumin.android.bletia.core.helper;
 
 import android.bluetooth.BluetoothGattCallback;
 import android.content.Context;

@@ -27,7 +27,7 @@ import info.izumin.android.bletia.core.BluetoothGattCallbackHandler;
 import info.izumin.android.bletia.core.action.AbstractAction;
 import info.izumin.android.bletia.core.wrapper.BluetoothDeviceWrapper;
 import info.izumin.android.bletia.core.wrapper.BluetoothGattWrapper;
-import info.izumin.android.bletia.helper.ConnectionHelper;
+import info.izumin.android.bletia.core.helper.ConnectionHelper;
 
 /**
  * Created by izumin on 9/7/15.
