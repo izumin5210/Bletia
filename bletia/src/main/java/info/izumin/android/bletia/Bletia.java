@@ -12,18 +12,22 @@ import org.jdeferred.Promise;
 import java.util.List;
 import java.util.UUID;
 
-import info.izumin.android.bletia.action.Action;
+import info.izumin.android.bletia.action.DeferredStrategy;
 import info.izumin.android.bletia.action.EnableNotificationAction;
 import info.izumin.android.bletia.action.ReadCharacteristicAction;
 import info.izumin.android.bletia.action.ReadDescriptorAction;
 import info.izumin.android.bletia.action.ReadRemoteRssiAction;
 import info.izumin.android.bletia.action.WriteCharacteristicAction;
 import info.izumin.android.bletia.action.WriteDescriptorAction;
+import info.izumin.android.bletia.core.ActionQueueContainer;
+import info.izumin.android.bletia.core.BleMessageThread;
 import info.izumin.android.bletia.core.BleState;
 import info.izumin.android.bletia.core.BletiaException;
-import info.izumin.android.bletia.helper.ConnectionHelper;
+import info.izumin.android.bletia.core.BluetoothGattCallbackHandler;
+import info.izumin.android.bletia.core.action.AbstractAction;
 import info.izumin.android.bletia.core.wrapper.BluetoothDeviceWrapper;
 import info.izumin.android.bletia.core.wrapper.BluetoothGattWrapper;
+import info.izumin.android.bletia.helper.ConnectionHelper;
 
 /**
  * Created by izumin on 9/7/15.
@@ -102,8 +106,9 @@ public class Bletia implements BluetoothGattCallbackHandler.Callback {
         return (mGattWrapper == null) ? null : mGattWrapper.getDevice();
     }
 
-    public <T> Promise<T, BletiaException, Void> execute(Action<T, ?> action) {
-        return mMessageThread.execute(action);
+    public <T, E extends Throwable> Promise<T, E, Void> execute(AbstractAction<T, E, ?> action) {
+        mMessageThread.dispatchAction(action);
+        return ((DeferredStrategy<T, E>) action.getResolveStrategy()).getDeferred().promise();
     }
 
     public Promise<BluetoothGattCharacteristic, BletiaException, Void> writeCharacteristic(BluetoothGattCharacteristic characteristic) {
