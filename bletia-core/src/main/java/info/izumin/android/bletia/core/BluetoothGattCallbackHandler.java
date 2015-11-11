@@ -14,30 +14,30 @@ import info.izumin.android.bletia.core.wrapper.BluetoothGattWrapper;
  */
 public class BluetoothGattCallbackHandler extends BluetoothGattCallbackWrapper {
 
-    private Callback mCallback;
+    private AbstractBletia.BleEventListener mListener;
     private ActionQueueContainer mQueueContainer;
 
-    public BluetoothGattCallbackHandler(Callback callback, ActionQueueContainer queueContainer) {
-        mCallback = callback;
+    public BluetoothGattCallbackHandler(AbstractBletia.BleEventListener listener, ActionQueueContainer queueContainer) {
+        mListener = listener;
         mQueueContainer = queueContainer;
     }
 
     @Override
     public void onConnectionStateChange(BluetoothGattWrapper gatt, int status, int newState) {
         if (newState == BluetoothGatt.STATE_DISCONNECTED) {
-            mCallback.onDisconnect(gatt);
+            mListener.onDisconnect(gatt);
         } else if (status == BluetoothGatt.GATT_SUCCESS) {
             if (newState == BluetoothGatt.STATE_CONNECTED) {
-                mCallback.onConnect(gatt);
+                mListener.onConnect(gatt);
             }
         } else {
-            mCallback.onError(new BletiaException(BleErrorType.valueOf(status)));
+            mListener.onError(new BletiaException(BleErrorType.valueOf(status)));
         }
     }
 
     @Override
     public void onServicesDiscovered(BluetoothGattWrapper gatt, int status) {
-        mCallback.onServiceDiscovered(status);
+        mListener.onServiceDiscovered(status);
     }
 
     @Override
@@ -52,7 +52,7 @@ public class BluetoothGattCallbackHandler extends BluetoothGattCallbackWrapper {
 
     @Override
     public void onCharacteristicChanged(BluetoothGattWrapper gatt, BluetoothGattCharacteristic characteristic) {
-        mCallback.onCharacteristicChanged(characteristic);
+        mListener.onCharacteristicChanged(characteristic);
     }
 
     @Override
@@ -92,13 +92,5 @@ public class BluetoothGattCallbackHandler extends BluetoothGattCallbackWrapper {
         } else {
             action.reject(new BletiaException(action, BleErrorType.valueOf(status)));
         }
-    }
-
-    public interface Callback {
-        void onConnect(BluetoothGattWrapper gatt);
-        void onDisconnect(BluetoothGattWrapper gatt);
-        void onServiceDiscovered(int status);
-        void onCharacteristicChanged(BluetoothGattCharacteristic characteristic);
-        void onError(BletiaException exception);
     }
 }
