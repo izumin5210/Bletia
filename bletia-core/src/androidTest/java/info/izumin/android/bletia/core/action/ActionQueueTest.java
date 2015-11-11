@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import info.izumin.android.bletia.core.BletiaException;
 import info.izumin.android.bletia.core.wrapper.BluetoothGattWrapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -24,7 +25,7 @@ import static org.mockito.Mockito.when;
  * Created by izumin on 10/5/15.
  */
 public class ActionQueueTest {
-    public class ActionImpl extends Action<String> {
+    public class ActionImpl extends Action<String, String> {
         public ActionImpl(String identity) {
             super(identity);
         }
@@ -37,6 +38,16 @@ public class ActionQueueTest {
         @Override
         public boolean execute(BluetoothGattWrapper gattWrapper) {
             return true;
+        }
+
+        @Override
+        public void resolve(String value) {
+
+        }
+
+        @Override
+        public void reject(BletiaException throwable) {
+
         }
     }
 

@@ -4,7 +4,7 @@ import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattDescriptor;
 
-import info.izumin.android.bletia.action.Action;
+import info.izumin.android.bletia.core.action.Action;
 import info.izumin.android.bletia.core.BletiaException;
 import info.izumin.android.bletia.core.action.ActionQueue;
 import info.izumin.android.bletia.core.BleErrorType;
@@ -91,9 +91,9 @@ class BluetoothGattCallbackHandler extends BluetoothGattCallbackWrapper {
     private <A extends Action<T, I>, T, I> void handleAction(ActionQueue<A, I> queue, T result, I identity, int status) {
         A action = queue.dequeue(identity);
         if (status == BluetoothGatt.GATT_SUCCESS) {
-            action.getDeferred().resolve(result);
+            action.resolve(result);
         } else {
-            action.getDeferred().reject(new BletiaException(action, BleErrorType.valueOf(status)));
+            action.reject(new BletiaException(action, BleErrorType.valueOf(status)));
         }
     }
 

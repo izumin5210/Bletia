@@ -3,12 +3,13 @@ package info.izumin.android.bletia.core.action;
 import android.os.Bundle;
 import android.os.Message;
 
+import info.izumin.android.bletia.core.BletiaException;
 import info.izumin.android.bletia.core.wrapper.BluetoothGattWrapper;
 
 /**
  * Created by izumin on 10/9/15.
  */
-public abstract class Action<I> {
+public abstract class Action<T, I> {
     public enum Type {
         WRITE_CHARACTERISTIC(1),
         READ_CHARACTERISTIC(2),
@@ -60,4 +61,6 @@ public abstract class Action<I> {
 
     public abstract Type getType();
     public abstract boolean execute(BluetoothGattWrapper gattWrapper);
+    public abstract void resolve(T value);
+    public abstract void reject(BletiaException throwable);
 }
