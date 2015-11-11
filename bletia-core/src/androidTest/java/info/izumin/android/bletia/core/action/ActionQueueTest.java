@@ -1,7 +1,10 @@
 package info.izumin.android.bletia.core.action;
 
+import android.support.test.runner.AndroidJUnit4;
+
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
@@ -12,7 +15,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import info.izumin.android.bletia.core.BletiaException;
+import info.izumin.android.bletia.core.action.AbstractAction;
+import info.izumin.android.bletia.core.action.ActionQueue;
 import info.izumin.android.bletia.core.wrapper.BluetoothGattWrapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -24,30 +28,16 @@ import static org.mockito.Mockito.when;
 /**
  * Created by izumin on 10/5/15.
  */
+@RunWith(AndroidJUnit4.class)
 public class ActionQueueTest {
-    public class ActionImpl extends AbstractAction<String, String> {
+    public class ActionImpl extends AbstractAction<String, Exception, String> {
         public ActionImpl(String identity) {
-            super(identity);
-        }
-
-        @Override
-        public Type getType() {
-            return null;
+            super(identity, null, null);
         }
 
         @Override
         public boolean execute(BluetoothGattWrapper gattWrapper) {
-            return true;
-        }
-
-        @Override
-        public void resolve(String value) {
-
-        }
-
-        @Override
-        public void reject(BletiaException throwable) {
-
+            return false;
         }
     }
 
@@ -61,7 +51,7 @@ public class ActionQueueTest {
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
         mQueue = new ActionQueue<>();
-        when(mAction.getIdentity()).thenReturn("test");
+        Whitebox.setInternalState(mAction, "mIdentity", "test");
         Whitebox.setInternalState(mQueue, "mWaitingActionList", mWaitingActionList);
         Whitebox.setInternalState(mQueue, "mRunningActionMap", mRunningActionMap);
         mWaitingActionList.add(mAction);

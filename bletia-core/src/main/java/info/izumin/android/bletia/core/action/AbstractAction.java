@@ -3,13 +3,15 @@ package info.izumin.android.bletia.core.action;
 import android.os.Bundle;
 import android.os.Message;
 
-import info.izumin.android.bletia.core.BletiaException;
+import java.io.Serializable;
+
+import info.izumin.android.bletia.core.ResolveStrategy;
 import info.izumin.android.bletia.core.wrapper.BluetoothGattWrapper;
 
 /**
  * Created by izumin on 10/9/15.
  */
-public abstract class AbstractAction<T, I> {
+public abstract class AbstractAction<T, E extends Throwable, I> {
     public enum Type {
         WRITE_CHARACTERISTIC(1),
         READ_CHARACTERISTIC(2),
@@ -36,31 +38,52 @@ public abstract class AbstractAction<T, I> {
         }
     }
 
-    public static final String KEY_UUID = "key_uuid";
+    public static final String KEY_IDENTITY = "key_identity";
 
     private final I mIdentity;
+    private final Type mType;
+    private final ResolveStrategy<T, E> mResolveStrategy;
 
-    public AbstractAction(I identity) {
+    public AbstractAction(I identity, Type type, ResolveStrategy<T, E> resolveStrategy) {
         mIdentity = identity;
+        mType = type;
+        mResolveStrategy = resolveStrategy;
     }
 
-    public I getIdentity() {
+    public final I getIdentity() {
         return mIdentity;
     }
 
-    public Message obtainMessage() {
+    public final Type getType() {
+        return mType;
+    }
+
+    public final ResolveStrategy<T, E> getResolveStrategy() {
+        return mResolveStrategy;
+    }
+
+    public void resolve(T value) {
+        mResolveStrategy.resolve(value);
+    }
+
+    public void reject(E throwable) {
+        mResolveStrategy.reject(throwable);
+    }
+
+    public final Message obtainMessage() {
         Message message = Message.obtain();
-        message.what = getType().getCode();
+        message.what = mType.getCode();
         message.setData(getBundle());
         return message;
     }
 
     public Bundle getBundle() {
-        return new Bundle();
+        Bundle bundle = new Bundle();
+        if (mIdentity instanceof Serializable) {
+            bundle.putSerializable(KEY_IDENTITY, (Serializable) mIdentity);
+        }
+        return bundle;
     }
 
-    public abstract Type getType();
     public abstract boolean execute(BluetoothGattWrapper gattWrapper);
-    public abstract void resolve(T value);
-    public abstract void reject(BletiaException throwable);
 }
