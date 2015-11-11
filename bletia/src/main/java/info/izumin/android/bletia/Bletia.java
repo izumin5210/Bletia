@@ -9,6 +9,7 @@ import android.os.HandlerThread;
 
 import org.jdeferred.Promise;
 
+import java.util.List;
 import java.util.UUID;
 
 import info.izumin.android.bletia.action.Action;
@@ -53,6 +54,14 @@ public class Bletia implements BluetoothGattCallbackHandler.Callback {
         return mState;
     }
 
+    public boolean isConnected() {
+        return (mState == BleState.CONNECTED) || (mState == BleState.SERVICE_DISCOVERING) || isReady();
+    }
+
+    public boolean isReady() {
+        return mState == BleState.SERVICE_DISCOVERED;
+    }
+
     public void addListener(BletiaListener listener) {
         mEmitter.addListener(listener);
     }
@@ -83,6 +92,14 @@ public class Bletia implements BluetoothGattCallbackHandler.Callback {
 
     public BluetoothGattService getService(UUID uuid) {
         return mGattWrapper.getService(uuid);
+    }
+
+    public List<BluetoothGattService> getServices() {
+        return mGattWrapper.getServices();
+    }
+
+    public BluetoothDevice getDevice() {
+        return (mGattWrapper == null) ? null : mGattWrapper.getDevice();
     }
 
     public <T> Promise<T, BletiaException, Void> execute(Action<T, ?> action) {
