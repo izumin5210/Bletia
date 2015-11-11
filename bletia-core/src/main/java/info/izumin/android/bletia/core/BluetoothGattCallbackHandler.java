@@ -1,13 +1,10 @@
-package info.izumin.android.bletia;
+package info.izumin.android.bletia.core;
 
 import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattDescriptor;
 
 import info.izumin.android.bletia.core.action.AbstractAction;
-import info.izumin.android.bletia.core.BletiaException;
-import info.izumin.android.bletia.core.action.ActionQueue;
-import info.izumin.android.bletia.core.BleErrorType;
 import info.izumin.android.bletia.core.util.NotificationUtils;
 import info.izumin.android.bletia.core.wrapper.BluetoothGattCallbackWrapper;
 import info.izumin.android.bletia.core.wrapper.BluetoothGattWrapper;
@@ -15,7 +12,7 @@ import info.izumin.android.bletia.core.wrapper.BluetoothGattWrapper;
 /**
  * Created by izumin on 9/7/15.
  */
-class BluetoothGattCallbackHandler extends BluetoothGattCallbackWrapper {
+public class BluetoothGattCallbackHandler extends BluetoothGattCallbackWrapper {
 
     private Callback mCallback;
     private ActionQueueContainer mQueueContainer;
@@ -88,7 +85,7 @@ class BluetoothGattCallbackHandler extends BluetoothGattCallbackWrapper {
         // TODO: Not yet implemented.
     }
 
-    private <A extends AbstractAction<T, I>, T, I> void handleAction(ActionQueue<A, I> queue, T result, I identity, int status) {
+    private <A extends AbstractAction<T, BletiaException, I>, T, I> void handleAction(ActionQueue<A, I> queue, T result, I identity, int status) {
         A action = queue.dequeue(identity);
         if (status == BluetoothGatt.GATT_SUCCESS) {
             action.resolve(result);
@@ -97,7 +94,7 @@ class BluetoothGattCallbackHandler extends BluetoothGattCallbackWrapper {
         }
     }
 
-    interface Callback {
+    public interface Callback {
         void onConnect(BluetoothGattWrapper gatt);
         void onDisconnect(BluetoothGattWrapper gatt);
         void onServiceDiscovered(int status);
