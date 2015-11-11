@@ -32,6 +32,7 @@ android {
 }
 
 dependencies {
+    compile project(':bletia-core')
     compile 'org.jdeferred:jdeferred-android-aar:1.2.4'
 
     androidTestCompile 'com.android.support.test:runner:0.3'
