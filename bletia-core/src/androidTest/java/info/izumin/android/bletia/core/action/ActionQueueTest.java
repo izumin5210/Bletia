@@ -25,7 +25,7 @@ import static org.mockito.Mockito.when;
  * Created by izumin on 10/5/15.
  */
 public class ActionQueueTest {
-    public class ActionImpl extends Action<String, String> {
+    public class ActionImpl extends AbstractAction<String, String> {
         public ActionImpl(String identity) {
             super(identity);
         }

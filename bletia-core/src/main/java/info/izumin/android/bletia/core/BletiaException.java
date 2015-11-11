@@ -1,6 +1,6 @@
 package info.izumin.android.bletia.core;
 
-import info.izumin.android.bletia.core.action.Action;
+import info.izumin.android.bletia.core.action.AbstractAction;
 
 /**
  * Created by izumin on 9/14/15.
@@ -9,13 +9,13 @@ public class BletiaException extends Exception {
 
     private final String mTag;
     private final BletiaErrorType mType;
-    private Action mAction = null;
+    private AbstractAction mAction = null;
 
-    public BletiaException(Action action, BletiaErrorType type) {
+    public BletiaException(AbstractAction action, BletiaErrorType type) {
         this(action, type.getName(), type);
     }
 
-    public BletiaException(Action action, String detailMessage, BletiaErrorType type) {
+    public BletiaException(AbstractAction action, String detailMessage, BletiaErrorType type) {
         this(action.getClass().getSimpleName(), detailMessage, type);
         mAction = action;
     }
@@ -49,7 +49,7 @@ public class BletiaException extends Exception {
         return mType;
     }
 
-    public Action getAction() {
+    public AbstractAction getAction() {
         return mAction;
     }
 }

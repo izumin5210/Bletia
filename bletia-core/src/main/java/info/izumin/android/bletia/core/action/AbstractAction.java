@@ -9,7 +9,7 @@ import info.izumin.android.bletia.core.wrapper.BluetoothGattWrapper;
 /**
  * Created by izumin on 10/9/15.
  */
-public abstract class Action<T, I> {
+public abstract class AbstractAction<T, I> {
     public enum Type {
         WRITE_CHARACTERISTIC(1),
         READ_CHARACTERISTIC(2),
@@ -40,7 +40,7 @@ public abstract class Action<T, I> {
 
     private final I mIdentity;
 
-    public Action(I identity) {
+    public AbstractAction(I identity) {
         mIdentity = identity;
     }
 

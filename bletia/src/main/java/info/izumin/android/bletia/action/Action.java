@@ -4,11 +4,12 @@ import org.jdeferred.Deferred;
 import org.jdeferred.impl.DeferredObject;
 
 import info.izumin.android.bletia.core.BletiaException;
+import info.izumin.android.bletia.core.action.AbstractAction;
 
 /**
  * Created by izumin on 9/15/15.
  */
-public abstract class Action<T, I> extends info.izumin.android.bletia.core.action.Action<T, I> {
+public abstract class Action<T, I> extends AbstractAction<T, I> {
 
     private final Deferred<T, BletiaException, Void> mDeferred;
 
