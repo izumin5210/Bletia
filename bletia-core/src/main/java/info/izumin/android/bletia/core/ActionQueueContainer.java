@@ -13,7 +13,7 @@ import info.izumin.android.bletia.core.action.AbstractWriteDescriptorAction;
 /**
  * Created by izumin on 10/3/15.
  */
-class ActionQueueContainer {
+public class ActionQueueContainer {
     private ActionQueue<AbstractReadCharacteristicAction, UUID> mReadCharacteristicActionQueue;
     private ActionQueue<AbstractWriteCharacteristicAction, UUID> mWriteCharacteristicActionQueue;
     private ActionQueue<AbstractReadDescriptorAction, UUID> mReadDescriptorActionQueue;
