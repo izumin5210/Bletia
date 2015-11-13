@@ -14,6 +14,7 @@ import info.izumin.android.bletia.core.action.AbstractWriteDescriptorAction;
  * Created by izumin on 10/3/15.
  */
 public class StateContainer {
+    private BleState mState;
     private ActionQueue<AbstractReadCharacteristicAction, UUID> mReadCharacteristicActionQueue;
     private ActionQueue<AbstractWriteCharacteristicAction, UUID> mWriteCharacteristicActionQueue;
     private ActionQueue<AbstractReadDescriptorAction, UUID> mReadDescriptorActionQueue;
@@ -22,12 +23,21 @@ public class StateContainer {
     private ActionQueue<AbstractReadRemoteRssiAction, Void> mReadRemoteRssiActionQueue;
 
     public StateContainer() {
+        mState = BleState.DISCONNECTED;
         mReadCharacteristicActionQueue = new ActionQueue<>();
         mWriteCharacteristicActionQueue = new ActionQueue<>();
         mReadDescriptorActionQueue = new ActionQueue<>();
         mWriteDescriptorActionQueue = new ActionQueue<>();
         mEnableNotificationActionQueue = new ActionQueue<>();
         mReadRemoteRssiActionQueue = new ActionQueue<>();
+    }
+
+    public BleState getState() {
+        return mState;
+    }
+
+    public void setState(BleState state) {
+        mState = state;
     }
 
     public ActionQueue<AbstractReadCharacteristicAction, UUID> getReadCharacteristicActionQueue() {
