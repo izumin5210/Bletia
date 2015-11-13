@@ -2,6 +2,7 @@ package info.izumin.android.bletia.action;
 
 import android.bluetooth.BluetoothGattCharacteristic;
 
+import info.izumin.android.bletia.DeferredResolver;
 import info.izumin.android.bletia.core.BletiaException;
 import info.izumin.android.bletia.core.action.AbstractWriteCharacteristicAction;
 
@@ -11,6 +12,6 @@ import info.izumin.android.bletia.core.action.AbstractWriteCharacteristicAction;
 public class WriteCharacteristicAction extends AbstractWriteCharacteristicAction {
 
     public WriteCharacteristicAction(BluetoothGattCharacteristic characteristic) {
-        super(characteristic, new DeferredStrategy<BluetoothGattCharacteristic, BletiaException>());
+        super(characteristic, new DeferredResolver<BluetoothGattCharacteristic, BletiaException>());
     }
 }

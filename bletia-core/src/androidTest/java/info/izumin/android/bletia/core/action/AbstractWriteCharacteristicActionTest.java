@@ -12,7 +12,7 @@ import org.mockito.MockitoAnnotations;
 
 import info.izumin.android.bletia.core.BleErrorType;
 import info.izumin.android.bletia.core.BletiaException;
-import info.izumin.android.bletia.core.ResolveStrategy;
+import info.izumin.android.bletia.core.ActionResolver;
 import info.izumin.android.bletia.core.wrapper.BluetoothGattWrapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -30,14 +30,14 @@ public class AbstractWriteCharacteristicActionTest {
     public static final String TAG = AbstractWriteCharacteristicActionTest.class.getSimpleName();
 
     class ActionImpl extends AbstractWriteCharacteristicAction {
-        public ActionImpl(BluetoothGattCharacteristic characteristic, ResolveStrategy<BluetoothGattCharacteristic, BletiaException> resolveStrategy) {
-            super(characteristic, resolveStrategy);
+        public ActionImpl(BluetoothGattCharacteristic characteristic, ActionResolver<BluetoothGattCharacteristic, BletiaException> actionResolver) {
+            super(characteristic, actionResolver);
         }
     }
 
     @Mock private BluetoothGattWrapper mGattWrapper;
     @Mock private BluetoothGattCharacteristic mCharacteristic;
-    @Mock private ResolveStrategy<BluetoothGattCharacteristic, BletiaException> mStrategy;
+    @Mock private ActionResolver<BluetoothGattCharacteristic, BletiaException> mResolver;
 
     private ActionImpl mAction;
     private ArgumentCaptor<BletiaException> mExceptionCaptor;
@@ -45,7 +45,7 @@ public class AbstractWriteCharacteristicActionTest {
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        mAction = new ActionImpl(mCharacteristic, mStrategy);
+        mAction = new ActionImpl(mCharacteristic, mResolver);
         mExceptionCaptor = ArgumentCaptor.forClass(BletiaException.class);
     }
 
@@ -53,7 +53,7 @@ public class AbstractWriteCharacteristicActionTest {
     public void executeWhenWriteCharacteristicReturnsFalse() throws Exception {
         when(mGattWrapper.writeCharacteristic(any(BluetoothGattCharacteristic.class))).thenReturn(false);
         assertThat(mAction.execute(mGattWrapper)).isFalse();
-        verify(mStrategy, times(1)).reject(mExceptionCaptor.capture());
+        verify(mResolver, times(1)).reject(mExceptionCaptor.capture());
         assertThat(mExceptionCaptor.getValue().getType()).isEqualTo(BleErrorType.OPERATION_INITIATED_FAILURE);
     }
 
@@ -61,7 +61,7 @@ public class AbstractWriteCharacteristicActionTest {
     public void executeWhenWriteCharacteristicReturnsTrue() throws Exception {
         when(mGattWrapper.writeCharacteristic(any(BluetoothGattCharacteristic.class))).thenReturn(true);
         assertThat(mAction.execute(mGattWrapper)).isTrue();
-        verify(mStrategy, never()).reject(any(BletiaException.class));
+        verify(mResolver, never()).reject(any(BletiaException.class));
     }
 }
 

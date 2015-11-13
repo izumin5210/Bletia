@@ -2,6 +2,7 @@ package info.izumin.android.bletia.action;
 
 import android.bluetooth.BluetoothGattDescriptor;
 
+import info.izumin.android.bletia.DeferredResolver;
 import info.izumin.android.bletia.core.BletiaException;
 import info.izumin.android.bletia.core.action.AbstractReadDescriptorAction;
 
@@ -11,6 +12,6 @@ import info.izumin.android.bletia.core.action.AbstractReadDescriptorAction;
 public class ReadDescriptorAction extends AbstractReadDescriptorAction {
 
     public ReadDescriptorAction(BluetoothGattDescriptor descriptor) {
-        super(descriptor, new DeferredStrategy<BluetoothGattDescriptor, BletiaException>());
+        super(descriptor, new DeferredResolver<BluetoothGattDescriptor, BletiaException>());
     }
 }

@@ -11,7 +11,7 @@ import org.mockito.MockitoAnnotations;
 
 import info.izumin.android.bletia.core.BleErrorType;
 import info.izumin.android.bletia.core.BletiaException;
-import info.izumin.android.bletia.core.ResolveStrategy;
+import info.izumin.android.bletia.core.ActionResolver;
 import info.izumin.android.bletia.core.wrapper.BluetoothGattWrapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -29,13 +29,13 @@ public class AbstractReadRemoteRssiActionTest {
     public static final String TAG = AbstractReadRemoteRssiActionTest.class.getSimpleName();
 
     class ActionImpl extends AbstractReadRemoteRssiAction {
-        public ActionImpl(ResolveStrategy<Integer, BletiaException> resolveStrategy) {
-            super(resolveStrategy);
+        public ActionImpl(ActionResolver<Integer, BletiaException> actionResolver) {
+            super(actionResolver);
         }
     }
 
     @Mock private BluetoothGattWrapper mGattWrapper;
-    @Mock private ResolveStrategy<Integer, BletiaException> mStrategy;
+    @Mock private ActionResolver<Integer, BletiaException> mResolver;
 
     private ActionImpl mAction;
     private ArgumentCaptor<BletiaException> mExceptionCaptor;
@@ -43,7 +43,7 @@ public class AbstractReadRemoteRssiActionTest {
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        mAction = new ActionImpl(mStrategy);
+        mAction = new ActionImpl(mResolver);
         mExceptionCaptor = ArgumentCaptor.forClass(BletiaException.class);
     }
 
@@ -51,7 +51,7 @@ public class AbstractReadRemoteRssiActionTest {
     public void executeWhenReadRemoteRssiReturnsFalse() throws Exception {
         when(mGattWrapper.readRemoteRssi()).thenReturn(false);
         assertThat(mAction.execute(mGattWrapper)).isFalse();
-        verify(mStrategy, times(1)).reject(mExceptionCaptor.capture());
+        verify(mResolver, times(1)).reject(mExceptionCaptor.capture());
         assertThat(mExceptionCaptor.getValue().getType()).isEqualTo(BleErrorType.REQUEST_FAILURE);
     }
 
@@ -59,7 +59,7 @@ public class AbstractReadRemoteRssiActionTest {
     public void executeWhenReadRemoteRssiReturnsTrue() throws Exception {
         when(mGattWrapper.readRemoteRssi()).thenReturn(true);
         assertThat(mAction.execute(mGattWrapper)).isTrue();
-        verify(mStrategy, never()).reject(any(BletiaException.class));
+        verify(mResolver, never()).reject(any(BletiaException.class));
     }
 }
 

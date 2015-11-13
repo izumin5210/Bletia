@@ -12,7 +12,7 @@ import org.mockito.MockitoAnnotations;
 
 import info.izumin.android.bletia.core.BleErrorType;
 import info.izumin.android.bletia.core.BletiaException;
-import info.izumin.android.bletia.core.ResolveStrategy;
+import info.izumin.android.bletia.core.ActionResolver;
 import info.izumin.android.bletia.core.wrapper.BluetoothGattWrapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -30,14 +30,14 @@ public class AbstractReadDescriptorActionTest {
     public static final String TAG = AbstractReadDescriptorActionTest.class.getSimpleName();
 
     class ActionImpl extends AbstractReadDescriptorAction {
-        public ActionImpl(BluetoothGattDescriptor descriptor, ResolveStrategy<BluetoothGattDescriptor, BletiaException> resolveStrategy) {
-            super(descriptor, resolveStrategy);
+        public ActionImpl(BluetoothGattDescriptor descriptor, ActionResolver<BluetoothGattDescriptor, BletiaException> actionResolver) {
+            super(descriptor, actionResolver);
         }
     }
 
     @Mock private BluetoothGattWrapper mGattWrapper;
     @Mock private BluetoothGattDescriptor mDescriptor;
-    @Mock private ResolveStrategy<BluetoothGattDescriptor, BletiaException> mStrategy;
+    @Mock private ActionResolver<BluetoothGattDescriptor, BletiaException> mResolver;
 
     private ActionImpl mAction;
     private ArgumentCaptor<BletiaException> mExceptionCaptor;
@@ -45,7 +45,7 @@ public class AbstractReadDescriptorActionTest {
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        mAction = new ActionImpl(mDescriptor, mStrategy);
+        mAction = new ActionImpl(mDescriptor, mResolver);
         mExceptionCaptor = ArgumentCaptor.forClass(BletiaException.class);
     }
 
@@ -53,7 +53,7 @@ public class AbstractReadDescriptorActionTest {
     public void executeWhenReadDescriptorReturnsFalse() throws Exception {
         when(mGattWrapper.readDescriptor(any(BluetoothGattDescriptor.class))).thenReturn(false);
         assertThat(mAction.execute(mGattWrapper)).isFalse();
-        verify(mStrategy, times(1)).reject(mExceptionCaptor.capture());
+        verify(mResolver, times(1)).reject(mExceptionCaptor.capture());
         assertThat(mExceptionCaptor.getValue().getType()).isEqualTo(BleErrorType.OPERATION_INITIATED_FAILURE);
     }
 
@@ -61,7 +61,7 @@ public class AbstractReadDescriptorActionTest {
     public void executeWhenReadDescriptorReturnsTrue() throws Exception {
         when(mGattWrapper.readDescriptor(any(BluetoothGattDescriptor.class))).thenReturn(true);
         assertThat(mAction.execute(mGattWrapper)).isTrue();
-        verify(mStrategy, never()).reject(any(BletiaException.class));
+        verify(mResolver, never()).reject(any(BletiaException.class));
     }
 }
 
