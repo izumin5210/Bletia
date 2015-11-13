@@ -1,4 +1,4 @@
-package info.izumin.android.bletia.action;
+package info.izumin.android.bletia;
 
 import org.jdeferred.impl.DeferredObject;
 
