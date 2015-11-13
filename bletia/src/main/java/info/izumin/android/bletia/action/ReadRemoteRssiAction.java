@@ -1,5 +1,6 @@
 package info.izumin.android.bletia.action;
 
+import info.izumin.android.bletia.DeferredResolver;
 import info.izumin.android.bletia.core.BletiaException;
 import info.izumin.android.bletia.core.action.AbstractReadRemoteRssiAction;
 
@@ -9,6 +10,6 @@ import info.izumin.android.bletia.core.action.AbstractReadRemoteRssiAction;
 public class ReadRemoteRssiAction extends AbstractReadRemoteRssiAction {
 
     public ReadRemoteRssiAction() {
-        super(new DeferredStrategy<Integer, BletiaException>());
+        super(new DeferredResolver<Integer, BletiaException>());
     }
 }

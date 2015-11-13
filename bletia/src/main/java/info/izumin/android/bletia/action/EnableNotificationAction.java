@@ -2,6 +2,7 @@ package info.izumin.android.bletia.action;
 
 import android.bluetooth.BluetoothGattCharacteristic;
 
+import info.izumin.android.bletia.DeferredResolver;
 import info.izumin.android.bletia.core.BletiaException;
 import info.izumin.android.bletia.core.action.AbstractEnableNotificationAction;
 
@@ -11,6 +12,6 @@ import info.izumin.android.bletia.core.action.AbstractEnableNotificationAction;
 public class EnableNotificationAction extends AbstractEnableNotificationAction {
 
     public EnableNotificationAction(BluetoothGattCharacteristic characteristic, boolean enabled) {
-        super(characteristic, enabled, new DeferredStrategy<BluetoothGattCharacteristic, BletiaException>());
+        super(characteristic, enabled, new DeferredResolver<BluetoothGattCharacteristic, BletiaException>());
     }
 }

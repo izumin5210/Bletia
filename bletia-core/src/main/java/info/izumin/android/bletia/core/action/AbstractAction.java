@@ -5,7 +5,7 @@ import android.os.Message;
 
 import java.io.Serializable;
 
-import info.izumin.android.bletia.core.ResolveStrategy;
+import info.izumin.android.bletia.core.ActionResolver;
 import info.izumin.android.bletia.core.wrapper.BluetoothGattWrapper;
 
 /**
@@ -42,12 +42,12 @@ public abstract class AbstractAction<T, E extends Throwable, I> {
 
     private final I mIdentity;
     private final Type mType;
-    private final ResolveStrategy<T, E> mResolveStrategy;
+    private final ActionResolver<T, E> mActionResolver;
 
-    public AbstractAction(I identity, Type type, ResolveStrategy<T, E> resolveStrategy) {
+    public AbstractAction(I identity, Type type, ActionResolver<T, E> actionResolver) {
         mIdentity = identity;
         mType = type;
-        mResolveStrategy = resolveStrategy;
+        mActionResolver = actionResolver;
     }
 
     public final I getIdentity() {
@@ -58,16 +58,16 @@ public abstract class AbstractAction<T, E extends Throwable, I> {
         return mType;
     }
 
-    public final ResolveStrategy<T, E> getResolveStrategy() {
-        return mResolveStrategy;
+    public final ActionResolver<T, E> getResolver() {
+        return mActionResolver;
     }
 
     public void resolve(T value) {
-        mResolveStrategy.resolve(value);
+        mActionResolver.resolve(value);
     }
 
     public void reject(E throwable) {
-        mResolveStrategy.reject(throwable);
+        mActionResolver.reject(throwable);
     }
 
     public final Message obtainMessage() {

@@ -13,7 +13,7 @@ import org.mockito.MockitoAnnotations;
 
 import info.izumin.android.bletia.core.BleErrorType;
 import info.izumin.android.bletia.core.BletiaException;
-import info.izumin.android.bletia.core.ResolveStrategy;
+import info.izumin.android.bletia.core.ActionResolver;
 import info.izumin.android.bletia.core.wrapper.BluetoothGattWrapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -32,14 +32,14 @@ public class AbstractEnableNotificationActionTest {
     public static final String TAG = AbstractEnableNotificationActionTest.class.getSimpleName();
 
     class ActionImpl extends AbstractEnableNotificationAction {
-        public ActionImpl(BluetoothGattCharacteristic characteristic, boolean enable, ResolveStrategy<BluetoothGattCharacteristic, BletiaException> resolveStrategy) {
-            super(characteristic, enable, resolveStrategy);
+        public ActionImpl(BluetoothGattCharacteristic characteristic, boolean enable, ActionResolver<BluetoothGattCharacteristic, BletiaException> actionResolver) {
+            super(characteristic, enable, actionResolver);
         }
     }
 
     @Mock private BluetoothGattWrapper mGattWrapper;
     @Mock private BluetoothGattCharacteristic mCharacteristic;
-    @Mock private ResolveStrategy<BluetoothGattCharacteristic, BletiaException> mStrategy;
+    @Mock private ActionResolver<BluetoothGattCharacteristic, BletiaException> mResolver;
 
     private ActionImpl mAction;
     private ArgumentCaptor<BletiaException> mExceptionCaptor;
@@ -47,7 +47,7 @@ public class AbstractEnableNotificationActionTest {
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        mAction = new ActionImpl(mCharacteristic, true, mStrategy);
+        mAction = new ActionImpl(mCharacteristic, true, mResolver);
         mExceptionCaptor = ArgumentCaptor.forClass(BletiaException.class);
     }
 
@@ -55,7 +55,7 @@ public class AbstractEnableNotificationActionTest {
     public void executeWhenSetCharacteristicNotificationReturnsFalse() throws Exception {
         when(mGattWrapper.setCharacteristicNotification(any(BluetoothGattCharacteristic.class), anyBoolean())).thenReturn(false);
         assertThat(mAction.execute(mGattWrapper)).isFalse();
-        verify(mStrategy, times(1)).reject(mExceptionCaptor.capture());
+        verify(mResolver, times(1)).reject(mExceptionCaptor.capture());
         assertThat(mExceptionCaptor.getValue().getType()).isEqualTo(BleErrorType.REQUEST_FAILURE);
     }
 
@@ -64,7 +64,7 @@ public class AbstractEnableNotificationActionTest {
         when(mGattWrapper.setCharacteristicNotification(any(BluetoothGattCharacteristic.class), anyBoolean())).thenReturn(true);
         when(mGattWrapper.writeDescriptor(any(BluetoothGattDescriptor.class))).thenReturn(false);
         assertThat(mAction.execute(mGattWrapper)).isFalse();
-        verify(mStrategy, times(1)).reject(mExceptionCaptor.capture());
+        verify(mResolver, times(1)).reject(mExceptionCaptor.capture());
         assertThat(mExceptionCaptor.getValue().getType()).isEqualTo(BleErrorType.OPERATION_INITIATED_FAILURE);
     }
 
@@ -73,7 +73,7 @@ public class AbstractEnableNotificationActionTest {
         when(mGattWrapper.setCharacteristicNotification(any(BluetoothGattCharacteristic.class), anyBoolean())).thenReturn(true);
         when(mGattWrapper.writeDescriptor(any(BluetoothGattDescriptor.class))).thenReturn(true);
         assertThat(mAction.execute(mGattWrapper)).isTrue();
-        verify(mStrategy, never()).reject(any(BletiaException.class));
+        verify(mResolver, never()).reject(any(BletiaException.class));
     }
 }
 

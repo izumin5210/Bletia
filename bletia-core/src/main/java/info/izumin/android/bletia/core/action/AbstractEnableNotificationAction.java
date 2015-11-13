@@ -5,7 +5,7 @@ import android.bluetooth.BluetoothGattDescriptor;
 
 import info.izumin.android.bletia.core.BleErrorType;
 import info.izumin.android.bletia.core.BletiaException;
-import info.izumin.android.bletia.core.ResolveStrategy;
+import info.izumin.android.bletia.core.ActionResolver;
 import info.izumin.android.bletia.core.util.NotificationUtils;
 import info.izumin.android.bletia.core.wrapper.BluetoothGattWrapper;
 
@@ -17,8 +17,8 @@ public abstract class AbstractEnableNotificationAction extends AbstractCharacter
     private final boolean mEnabled;
 
     public AbstractEnableNotificationAction(BluetoothGattCharacteristic characteristic, boolean enabled,
-                                            ResolveStrategy<BluetoothGattCharacteristic, BletiaException> resolveStrategy) {
-        super(characteristic, Type.ENABLE_NOTIFICATION, resolveStrategy);
+                                            ActionResolver<BluetoothGattCharacteristic, BletiaException> actionResolver) {
+        super(characteristic, Type.ENABLE_NOTIFICATION, actionResolver);
         mEnabled = enabled;
     }
 

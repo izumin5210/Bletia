@@ -6,7 +6,6 @@ import android.content.Context;
 
 import org.jdeferred.Promise;
 
-import info.izumin.android.bletia.action.DeferredStrategy;
 import info.izumin.android.bletia.action.EnableNotificationAction;
 import info.izumin.android.bletia.action.ReadCharacteristicAction;
 import info.izumin.android.bletia.action.ReadDescriptorAction;
@@ -40,7 +39,7 @@ public class Bletia extends AbstractBletia {
 
     public <T, E extends Throwable> Promise<T, E, Void> execute(AbstractAction<T, E, ?> action) {
         dispatchAction(action);
-        return ((DeferredStrategy<T, E>) action.getResolveStrategy()).getDeferred().promise();
+        return ((DeferredResolver<T, E>) action.getResolver()).getDeferred().promise();
     }
 
     public Promise<BluetoothGattCharacteristic, BletiaException, Void> writeCharacteristic(BluetoothGattCharacteristic characteristic) {

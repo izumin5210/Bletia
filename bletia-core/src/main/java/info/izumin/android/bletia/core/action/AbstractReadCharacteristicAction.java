@@ -4,7 +4,7 @@ import android.bluetooth.BluetoothGattCharacteristic;
 
 import info.izumin.android.bletia.core.BleErrorType;
 import info.izumin.android.bletia.core.BletiaException;
-import info.izumin.android.bletia.core.ResolveStrategy;
+import info.izumin.android.bletia.core.ActionResolver;
 import info.izumin.android.bletia.core.wrapper.BluetoothGattWrapper;
 
 /**
@@ -13,8 +13,8 @@ import info.izumin.android.bletia.core.wrapper.BluetoothGattWrapper;
 public abstract class AbstractReadCharacteristicAction extends AbstractCharacteristicAction {
 
     public AbstractReadCharacteristicAction(BluetoothGattCharacteristic characteristic,
-                                            ResolveStrategy<BluetoothGattCharacteristic, BletiaException> resolveStrategy) {
-        super(characteristic, Type.READ_CHARACTERISTIC, resolveStrategy);
+                                            ActionResolver<BluetoothGattCharacteristic, BletiaException> actionResolver) {
+        super(characteristic, Type.READ_CHARACTERISTIC, actionResolver);
     }
 
     @Override

@@ -4,7 +4,7 @@ import android.bluetooth.BluetoothGattDescriptor;
 
 import info.izumin.android.bletia.core.BleErrorType;
 import info.izumin.android.bletia.core.BletiaException;
-import info.izumin.android.bletia.core.ResolveStrategy;
+import info.izumin.android.bletia.core.ActionResolver;
 import info.izumin.android.bletia.core.wrapper.BluetoothGattWrapper;
 
 /**
@@ -13,8 +13,8 @@ import info.izumin.android.bletia.core.wrapper.BluetoothGattWrapper;
 public abstract class AbstractWriteDescriptorAction extends AbstractDescriptorAction {
 
     public AbstractWriteDescriptorAction(BluetoothGattDescriptor descriptor,
-                                         ResolveStrategy<BluetoothGattDescriptor, BletiaException> resolveStrategy) {
-        super(descriptor, Type.WRITE_DESCRIPTOR, resolveStrategy);
+                                         ActionResolver<BluetoothGattDescriptor, BletiaException> actionResolver) {
+        super(descriptor, Type.WRITE_DESCRIPTOR, actionResolver);
     }
 
     @Override
