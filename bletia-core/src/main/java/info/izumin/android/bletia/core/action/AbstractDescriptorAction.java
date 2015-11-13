@@ -10,12 +10,12 @@ import info.izumin.android.bletia.core.ResolveStrategy;
 /**
  * Created by izumin on 9/15/15.
  */
-public abstract class AbstractDescriptorAction extends AbstractAction<BluetoothGattDescriptor, BletiaException, UUID> {
+public abstract class AbstractDescriptorAction<R> extends AbstractAction<BluetoothGattDescriptor, BletiaException, UUID, R> {
 
     private final BluetoothGattDescriptor mDescriptor;
 
     public AbstractDescriptorAction(BluetoothGattDescriptor descriptor, AbstractAction.Type type,
-                                    ResolveStrategy<BluetoothGattDescriptor, BletiaException> resolveStrategy) {
+                                    ResolveStrategy<BluetoothGattDescriptor, BletiaException, R> resolveStrategy) {
         super(descriptor.getUuid(), type, resolveStrategy);
         mDescriptor = descriptor;
     }

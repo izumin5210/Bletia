@@ -85,7 +85,7 @@ public class BluetoothGattCallbackHandler extends BluetoothGattCallbackWrapper {
         // TODO: Not yet implemented.
     }
 
-    private <A extends AbstractAction<T, BletiaException, I>, T, I> void handleAction(ActionQueue<A, I> queue, T result, I identity, int status) {
+    private <A extends AbstractAction<T, BletiaException, I, ?>, T, I> void handleAction(ActionQueue<A, I> queue, T result, I identity, int status) {
         A action = queue.dequeue(identity);
         if (status == BluetoothGatt.GATT_SUCCESS) {
             action.resolve(result);

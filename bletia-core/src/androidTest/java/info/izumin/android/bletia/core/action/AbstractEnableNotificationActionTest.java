@@ -32,14 +32,14 @@ public class AbstractEnableNotificationActionTest {
     public static final String TAG = AbstractEnableNotificationActionTest.class.getSimpleName();
 
     class ActionImpl extends AbstractEnableNotificationAction {
-        public ActionImpl(BluetoothGattCharacteristic characteristic, boolean enable, ResolveStrategy<BluetoothGattCharacteristic, BletiaException> resolveStrategy) {
+        public ActionImpl(BluetoothGattCharacteristic characteristic, boolean enable, ResolveStrategy<BluetoothGattCharacteristic, BletiaException, Void> resolveStrategy) {
             super(characteristic, enable, resolveStrategy);
         }
     }
 
     @Mock private BluetoothGattWrapper mGattWrapper;
     @Mock private BluetoothGattCharacteristic mCharacteristic;
-    @Mock private ResolveStrategy<BluetoothGattCharacteristic, BletiaException> mStrategy;
+    @Mock private ResolveStrategy<BluetoothGattCharacteristic, BletiaException, Void> mStrategy;
 
     private ActionImpl mAction;
     private ArgumentCaptor<BletiaException> mExceptionCaptor;

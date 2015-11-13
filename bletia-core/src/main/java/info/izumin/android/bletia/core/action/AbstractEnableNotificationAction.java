@@ -12,12 +12,12 @@ import info.izumin.android.bletia.core.wrapper.BluetoothGattWrapper;
 /**
  * Created by izumin on 9/15/15.
  */
-public abstract class AbstractEnableNotificationAction extends AbstractCharacteristicAction {
+public abstract class AbstractEnableNotificationAction<R> extends AbstractCharacteristicAction<R> {
 
     private final boolean mEnabled;
 
     public AbstractEnableNotificationAction(BluetoothGattCharacteristic characteristic, boolean enabled,
-                                            ResolveStrategy<BluetoothGattCharacteristic, BletiaException> resolveStrategy) {
+                                            ResolveStrategy<BluetoothGattCharacteristic, BletiaException, R> resolveStrategy) {
         super(characteristic, Type.ENABLE_NOTIFICATION, resolveStrategy);
         mEnabled = enabled;
     }

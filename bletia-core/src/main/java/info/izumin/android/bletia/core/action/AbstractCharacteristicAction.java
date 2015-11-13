@@ -10,12 +10,12 @@ import info.izumin.android.bletia.core.ResolveStrategy;
 /**
  * Created by izumin on 9/15/15.
  */
-public abstract class AbstractCharacteristicAction extends AbstractAction<BluetoothGattCharacteristic, BletiaException, UUID> {
+public abstract class AbstractCharacteristicAction<R> extends AbstractAction<BluetoothGattCharacteristic, BletiaException, UUID, R> {
 
     private final BluetoothGattCharacteristic mCharacteristic;
 
     public AbstractCharacteristicAction(BluetoothGattCharacteristic characteristic, Type type,
-                                        ResolveStrategy<BluetoothGattCharacteristic, BletiaException> resolveStrategy) {
+                                        ResolveStrategy<BluetoothGattCharacteristic, BletiaException, R> resolveStrategy) {
         super(characteristic.getUuid(), type, resolveStrategy);
         mCharacteristic = characteristic;
     }

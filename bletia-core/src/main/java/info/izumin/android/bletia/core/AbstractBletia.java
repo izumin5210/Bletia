@@ -82,6 +82,11 @@ public abstract class AbstractBletia {
         return (mGattWrapper == null) ? null : mGattWrapper.getDevice();
     }
 
+    public <T, E extends Throwable, R> R execute(AbstractAction<T, E, ?, R> action) {
+        dispatchAction(action);
+        return action.getResolver();
+    }
+
     protected void setSubListener(BleEventListener subListener) {
         mSubListener = subListener;
     }

@@ -10,10 +10,10 @@ import info.izumin.android.bletia.core.wrapper.BluetoothGattWrapper;
 /**
  * Created by izumin on 9/15/15.
  */
-public abstract class AbstractWriteDescriptorAction extends AbstractDescriptorAction {
+public abstract class AbstractWriteDescriptorAction<R> extends AbstractDescriptorAction<R> {
 
     public AbstractWriteDescriptorAction(BluetoothGattDescriptor descriptor,
-                                         ResolveStrategy<BluetoothGattDescriptor, BletiaException> resolveStrategy) {
+                                         ResolveStrategy<BluetoothGattDescriptor, BletiaException, R> resolveStrategy) {
         super(descriptor, Type.WRITE_DESCRIPTOR, resolveStrategy);
     }
 

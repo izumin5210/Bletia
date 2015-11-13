@@ -10,10 +10,10 @@ import info.izumin.android.bletia.core.wrapper.BluetoothGattWrapper;
 /**
  * Created by izumin on 9/15/15.
  */
-public abstract class AbstractWriteCharacteristicAction extends AbstractCharacteristicAction {
+public abstract class AbstractWriteCharacteristicAction<R> extends AbstractCharacteristicAction<R> {
 
     public AbstractWriteCharacteristicAction(BluetoothGattCharacteristic characteristic,
-                                             ResolveStrategy<BluetoothGattCharacteristic, BletiaException> resolveStrategy) {
+                                             ResolveStrategy<BluetoothGattCharacteristic, BletiaException, R> resolveStrategy) {
         super(characteristic, Type.WRITE_CHARACTERISTIC, resolveStrategy);
     }
 

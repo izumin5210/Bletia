@@ -11,7 +11,7 @@ import info.izumin.android.bletia.core.wrapper.BluetoothGattWrapper;
 /**
  * Created by izumin on 10/9/15.
  */
-public abstract class AbstractAction<T, E extends Throwable, I> {
+public abstract class AbstractAction<T, E extends Throwable, I, R> {
     public enum Type {
         WRITE_CHARACTERISTIC(1),
         READ_CHARACTERISTIC(2),
@@ -42,9 +42,9 @@ public abstract class AbstractAction<T, E extends Throwable, I> {
 
     private final I mIdentity;
     private final Type mType;
-    private final ResolveStrategy<T, E> mResolveStrategy;
+    private final ResolveStrategy<T, E, R> mResolveStrategy;
 
-    public AbstractAction(I identity, Type type, ResolveStrategy<T, E> resolveStrategy) {
+    public AbstractAction(I identity, Type type, ResolveStrategy<T, E, R> resolveStrategy) {
         mIdentity = identity;
         mType = type;
         mResolveStrategy = resolveStrategy;
@@ -58,8 +58,8 @@ public abstract class AbstractAction<T, E extends Throwable, I> {
         return mType;
     }
 
-    public final ResolveStrategy<T, E> getResolveStrategy() {
-        return mResolveStrategy;
+    public final R getResolver() {
+        return mResolveStrategy.getResolver();
     }
 
     public void resolve(T value) {

@@ -30,14 +30,14 @@ public class AbstractReadDescriptorActionTest {
     public static final String TAG = AbstractReadDescriptorActionTest.class.getSimpleName();
 
     class ActionImpl extends AbstractReadDescriptorAction {
-        public ActionImpl(BluetoothGattDescriptor descriptor, ResolveStrategy<BluetoothGattDescriptor, BletiaException> resolveStrategy) {
+        public ActionImpl(BluetoothGattDescriptor descriptor, ResolveStrategy<BluetoothGattDescriptor, BletiaException, Void> resolveStrategy) {
             super(descriptor, resolveStrategy);
         }
     }
 
     @Mock private BluetoothGattWrapper mGattWrapper;
     @Mock private BluetoothGattDescriptor mDescriptor;
-    @Mock private ResolveStrategy<BluetoothGattDescriptor, BletiaException> mStrategy;
+    @Mock private ResolveStrategy<BluetoothGattDescriptor, BletiaException, Void> mStrategy;
 
     private ActionImpl mAction;
     private ArgumentCaptor<BletiaException> mExceptionCaptor;

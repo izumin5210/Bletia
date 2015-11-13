@@ -30,14 +30,14 @@ public class AbstractWriteCharacteristicActionTest {
     public static final String TAG = AbstractWriteCharacteristicActionTest.class.getSimpleName();
 
     class ActionImpl extends AbstractWriteCharacteristicAction {
-        public ActionImpl(BluetoothGattCharacteristic characteristic, ResolveStrategy<BluetoothGattCharacteristic, BletiaException> resolveStrategy) {
+        public ActionImpl(BluetoothGattCharacteristic characteristic, ResolveStrategy<BluetoothGattCharacteristic, BletiaException, Void> resolveStrategy) {
             super(characteristic, resolveStrategy);
         }
     }
 
     @Mock private BluetoothGattWrapper mGattWrapper;
     @Mock private BluetoothGattCharacteristic mCharacteristic;
-    @Mock private ResolveStrategy<BluetoothGattCharacteristic, BletiaException> mStrategy;
+    @Mock private ResolveStrategy<BluetoothGattCharacteristic, BletiaException, Void> mStrategy;
 
     private ActionImpl mAction;
     private ArgumentCaptor<BletiaException> mExceptionCaptor;
