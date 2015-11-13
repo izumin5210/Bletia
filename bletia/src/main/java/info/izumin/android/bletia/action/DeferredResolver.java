@@ -2,17 +2,17 @@ package info.izumin.android.bletia.action;
 
 import org.jdeferred.impl.DeferredObject;
 
-import info.izumin.android.bletia.core.ResolveStrategy;
+import info.izumin.android.bletia.core.ActionResolver;
 
 /**
  * Created by izumin on 11/11/15.
  */
-public class DeferredStrategy<T, E extends Throwable> implements ResolveStrategy<T, E> {
-    public static final String TAG = DeferredStrategy.class.getSimpleName();
+public class DeferredResolver<T, E extends Throwable> implements ActionResolver<T, E> {
+    public static final String TAG = DeferredResolver.class.getSimpleName();
 
     private final DeferredObject<T, E, Void> mDeferred;
 
-    public DeferredStrategy() {
+    public DeferredResolver() {
         mDeferred = new DeferredObject<>();
     }
 
