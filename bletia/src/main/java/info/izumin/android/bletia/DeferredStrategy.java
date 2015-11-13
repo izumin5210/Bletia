@@ -17,10 +17,6 @@ public class DeferredStrategy<T, E extends Throwable> implements ResolveStrategy
         mDeferred = new DeferredObject<>();
     }
 
-    public DeferredObject<T, E, Void> getDeferred() {
-        return mDeferred;
-    }
-
     @Override
     public void resolve(T value) {
         mDeferred.resolve(value);
