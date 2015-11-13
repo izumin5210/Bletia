@@ -29,7 +29,7 @@ import static org.mockito.Mockito.when;
  */
 @RunWith(AndroidJUnit4.class)
 public class ActionQueueTest {
-    public class ActionImpl extends AbstractAction<String, Exception, String> {
+    public class ActionImpl extends AbstractAction<String, Exception, String, Void> {
         public ActionImpl(String identity) {
             super(identity, null, null);
         }

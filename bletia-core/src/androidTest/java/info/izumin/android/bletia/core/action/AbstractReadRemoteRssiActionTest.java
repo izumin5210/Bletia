@@ -29,13 +29,13 @@ public class AbstractReadRemoteRssiActionTest {
     public static final String TAG = AbstractReadRemoteRssiActionTest.class.getSimpleName();
 
     class ActionImpl extends AbstractReadRemoteRssiAction {
-        public ActionImpl(ResolveStrategy<Integer, BletiaException> resolveStrategy) {
+        public ActionImpl(ResolveStrategy<Integer, BletiaException, Void> resolveStrategy) {
             super(resolveStrategy);
         }
     }
 
     @Mock private BluetoothGattWrapper mGattWrapper;
-    @Mock private ResolveStrategy<Integer, BletiaException> mStrategy;
+    @Mock private ResolveStrategy<Integer, BletiaException, Void> mStrategy;
 
     private ActionImpl mAction;
     private ArgumentCaptor<BletiaException> mExceptionCaptor;
