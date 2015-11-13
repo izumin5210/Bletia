@@ -8,8 +8,8 @@ import info.izumin.android.bletia.core.wrapper.BluetoothGattWrapper;
 /**
  * Created by izumin on 9/15/15.
  */
-public abstract class AbstractReadRemoteRssiAction extends AbstractAction<Integer, BletiaException, Void> {
-    public AbstractReadRemoteRssiAction(ResolveStrategy<Integer, BletiaException> resolveStrategy) {
+public abstract class AbstractReadRemoteRssiAction<R> extends AbstractAction<Integer, BletiaException, Void, R> {
+    public AbstractReadRemoteRssiAction(ResolveStrategy<Integer, BletiaException, R> resolveStrategy) {
         super(null, Type.READ_REMOTE_RSSI, resolveStrategy);
     }
 
