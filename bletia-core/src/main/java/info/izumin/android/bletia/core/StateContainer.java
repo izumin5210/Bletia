@@ -40,6 +40,14 @@ public class StateContainer {
         mState = state;
     }
 
+    public boolean isConnected() {
+        return (mState == BleState.CONNECTED) || (mState == BleState.SERVICE_DISCOVERING) || isReady();
+    }
+
+    public boolean isReady() {
+        return mState == BleState.SERVICE_DISCOVERED;
+    }
+
     public ActionQueue<AbstractReadCharacteristicAction, UUID> getReadCharacteristicActionQueue() {
         return mReadCharacteristicActionQueue;
     }

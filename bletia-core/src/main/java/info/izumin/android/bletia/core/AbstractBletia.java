@@ -22,8 +22,6 @@ public abstract class AbstractBletia {
     private Context mContext;
     private BluetoothGattWrapper mGattWrapper;
 
-    private BleState mState = BleState.DISCONNECTED;
-
     private StateContainer mContainer;
     private BluetoothGattCallbackHandler mCallbackHandler;
     private BleMessageThread mMessageThread;
@@ -37,19 +35,23 @@ public abstract class AbstractBletia {
     }
 
     public BleState getState() {
-        return mState;
+        return mContainer.getState();
+    }
+
+    protected void setState(BleState state) {
+        mContainer.setState(state);
     }
 
     public boolean isConnected() {
-        return (mState == BleState.CONNECTED) || (mState == BleState.SERVICE_DISCOVERING) || isReady();
+        return mContainer.isConnected();
     }
 
     public boolean isReady() {
-        return mState == BleState.SERVICE_DISCOVERED;
+        return mContainer.isReady();
     }
 
     public void connect(BluetoothDevice device) {
-        mState = BleState.CONNECTING;
+        setState(BleState.CONNECTING);
         mGattWrapper = new BluetoothDeviceWrapper(device).connectGatt(mContext, false, mCallbackHandler);
 
         HandlerThread thread = new HandlerThread(device.getName());
@@ -58,13 +60,13 @@ public abstract class AbstractBletia {
     }
 
     public void disconenct() {
-        mState = BleState.DISCONNECTING;
+        setState(BleState.DISCONNECTING);
         mGattWrapper.disconnect();
         mMessageThread.stop();
     }
 
     public boolean discoverServices() {
-        mState = BleState.SERVICE_DISCOVERING;
+        setState(BleState.SERVICE_DISCOVERING);
         return mGattWrapper.discoverServices();
     }
 
@@ -95,7 +97,7 @@ public abstract class AbstractBletia {
     private final BleEventListener mListener = new BleEventListener() {
         @Override
         public void onConnect(BluetoothGattWrapper gatt) {
-            mState = BleState.CONNECTED;
+            setState(BleState.CONNECTED);
             if (mSubListener != null) {
                 mSubListener.onConnect(gatt);
             }
@@ -103,7 +105,7 @@ public abstract class AbstractBletia {
 
         @Override
         public void onDisconnect(BluetoothGattWrapper gatt) {
-            mState = BleState.DISCONNECTED;
+            setState(BleState.DISCONNECTED);
             mGattWrapper.close();
             if (mSubListener != null) {
                 mSubListener.onDisconnect(gatt);
@@ -112,7 +114,7 @@ public abstract class AbstractBletia {
 
         @Override
         public void onServiceDiscovered(int status) {
-            mState = BleState.SERVICE_DISCOVERED;
+            setState(BleState.SERVICE_DISCOVERED);
             if (mSubListener != null) {
                 mSubListener.onServiceDiscovered(status);
             }
