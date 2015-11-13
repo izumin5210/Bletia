@@ -13,7 +13,8 @@ import info.izumin.android.bletia.core.action.AbstractWriteDescriptorAction;
 /**
  * Created by izumin on 10/3/15.
  */
-public class ActionQueueContainer {
+public class StateContainer {
+    private BleState mState;
     private ActionQueue<AbstractReadCharacteristicAction, UUID> mReadCharacteristicActionQueue;
     private ActionQueue<AbstractWriteCharacteristicAction, UUID> mWriteCharacteristicActionQueue;
     private ActionQueue<AbstractReadDescriptorAction, UUID> mReadDescriptorActionQueue;
@@ -21,13 +22,30 @@ public class ActionQueueContainer {
     private ActionQueue<AbstractEnableNotificationAction, UUID> mEnableNotificationActionQueue;
     private ActionQueue<AbstractReadRemoteRssiAction, Void> mReadRemoteRssiActionQueue;
 
-    public ActionQueueContainer() {
+    public StateContainer() {
+        mState = BleState.DISCONNECTED;
         mReadCharacteristicActionQueue = new ActionQueue<>();
         mWriteCharacteristicActionQueue = new ActionQueue<>();
         mReadDescriptorActionQueue = new ActionQueue<>();
         mWriteDescriptorActionQueue = new ActionQueue<>();
         mEnableNotificationActionQueue = new ActionQueue<>();
         mReadRemoteRssiActionQueue = new ActionQueue<>();
+    }
+
+    public BleState getState() {
+        return mState;
+    }
+
+    public void setState(BleState state) {
+        mState = state;
+    }
+
+    public boolean isConnected() {
+        return (mState == BleState.CONNECTED) || (mState == BleState.SERVICE_DISCOVERING) || isReady();
+    }
+
+    public boolean isReady() {
+        return mState == BleState.SERVICE_DISCOVERED;
     }
 
     public ActionQueue<AbstractReadCharacteristicAction, UUID> getReadCharacteristicActionQueue() {

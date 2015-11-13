@@ -19,12 +19,12 @@ import info.izumin.android.bletia.core.wrapper.BluetoothGattWrapper;
 enum ActionMessageHandler {
     READ_CHARACTERISTIC(AbstractAction.Type.READ_CHARACTERISTIC) {
         @Override
-        public boolean execute(Message msg, ActionQueueContainer container, BluetoothGattWrapper gattWrapper) {
+        public boolean execute(Message msg, StateContainer container, BluetoothGattWrapper gattWrapper) {
             return getQueueFromContainer(container).execute(getIdentityFromMessage(msg), gattWrapper);
         }
 
         @Override
-        public boolean isRunning(Message msg, ActionQueueContainer container) {
+        public boolean isRunning(Message msg, StateContainer container) {
             return getQueueFromContainer(container).isRunning(getIdentityFromMessage(msg));
         }
 
@@ -32,18 +32,18 @@ enum ActionMessageHandler {
             return (UUID) msg.getData().getSerializable(AbstractAction.KEY_IDENTITY);
         }
 
-        private ActionQueue<AbstractReadCharacteristicAction, UUID> getQueueFromContainer(ActionQueueContainer container) {
+        private ActionQueue<AbstractReadCharacteristicAction, UUID> getQueueFromContainer(StateContainer container) {
             return container.getReadCharacteristicActionQueue();
         }
     },
     WRITE_CHARACTERISTIC(AbstractAction.Type.WRITE_CHARACTERISTIC) {
         @Override
-        public boolean execute(Message msg, ActionQueueContainer container, BluetoothGattWrapper gattWrapper) {
+        public boolean execute(Message msg, StateContainer container, BluetoothGattWrapper gattWrapper) {
             return getQueueFromContainer(container).execute(getIdentityFromMessage(msg), gattWrapper);
         }
 
         @Override
-        public boolean isRunning(Message msg, ActionQueueContainer container) {
+        public boolean isRunning(Message msg, StateContainer container) {
             return getQueueFromContainer(container).isRunning(getIdentityFromMessage(msg));
         }
 
@@ -51,18 +51,18 @@ enum ActionMessageHandler {
             return (UUID) msg.getData().getSerializable(AbstractAction.KEY_IDENTITY);
         }
 
-        private ActionQueue<AbstractWriteCharacteristicAction, UUID> getQueueFromContainer(ActionQueueContainer container) {
+        private ActionQueue<AbstractWriteCharacteristicAction, UUID> getQueueFromContainer(StateContainer container) {
             return container.getWriteCharacteristicActionQueue();
         }
     },
     READ_DESCRIPTOR(AbstractAction.Type.READ_DESCRIPTOR) {
         @Override
-        public boolean execute(Message msg, ActionQueueContainer container, BluetoothGattWrapper gattWrapper) {
+        public boolean execute(Message msg, StateContainer container, BluetoothGattWrapper gattWrapper) {
             return getQueueFromContainer(container).execute(getIdentityFromMessage(msg), gattWrapper);
         }
 
         @Override
-        public boolean isRunning(Message msg, ActionQueueContainer container) {
+        public boolean isRunning(Message msg, StateContainer container) {
             return getQueueFromContainer(container).isRunning(getIdentityFromMessage(msg));
         }
 
@@ -70,18 +70,18 @@ enum ActionMessageHandler {
             return (UUID) msg.getData().getSerializable(AbstractAction.KEY_IDENTITY);
         }
 
-        private ActionQueue<AbstractReadDescriptorAction, UUID> getQueueFromContainer(ActionQueueContainer container) {
+        private ActionQueue<AbstractReadDescriptorAction, UUID> getQueueFromContainer(StateContainer container) {
             return container.getReadDescriptorActionQueue();
         }
     },
     WRITE_DESCRIPTOR(AbstractAction.Type.WRITE_DESCRIPTOR) {
         @Override
-        public boolean execute(Message msg, ActionQueueContainer container, BluetoothGattWrapper gattWrapper) {
+        public boolean execute(Message msg, StateContainer container, BluetoothGattWrapper gattWrapper) {
             return getQueueFromContainer(container).execute(getIdentityFromMessage(msg), gattWrapper);
         }
 
         @Override
-        public boolean isRunning(Message msg, ActionQueueContainer container) {
+        public boolean isRunning(Message msg, StateContainer container) {
             return getQueueFromContainer(container).isRunning(getIdentityFromMessage(msg));
         }
 
@@ -89,18 +89,18 @@ enum ActionMessageHandler {
             return (UUID) msg.getData().getSerializable(AbstractAction.KEY_IDENTITY);
         }
 
-        private ActionQueue<AbstractWriteDescriptorAction, UUID> getQueueFromContainer(ActionQueueContainer container) {
+        private ActionQueue<AbstractWriteDescriptorAction, UUID> getQueueFromContainer(StateContainer container) {
             return container.getWriteDescriptorActionQueue();
         }
     },
     ENABLE_NOTIFICATION(AbstractAction.Type.ENABLE_NOTIFICATION) {
         @Override
-        public boolean execute(Message msg, ActionQueueContainer container, BluetoothGattWrapper gattWrapper) {
+        public boolean execute(Message msg, StateContainer container, BluetoothGattWrapper gattWrapper) {
             return getQueueFromContainer(container).execute(getIdentityFromMessage(msg), gattWrapper);
         }
 
         @Override
-        public boolean isRunning(Message msg, ActionQueueContainer container) {
+        public boolean isRunning(Message msg, StateContainer container) {
             return getQueueFromContainer(container).isRunning(getIdentityFromMessage(msg));
         }
 
@@ -108,22 +108,22 @@ enum ActionMessageHandler {
             return (UUID) msg.getData().getSerializable(AbstractAction.KEY_IDENTITY);
         }
 
-        private ActionQueue<AbstractEnableNotificationAction, UUID> getQueueFromContainer(ActionQueueContainer container) {
+        private ActionQueue<AbstractEnableNotificationAction, UUID> getQueueFromContainer(StateContainer container) {
             return container.getEnableNotificationActionQueue();
         }
     },
     READ_REMOTE_RSSI(AbstractAction.Type.READ_REMOTE_RSSI) {
         @Override
-        public boolean execute(Message msg, ActionQueueContainer container, BluetoothGattWrapper gattWrapper) {
+        public boolean execute(Message msg, StateContainer container, BluetoothGattWrapper gattWrapper) {
             return getQueueFromContainer(container).execute(null, gattWrapper);
         }
 
         @Override
-        public boolean isRunning(Message msg, ActionQueueContainer container) {
+        public boolean isRunning(Message msg, StateContainer container) {
             return getQueueFromContainer(container).isRunning(null);
         }
 
-        private ActionQueue<AbstractReadRemoteRssiAction, Void> getQueueFromContainer(ActionQueueContainer container) {
+        private ActionQueue<AbstractReadRemoteRssiAction, Void> getQueueFromContainer(StateContainer container) {
             return container.getReadRemoteRssiActionQueue();
         }
     };
@@ -149,6 +149,6 @@ enum ActionMessageHandler {
         throw new IllegalArgumentException();
     }
 
-    public abstract boolean execute(Message msg, ActionQueueContainer container, BluetoothGattWrapper gattWrapper);
-    public abstract boolean isRunning(Message msg, ActionQueueContainer container);
+    public abstract boolean execute(Message msg, StateContainer container, BluetoothGattWrapper gattWrapper);
+    public abstract boolean isRunning(Message msg, StateContainer container);
 }

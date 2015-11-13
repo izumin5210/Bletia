@@ -15,11 +15,11 @@ import info.izumin.android.bletia.core.wrapper.BluetoothGattWrapper;
 public class BluetoothGattCallbackHandler extends BluetoothGattCallbackWrapper {
 
     private AbstractBletia.BleEventListener mListener;
-    private ActionQueueContainer mQueueContainer;
+    private StateContainer mContainer;
 
-    public BluetoothGattCallbackHandler(AbstractBletia.BleEventListener listener, ActionQueueContainer queueContainer) {
+    public BluetoothGattCallbackHandler(AbstractBletia.BleEventListener listener, StateContainer queueContainer) {
         mListener = listener;
-        mQueueContainer = queueContainer;
+        mContainer = queueContainer;
     }
 
     @Override
@@ -42,12 +42,12 @@ public class BluetoothGattCallbackHandler extends BluetoothGattCallbackWrapper {
 
     @Override
     public void onCharacteristicRead(BluetoothGattWrapper gatt, BluetoothGattCharacteristic characteristic, int status) {
-        handleAction(mQueueContainer.getReadCharacteristicActionQueue(), characteristic, characteristic.getUuid(), status);
+        handleAction(mContainer.getReadCharacteristicActionQueue(), characteristic, characteristic.getUuid(), status);
     }
 
     @Override
     public void onCharacteristicWrite(BluetoothGattWrapper gatt, BluetoothGattCharacteristic characteristic, int status) {
-        handleAction(mQueueContainer.getWriteCharacteristicActionQueue(), characteristic, characteristic.getUuid(), status);
+        handleAction(mContainer.getWriteCharacteristicActionQueue(), characteristic, characteristic.getUuid(), status);
     }
 
     @Override
@@ -57,16 +57,16 @@ public class BluetoothGattCallbackHandler extends BluetoothGattCallbackWrapper {
 
     @Override
     public void onDescriptorRead(BluetoothGattWrapper gatt, BluetoothGattDescriptor descriptor, int status) {
-        handleAction(mQueueContainer.getReadDescriptorActionQueue(), descriptor, descriptor.getUuid(), status);
+        handleAction(mContainer.getReadDescriptorActionQueue(), descriptor, descriptor.getUuid(), status);
     }
 
     @Override
     public void onDescriptorWrite(BluetoothGattWrapper gatt, BluetoothGattDescriptor descriptor, int status) {
         if (NotificationUtils.isEnabledNotificationDescriptor(descriptor)) {
             BluetoothGattCharacteristic characteristic = descriptor.getCharacteristic();
-            handleAction(mQueueContainer.getEnableNotificationActionQueue(), characteristic, characteristic.getUuid(), status);
+            handleAction(mContainer.getEnableNotificationActionQueue(), characteristic, characteristic.getUuid(), status);
         } else {
-            handleAction(mQueueContainer.getWriteDescriptorActionQueue(), descriptor, descriptor.getUuid(), status);
+            handleAction(mContainer.getWriteDescriptorActionQueue(), descriptor, descriptor.getUuid(), status);
         }
     }
 
@@ -77,7 +77,7 @@ public class BluetoothGattCallbackHandler extends BluetoothGattCallbackWrapper {
 
     @Override
     public void onReadRemoteRssi(BluetoothGattWrapper gatt, int rssi, int status) {
-        handleAction(mQueueContainer.getReadRemoteRssiActionQueue(), rssi, null, status);
+        handleAction(mContainer.getReadRemoteRssiActionQueue(), rssi, null, status);
     }
 
     @Override

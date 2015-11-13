@@ -30,7 +30,7 @@ import info.izumin.android.bletia.action.ReadDescriptorAction;
 import info.izumin.android.bletia.action.ReadRemoteRssiAction;
 import info.izumin.android.bletia.action.WriteCharacteristicAction;
 import info.izumin.android.bletia.action.WriteDescriptorAction;
-import info.izumin.android.bletia.core.ActionQueueContainer;
+import info.izumin.android.bletia.core.StateContainer;
 import info.izumin.android.bletia.core.BleErrorType;
 import info.izumin.android.bletia.core.BleMessageThread;
 import info.izumin.android.bletia.core.BletiaException;
@@ -55,7 +55,7 @@ public class BletiaTest extends AndroidTestCase {
     @Mock private BluetoothGattDescriptor mDescriptor;
     @Mock private BluetoothGattWrapper mBluetoothGattWrapper;
 
-    private ActionQueueContainer mQueueContainer;
+    private StateContainer mContainer;
     private BleMessageThread mMessageThread;
     private BluetoothGattCallbackHandler mCallbackHandler;
     private Bletia mBletia;
@@ -69,11 +69,11 @@ public class BletiaTest extends AndroidTestCase {
         mContext = getContext();
         mBletia = new Bletia(mContext);
 
-        mQueueContainer = (ActionQueueContainer) Whitebox.getInternalState(mBletia, "mQueueContainer");
+        mContainer = (StateContainer) Whitebox.getInternalState(mBletia, "mContainer");
         mCallbackHandler = (BluetoothGattCallbackHandler) Whitebox.getInternalState(mBletia, "mCallbackHandler");
         HandlerThread thread = new HandlerThread("test");
         thread.start();
-        mMessageThread = new BleMessageThread(thread, mBluetoothGattWrapper, mQueueContainer);
+        mMessageThread = new BleMessageThread(thread, mBluetoothGattWrapper, mContainer);
         Whitebox.setInternalState(mBletia, "mMessageThread", mMessageThread);
         Whitebox.setInternalState(mBletia, "mGattWrapper", mBluetoothGattWrapper);
 
