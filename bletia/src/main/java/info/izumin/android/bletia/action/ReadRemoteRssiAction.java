@@ -2,6 +2,7 @@ package info.izumin.android.bletia.action;
 
 import org.jdeferred.Promise;
 
+import info.izumin.android.bletia.DeferredStrategy;
 import info.izumin.android.bletia.core.BletiaException;
 import info.izumin.android.bletia.core.action.AbstractReadRemoteRssiAction;
 

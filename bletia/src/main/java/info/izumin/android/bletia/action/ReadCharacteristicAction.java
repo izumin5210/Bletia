@@ -4,6 +4,7 @@ import android.bluetooth.BluetoothGattCharacteristic;
 
 import org.jdeferred.Promise;
 
+import info.izumin.android.bletia.DeferredStrategy;
 import info.izumin.android.bletia.core.BletiaException;
 import info.izumin.android.bletia.core.action.AbstractReadCharacteristicAction;
 
