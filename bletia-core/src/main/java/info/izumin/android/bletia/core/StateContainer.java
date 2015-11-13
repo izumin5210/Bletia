@@ -15,12 +15,12 @@ import info.izumin.android.bletia.core.action.AbstractWriteDescriptorAction;
  */
 public class StateContainer {
     private BleState mState;
-    private ActionQueue<AbstractReadCharacteristicAction, UUID> mReadCharacteristicActionQueue;
-    private ActionQueue<AbstractWriteCharacteristicAction, UUID> mWriteCharacteristicActionQueue;
-    private ActionQueue<AbstractReadDescriptorAction, UUID> mReadDescriptorActionQueue;
-    private ActionQueue<AbstractWriteDescriptorAction, UUID> mWriteDescriptorActionQueue;
-    private ActionQueue<AbstractEnableNotificationAction, UUID> mEnableNotificationActionQueue;
-    private ActionQueue<AbstractReadRemoteRssiAction, Void> mReadRemoteRssiActionQueue;
+    private ActionQueue<AbstractReadCharacteristicAction<?>, UUID> mReadCharacteristicActionQueue;
+    private ActionQueue<AbstractWriteCharacteristicAction<?>, UUID> mWriteCharacteristicActionQueue;
+    private ActionQueue<AbstractReadDescriptorAction<?>, UUID> mReadDescriptorActionQueue;
+    private ActionQueue<AbstractWriteDescriptorAction<?>, UUID> mWriteDescriptorActionQueue;
+    private ActionQueue<AbstractEnableNotificationAction<?>, UUID> mEnableNotificationActionQueue;
+    private ActionQueue<AbstractReadRemoteRssiAction<?>, Void> mReadRemoteRssiActionQueue;
 
     public StateContainer() {
         mState = BleState.DISCONNECTED;
@@ -48,27 +48,27 @@ public class StateContainer {
         return mState == BleState.SERVICE_DISCOVERED;
     }
 
-    public ActionQueue<AbstractReadCharacteristicAction, UUID> getReadCharacteristicActionQueue() {
+    public ActionQueue<AbstractReadCharacteristicAction<?>, UUID> getReadCharacteristicActionQueue() {
         return mReadCharacteristicActionQueue;
     }
 
-    public ActionQueue<AbstractWriteCharacteristicAction, UUID> getWriteCharacteristicActionQueue() {
+    public ActionQueue<AbstractWriteCharacteristicAction<?>, UUID> getWriteCharacteristicActionQueue() {
         return mWriteCharacteristicActionQueue;
     }
 
-    public ActionQueue<AbstractReadDescriptorAction, UUID> getReadDescriptorActionQueue() {
+    public ActionQueue<AbstractReadDescriptorAction<?>, UUID> getReadDescriptorActionQueue() {
         return mReadDescriptorActionQueue;
     }
 
-    public ActionQueue<AbstractWriteDescriptorAction, UUID> getWriteDescriptorActionQueue() {
+    public ActionQueue<AbstractWriteDescriptorAction<?>, UUID> getWriteDescriptorActionQueue() {
         return mWriteDescriptorActionQueue;
     }
 
-    public ActionQueue<AbstractEnableNotificationAction, UUID> getEnableNotificationActionQueue() {
+    public ActionQueue<AbstractEnableNotificationAction<?>, UUID> getEnableNotificationActionQueue() {
         return mEnableNotificationActionQueue;
     }
 
-    public ActionQueue<AbstractReadRemoteRssiAction, Void> getReadRemoteRssiActionQueue() {
+    public ActionQueue<AbstractReadRemoteRssiAction<?>, Void> getReadRemoteRssiActionQueue() {
         return mReadRemoteRssiActionQueue;
     }
 

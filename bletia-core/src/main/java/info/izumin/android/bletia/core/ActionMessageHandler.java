@@ -32,7 +32,7 @@ enum ActionMessageHandler {
             return (UUID) msg.getData().getSerializable(AbstractAction.KEY_IDENTITY);
         }
 
-        private ActionQueue<AbstractReadCharacteristicAction, UUID> getQueueFromContainer(StateContainer container) {
+        private ActionQueue<AbstractReadCharacteristicAction<?>, UUID> getQueueFromContainer(StateContainer container) {
             return container.getReadCharacteristicActionQueue();
         }
     },
@@ -51,7 +51,7 @@ enum ActionMessageHandler {
             return (UUID) msg.getData().getSerializable(AbstractAction.KEY_IDENTITY);
         }
 
-        private ActionQueue<AbstractWriteCharacteristicAction, UUID> getQueueFromContainer(StateContainer container) {
+        private ActionQueue<AbstractWriteCharacteristicAction<?>, UUID> getQueueFromContainer(StateContainer container) {
             return container.getWriteCharacteristicActionQueue();
         }
     },
@@ -70,7 +70,7 @@ enum ActionMessageHandler {
             return (UUID) msg.getData().getSerializable(AbstractAction.KEY_IDENTITY);
         }
 
-        private ActionQueue<AbstractReadDescriptorAction, UUID> getQueueFromContainer(StateContainer container) {
+        private ActionQueue<AbstractReadDescriptorAction<?>, UUID> getQueueFromContainer(StateContainer container) {
             return container.getReadDescriptorActionQueue();
         }
     },
@@ -89,7 +89,7 @@ enum ActionMessageHandler {
             return (UUID) msg.getData().getSerializable(AbstractAction.KEY_IDENTITY);
         }
 
-        private ActionQueue<AbstractWriteDescriptorAction, UUID> getQueueFromContainer(StateContainer container) {
+        private ActionQueue<AbstractWriteDescriptorAction<?>, UUID> getQueueFromContainer(StateContainer container) {
             return container.getWriteDescriptorActionQueue();
         }
     },
@@ -108,7 +108,7 @@ enum ActionMessageHandler {
             return (UUID) msg.getData().getSerializable(AbstractAction.KEY_IDENTITY);
         }
 
-        private ActionQueue<AbstractEnableNotificationAction, UUID> getQueueFromContainer(StateContainer container) {
+        private ActionQueue<AbstractEnableNotificationAction<?>, UUID> getQueueFromContainer(StateContainer container) {
             return container.getEnableNotificationActionQueue();
         }
     },
@@ -123,7 +123,7 @@ enum ActionMessageHandler {
             return getQueueFromContainer(container).isRunning(null);
         }
 
-        private ActionQueue<AbstractReadRemoteRssiAction, Void> getQueueFromContainer(StateContainer container) {
+        private ActionQueue<AbstractReadRemoteRssiAction<?>, Void> getQueueFromContainer(StateContainer container) {
             return container.getReadRemoteRssiActionQueue();
         }
     };
