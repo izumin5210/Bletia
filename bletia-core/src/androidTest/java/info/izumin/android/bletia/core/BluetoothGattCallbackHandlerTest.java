@@ -37,7 +37,7 @@ import static org.mockito.Mockito.when;
 public class BluetoothGattCallbackHandlerTest {
 
     private BluetoothGattCallbackHandler mCallbackHandler;
-    private ActionQueueContainer mQueueContainer;
+    private StateContainer mContainer;
 
     @Mock private AbstractBletia.BleEventListener mListener;
     @Mock private BluetoothGattWrapper mGattWrapper;
@@ -56,14 +56,14 @@ public class BluetoothGattCallbackHandlerTest {
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        mQueueContainer = Mockito.mock(ActionQueueContainer.class, Mockito.RETURNS_DEEP_STUBS);
-        mCallbackHandler = new BluetoothGattCallbackHandler(mListener, mQueueContainer);
-        when(mQueueContainer.getReadCharacteristicActionQueue().dequeue(any(UUID.class))).thenReturn(mReadCharacteristicAction);
-        when(mQueueContainer.getWriteCharacteristicActionQueue().dequeue(any(UUID.class))).thenReturn(mWriteCharacteristicAction);
-        when(mQueueContainer.getReadDescriptorActionQueue().dequeue(any(UUID.class))).thenReturn(mReadDescriptorAction);
-        when(mQueueContainer.getWriteDescriptorActionQueue().dequeue(any(UUID.class))).thenReturn(mWriteDescriptorAction);
-        when(mQueueContainer.getEnableNotificationActionQueue().dequeue(any(UUID.class))).thenReturn(mNotificationAction);
-        when(mQueueContainer.getReadRemoteRssiActionQueue().dequeue(null)).thenReturn(mRssiAction);
+        mContainer = Mockito.mock(StateContainer.class, Mockito.RETURNS_DEEP_STUBS);
+        mCallbackHandler = new BluetoothGattCallbackHandler(mListener, mContainer);
+        when(mContainer.getReadCharacteristicActionQueue().dequeue(any(UUID.class))).thenReturn(mReadCharacteristicAction);
+        when(mContainer.getWriteCharacteristicActionQueue().dequeue(any(UUID.class))).thenReturn(mWriteCharacteristicAction);
+        when(mContainer.getReadDescriptorActionQueue().dequeue(any(UUID.class))).thenReturn(mReadDescriptorAction);
+        when(mContainer.getWriteDescriptorActionQueue().dequeue(any(UUID.class))).thenReturn(mWriteDescriptorAction);
+        when(mContainer.getEnableNotificationActionQueue().dequeue(any(UUID.class))).thenReturn(mNotificationAction);
+        when(mContainer.getReadRemoteRssiActionQueue().dequeue(null)).thenReturn(mRssiAction);
         when(mDescriptor.getUuid()).thenReturn(UUID.randomUUID());
         when(mDescriptor.getCharacteristic()).thenReturn(mCharacteristic);
         mExceptionCaptor = ArgumentCaptor.forClass(BletiaException.class);

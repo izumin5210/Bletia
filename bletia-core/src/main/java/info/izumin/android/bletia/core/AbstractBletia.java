@@ -24,7 +24,7 @@ public abstract class AbstractBletia {
 
     private BleState mState = BleState.DISCONNECTED;
 
-    private ActionQueueContainer mQueueContainer;
+    private StateContainer mContainer;
     private BluetoothGattCallbackHandler mCallbackHandler;
     private BleMessageThread mMessageThread;
 
@@ -32,8 +32,8 @@ public abstract class AbstractBletia {
 
     public AbstractBletia(Context context) {
         mContext = context;
-        mQueueContainer = new ActionQueueContainer();
-        mCallbackHandler = new BluetoothGattCallbackHandler(mListener, mQueueContainer);
+        mContainer = new StateContainer();
+        mCallbackHandler = new BluetoothGattCallbackHandler(mListener, mContainer);
     }
 
     public BleState getState() {
@@ -54,7 +54,7 @@ public abstract class AbstractBletia {
 
         HandlerThread thread = new HandlerThread(device.getName());
         thread.start();
-        mMessageThread = new BleMessageThread(thread, mGattWrapper, mQueueContainer);
+        mMessageThread = new BleMessageThread(thread, mGattWrapper, mContainer);
     }
 
     public void disconenct() {
