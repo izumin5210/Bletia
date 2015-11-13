@@ -19,19 +19,11 @@ import info.izumin.android.bletia.core.wrapper.BluetoothGattWrapper;
 public abstract class AbstractBletia {
     public static final String TAG = AbstractBletia.class.getSimpleName();
 
-    private Context mContext;
-    private BluetoothGattWrapper mGattWrapper;
-
     private StateContainer mContainer;
-    private BluetoothGattCallbackHandler mCallbackHandler;
-    private BleMessageThread mMessageThread;
-
     private BleEventListener mSubListener;
 
     public AbstractBletia(Context context) {
-        mContext = context;
-        mContainer = new StateContainer();
-        mCallbackHandler = new BluetoothGattCallbackHandler(mListener, mContainer);
+        mContainer = new StateContainer(context, mListener);
     }
 
     public BleState getState() {
@@ -52,34 +44,34 @@ public abstract class AbstractBletia {
 
     public void connect(BluetoothDevice device) {
         setState(BleState.CONNECTING);
-        mGattWrapper = new BluetoothDeviceWrapper(device).connectGatt(mContext, false, mCallbackHandler);
-
+        mContainer.setGattWrapper(new BluetoothDeviceWrapper(device)
+                .connectGatt(mContainer.getContext(), false, mContainer.getCallbackHandler()));
         HandlerThread thread = new HandlerThread(device.getName());
         thread.start();
-        mMessageThread = new BleMessageThread(thread, mGattWrapper, mContainer);
+        mContainer.setMessageThread(new BleMessageThread(thread, mContainer.getGattWrapper(), mContainer));
     }
 
     public void disconenct() {
         setState(BleState.DISCONNECTING);
-        mGattWrapper.disconnect();
-        mMessageThread.stop();
+        getBluetoothGattWrapper().disconnect();
+        mContainer.getMessageThread().stop();
     }
 
     public boolean discoverServices() {
         setState(BleState.SERVICE_DISCOVERING);
-        return mGattWrapper.discoverServices();
+        return getBluetoothGattWrapper().discoverServices();
     }
 
     public BluetoothGattService getService(UUID uuid) {
-        return mGattWrapper.getService(uuid);
+        return getBluetoothGattWrapper().getService(uuid);
     }
 
     public List<BluetoothGattService> getServices() {
-        return mGattWrapper.getServices();
+        return getBluetoothGattWrapper().getServices();
     }
 
     public BluetoothDevice getDevice() {
-        return (mGattWrapper == null) ? null : mGattWrapper.getDevice();
+        return (getBluetoothGattWrapper() == null) ? null : getBluetoothGattWrapper().getDevice();
     }
 
     public <T, E extends Throwable, R> R execute(AbstractAction<T, E, ?, R> action) {
@@ -92,11 +84,11 @@ public abstract class AbstractBletia {
     }
 
     protected BluetoothGattWrapper getBluetoothGattWrapper() {
-        return mGattWrapper;
+        return mContainer.getGattWrapper();
     }
 
     protected void dispatchAction(AbstractAction action) {
-        mMessageThread.dispatchAction(action);
+        mContainer.getMessageThread().dispatchAction(action);
     }
 
     private final BleEventListener mListener = new BleEventListener() {
@@ -111,7 +103,7 @@ public abstract class AbstractBletia {
         @Override
         public void onDisconnect(BluetoothGattWrapper gatt) {
             setState(BleState.DISCONNECTED);
-            mGattWrapper.close();
+            getBluetoothGattWrapper().close();
             if (mSubListener != null) {
                 mSubListener.onDisconnect(gatt);
             }
