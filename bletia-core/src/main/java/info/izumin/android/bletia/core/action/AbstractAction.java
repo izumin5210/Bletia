@@ -18,7 +18,10 @@ public abstract class AbstractAction<T, E extends Throwable, I, R> {
         WRITE_DESCRIPTOR(3),
         READ_DESCRIPTOR(4),
         ENABLE_NOTIFICATION(5),
-        READ_REMOTE_RSSI(6);
+        READ_REMOTE_RSSI(6),
+        CONNECT(101),
+        DISCOVER_SERVICES(102),
+        DISCONNECT(103);
 
         private final int mCode;
 
