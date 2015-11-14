@@ -5,6 +5,9 @@ import android.os.Message;
 import java.util.UUID;
 
 import info.izumin.android.bletia.core.action.AbstractAction;
+import info.izumin.android.bletia.core.action.AbstractConnectAction;
+import info.izumin.android.bletia.core.action.AbstractDisconnectAction;
+import info.izumin.android.bletia.core.action.AbstractDiscoverServicesAction;
 import info.izumin.android.bletia.core.action.AbstractEnableNotificationAction;
 import info.izumin.android.bletia.core.action.AbstractReadCharacteristicAction;
 import info.izumin.android.bletia.core.action.AbstractReadDescriptorAction;
@@ -124,6 +127,51 @@ enum ActionMessageHandler {
 
         private ActionQueue<AbstractReadRemoteRssiAction<?>, Void> getQueueFromContainer(StateContainer container) {
             return container.getReadRemoteRssiActionQueue();
+        }
+    },
+    CONNECT(AbstractAction.Type.CONNECT) {
+        @Override
+        public boolean execute(Message msg, StateContainer container) {
+            return getQueueFromContainer(container).execute(null, container.getGattWrapper());
+        }
+
+        @Override
+        public boolean isRunning(Message msg, StateContainer container) {
+            return getQueueFromContainer(container).isRunning(null);
+        }
+
+        private ActionQueue<AbstractConnectAction<?>, Void> getQueueFromContainer(StateContainer container) {
+            return container.getConnectActionQueue();
+        }
+    },
+    DISCOVER_SERVICES(AbstractAction.Type.DISCOVER_SERVICES) {
+        @Override
+        public boolean execute(Message msg, StateContainer container) {
+            return getQueueFromContainer(container).execute(null, container.getGattWrapper());
+        }
+
+        @Override
+        public boolean isRunning(Message msg, StateContainer container) {
+            return getQueueFromContainer(container).isRunning(null);
+        }
+
+        private ActionQueue<AbstractDiscoverServicesAction<?>, Void> getQueueFromContainer(StateContainer container) {
+            return container.getDiscoverServicesActionQueue();
+        }
+    },
+    DISCONNECT(AbstractAction.Type.DISCONNECT) {
+        @Override
+        public boolean execute(Message msg, StateContainer container) {
+            return getQueueFromContainer(container).execute(null, container.getGattWrapper());
+        }
+
+        @Override
+        public boolean isRunning(Message msg, StateContainer container) {
+            return getQueueFromContainer(container).isRunning(null);
+        }
+
+        private ActionQueue<AbstractDisconnectAction<?>, Void> getQueueFromContainer(StateContainer container) {
+            return container.getDisconnectActionQueue();
         }
     };
 
