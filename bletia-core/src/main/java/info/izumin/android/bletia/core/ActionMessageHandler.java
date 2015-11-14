@@ -11,7 +11,6 @@ import info.izumin.android.bletia.core.action.AbstractReadDescriptorAction;
 import info.izumin.android.bletia.core.action.AbstractReadRemoteRssiAction;
 import info.izumin.android.bletia.core.action.AbstractWriteCharacteristicAction;
 import info.izumin.android.bletia.core.action.AbstractWriteDescriptorAction;
-import info.izumin.android.bletia.core.wrapper.BluetoothGattWrapper;
 
 /**
  * Created by izumin on 10/3/15.
@@ -19,8 +18,8 @@ import info.izumin.android.bletia.core.wrapper.BluetoothGattWrapper;
 enum ActionMessageHandler {
     READ_CHARACTERISTIC(AbstractAction.Type.READ_CHARACTERISTIC) {
         @Override
-        public boolean execute(Message msg, StateContainer container, BluetoothGattWrapper gattWrapper) {
-            return getQueueFromContainer(container).execute(getIdentityFromMessage(msg), gattWrapper);
+        public boolean execute(Message msg, StateContainer container) {
+            return getQueueFromContainer(container).execute(getIdentityFromMessage(msg), container.getGattWrapper());
         }
 
         @Override
@@ -38,8 +37,8 @@ enum ActionMessageHandler {
     },
     WRITE_CHARACTERISTIC(AbstractAction.Type.WRITE_CHARACTERISTIC) {
         @Override
-        public boolean execute(Message msg, StateContainer container, BluetoothGattWrapper gattWrapper) {
-            return getQueueFromContainer(container).execute(getIdentityFromMessage(msg), gattWrapper);
+        public boolean execute(Message msg, StateContainer container) {
+            return getQueueFromContainer(container).execute(getIdentityFromMessage(msg), container.getGattWrapper());
         }
 
         @Override
@@ -57,8 +56,8 @@ enum ActionMessageHandler {
     },
     READ_DESCRIPTOR(AbstractAction.Type.READ_DESCRIPTOR) {
         @Override
-        public boolean execute(Message msg, StateContainer container, BluetoothGattWrapper gattWrapper) {
-            return getQueueFromContainer(container).execute(getIdentityFromMessage(msg), gattWrapper);
+        public boolean execute(Message msg, StateContainer container) {
+            return getQueueFromContainer(container).execute(getIdentityFromMessage(msg), container.getGattWrapper());
         }
 
         @Override
@@ -76,8 +75,8 @@ enum ActionMessageHandler {
     },
     WRITE_DESCRIPTOR(AbstractAction.Type.WRITE_DESCRIPTOR) {
         @Override
-        public boolean execute(Message msg, StateContainer container, BluetoothGattWrapper gattWrapper) {
-            return getQueueFromContainer(container).execute(getIdentityFromMessage(msg), gattWrapper);
+        public boolean execute(Message msg, StateContainer container) {
+            return getQueueFromContainer(container).execute(getIdentityFromMessage(msg), container.getGattWrapper());
         }
 
         @Override
@@ -95,8 +94,8 @@ enum ActionMessageHandler {
     },
     ENABLE_NOTIFICATION(AbstractAction.Type.ENABLE_NOTIFICATION) {
         @Override
-        public boolean execute(Message msg, StateContainer container, BluetoothGattWrapper gattWrapper) {
-            return getQueueFromContainer(container).execute(getIdentityFromMessage(msg), gattWrapper);
+        public boolean execute(Message msg, StateContainer container) {
+            return getQueueFromContainer(container).execute(getIdentityFromMessage(msg), container.getGattWrapper());
         }
 
         @Override
@@ -114,8 +113,8 @@ enum ActionMessageHandler {
     },
     READ_REMOTE_RSSI(AbstractAction.Type.READ_REMOTE_RSSI) {
         @Override
-        public boolean execute(Message msg, StateContainer container, BluetoothGattWrapper gattWrapper) {
-            return getQueueFromContainer(container).execute(null, gattWrapper);
+        public boolean execute(Message msg, StateContainer container) {
+            return getQueueFromContainer(container).execute(null, container.getGattWrapper());
         }
 
         @Override
@@ -149,6 +148,6 @@ enum ActionMessageHandler {
         throw new IllegalArgumentException();
     }
 
-    public abstract boolean execute(Message msg, StateContainer container, BluetoothGattWrapper gattWrapper);
+    public abstract boolean execute(Message msg, StateContainer container);
     public abstract boolean isRunning(Message msg, StateContainer container);
 }
