@@ -16,9 +16,14 @@ public class RxObservableStrategy<T, E extends Throwable> implements ResolveStra
         mSubject = PublishSubject.create();
     }
 
+    protected PublishSubject<T> getSubject() {
+        return mSubject;
+    }
+
     @Override
     public void resolve(T value) {
         mSubject.onNext(value);
+        mSubject.onCompleted();
     }
 
     @Override
