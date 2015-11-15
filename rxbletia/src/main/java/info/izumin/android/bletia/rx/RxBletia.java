@@ -36,6 +36,7 @@ public class RxBletia extends AbstractBletia {
 
     public RxBletia(Context context) {
         super(context);
+        setSubListener(mListener);
         mEnabledNotificationList = new HashMap<>();
         mExceptionSubject = PublishSubject.create();
     }
