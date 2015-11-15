@@ -70,12 +70,12 @@ public class BletiaTest extends AndroidTestCase {
         mBletia = new Bletia(mContext);
 
         mContainer = (StateContainer) Whitebox.getInternalState(mBletia, "mContainer");
-        mCallbackHandler = (BluetoothGattCallbackHandler) Whitebox.getInternalState(mBletia, "mCallbackHandler");
+        mCallbackHandler = mContainer.getCallbackHandler();
         HandlerThread thread = new HandlerThread("test");
         thread.start();
-        mMessageThread = new BleMessageThread(thread, mBluetoothGattWrapper, mContainer);
-        Whitebox.setInternalState(mBletia, "mMessageThread", mMessageThread);
-        Whitebox.setInternalState(mBletia, "mGattWrapper", mBluetoothGattWrapper);
+        mMessageThread = new BleMessageThread(thread, mContainer);
+        mContainer.setMessageThread(mMessageThread);
+        mContainer.setGattWrapper(mBluetoothGattWrapper);
 
         when(mCharacteristic.getUuid()).thenReturn(UUID.randomUUID());
         when(mDescriptor.getUuid()).thenReturn(UUID.randomUUID());
