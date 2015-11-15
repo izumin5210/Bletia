@@ -8,7 +8,7 @@ public class RxObservableContinuouslyStrategy<T, E extends Throwable> extends Rx
 
     @Override
     public void resolve(T value) {
-        getSubject().onNext(value);
+       getSubject().onNext(value);
     }
 
     public void complete() {

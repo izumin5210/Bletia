@@ -22,6 +22,7 @@ import info.izumin.android.bletia.rx.action.RxReadRemoteRssiAction;
 import info.izumin.android.bletia.rx.action.RxWriteCharacteristicAction;
 import info.izumin.android.bletia.rx.action.RxWriteDescriptorAction;
 import rx.Observable;
+import rx.functions.Action0;
 import rx.functions.Action1;
 import rx.subjects.PublishSubject;
 
@@ -73,19 +74,19 @@ public class RxBletia extends AbstractBletia {
         return enabled ? enableNotification(characteristic) : disableNotification(characteristic);
     }
 
-    public Observable<BluetoothGattCharacteristic> enableNotification(BluetoothGattCharacteristic characteristic) {
+    public Observable<BluetoothGattCharacteristic> enableNotification(final BluetoothGattCharacteristic characteristic) {
         final UUID uuid = characteristic.getUuid();
         if (mEnabledNotificationList.containsKey(uuid)) {
             return mEnabledNotificationList.get(uuid).getResolver();
         }
         final RxEnableNotificationAction action = new RxEnableNotificationAction(characteristic);
-        return execute(action)
-                .doOnNext(new Action1<BluetoothGattCharacteristic>() {
-                    @Override
-                    public void call(BluetoothGattCharacteristic characteristic) {
-                        mEnabledNotificationList.put(characteristic.getUuid(), action);
-                    }
-                });
+        mEnabledNotificationList.put(characteristic.getUuid(), action);
+        return execute(action).doOnUnsubscribe(new Action0() {
+            @Override
+            public void call() {
+                mEnabledNotificationList.remove(uuid);
+            }
+        });
     }
 
     public Observable<BluetoothGattCharacteristic> disableNotification(BluetoothGattCharacteristic characteristic) {
@@ -108,7 +109,7 @@ public class RxBletia extends AbstractBletia {
 
     private final BleEventListener mListener = new BleEventListener() {
         @Override
-        public void onCharacteristicChanged(BluetoothGattCharacteristic characteristic) {
+        public void onCharacteristicChanged(final BluetoothGattCharacteristic characteristic) {
             final UUID uuid = characteristic.getUuid();
             if (mEnabledNotificationList.containsKey(uuid)) {
                 mEnabledNotificationList.get(uuid).resolve(characteristic);
