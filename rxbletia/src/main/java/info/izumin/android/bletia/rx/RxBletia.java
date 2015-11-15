@@ -42,7 +42,7 @@ public class RxBletia extends AbstractBletia {
         mExceptionSubject = PublishSubject.create();
     }
 
-    public Observable<Void> conncet(BluetoothDevice device) {
+    public Observable<Void> connect(BluetoothDevice device) {
         return execute(new RxConnectAction(device, getStateContainer()));
     }
 

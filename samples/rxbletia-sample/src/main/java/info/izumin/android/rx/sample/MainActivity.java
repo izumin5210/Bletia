@@ -151,7 +151,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void connect(BluetoothDevice device) {
-        Subscription subscription = mBletia.conncet(device)
+        Subscription subscription = mBletia.connect(device)
                 .flatMap(_void -> mBletia.discoverServices())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnNext(_void -> refresh(true))
