@@ -5,6 +5,7 @@ import android.bluetooth.BluetoothGattCharacteristic;
 import java.util.ArrayList;
 import java.util.List;
 
+import info.izumin.android.bletia.core.BleState;
 import info.izumin.android.bletia.core.BletiaException;
 
 /**
@@ -28,33 +29,15 @@ class EventEmitter {
         mListeners.remove(listener);
     }
 
-    public void emitConnectEvent() {
-        for (BletiaListener listener : mListeners) {
-            listener.onConnect(mBletia);
-        }
-    }
-
-    public void emitDisconnectEvent() {
-        for (BletiaListener listener : mListeners) {
-            listener.onDisconnect(mBletia);
-        }
-    }
-
-    public void emitServiceDiscovered(int status) {
-        for (BletiaListener listener : mListeners) {
-            listener.onServicesDiscovered(mBletia, status);
-        }
-    }
-
     public void emitCharacteristicChanged(BluetoothGattCharacteristic characteristic) {
         for (BletiaListener listener : mListeners) {
             listener.onCharacteristicChanged(mBletia, characteristic);
         }
     }
 
-    public void emitError(BletiaException exception) {
+    public void emitError(BletiaException exception, BleState state) {
         for (BletiaListener listener : mListeners) {
-            listener.onError(exception);
+            listener.onError(exception, state);
         }
     }
 }

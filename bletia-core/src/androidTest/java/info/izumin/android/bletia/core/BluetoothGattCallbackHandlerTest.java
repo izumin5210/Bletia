@@ -15,6 +15,9 @@ import org.mockito.MockitoAnnotations;
 
 import java.util.UUID;
 
+import info.izumin.android.bletia.core.action.AbstractConnectAction;
+import info.izumin.android.bletia.core.action.AbstractDisconnectAction;
+import info.izumin.android.bletia.core.action.AbstractDiscoverServicesAction;
 import info.izumin.android.bletia.core.action.AbstractEnableNotificationAction;
 import info.izumin.android.bletia.core.action.AbstractReadCharacteristicAction;
 import info.izumin.android.bletia.core.action.AbstractReadDescriptorAction;
@@ -51,6 +54,10 @@ public class BluetoothGattCallbackHandlerTest {
     @Mock private AbstractEnableNotificationAction mNotificationAction;
     @Mock private AbstractReadRemoteRssiAction mRssiAction;
 
+    @Mock private AbstractConnectAction mConnectAction;
+    @Mock private AbstractDiscoverServicesAction mDiscoverServicesAction;
+    @Mock private AbstractDisconnectAction mDisconnectAction;
+
     private ArgumentCaptor<BletiaException> mExceptionCaptor;
 
     @Before
@@ -64,6 +71,9 @@ public class BluetoothGattCallbackHandlerTest {
         when(mContainer.getWriteDescriptorActionQueue().dequeue(any(UUID.class))).thenReturn(mWriteDescriptorAction);
         when(mContainer.getEnableNotificationActionQueue().dequeue(any(UUID.class))).thenReturn(mNotificationAction);
         when(mContainer.getReadRemoteRssiActionQueue().dequeue(null)).thenReturn(mRssiAction);
+        when(mContainer.getConnectActionQueue().dequeue(null)).thenReturn(mConnectAction);
+        when(mContainer.getDiscoverServicesActionQueue().dequeue(null)).thenReturn(mDiscoverServicesAction);
+        when(mContainer.getDisconnectActionQueue().dequeue(null)).thenReturn(mDisconnectAction);
         when(mDescriptor.getUuid()).thenReturn(UUID.randomUUID());
         when(mDescriptor.getCharacteristic()).thenReturn(mCharacteristic);
         mExceptionCaptor = ArgumentCaptor.forClass(BletiaException.class);
@@ -72,39 +82,47 @@ public class BluetoothGattCallbackHandlerTest {
     @Test
     public void onConnectionStateChange_WhenStatusIsSuccessAndNewStateIsConnected() throws Exception {
         mCallbackHandler.onConnectionStateChange(mGattWrapper, BluetoothGatt.GATT_SUCCESS, BluetoothGatt.STATE_CONNECTED);
-        verify(mListener, times(1)).onConnect(mGattWrapper);
+        verify(mConnectAction, times(1)).resolve(null);
     }
 
     @Test
     public void onConnectionStateChange_WhenStatusIsSuccessAndNewStateIsDisconnected() throws Exception {
         mCallbackHandler.onConnectionStateChange(mGattWrapper, BluetoothGatt.GATT_SUCCESS, BluetoothGatt.STATE_DISCONNECTED);
-        verify(mListener, times(1)).onDisconnect(mGattWrapper);
+        verify(mDisconnectAction, times(1)).resolve(null);
     }
 
     @Test
     public void onConnectionStateChange_WhenStatusIsFailureAndNewStateIsConnected() throws Exception {
         mCallbackHandler.onConnectionStateChange(mGattWrapper, BluetoothGatt.GATT_FAILURE, BluetoothGatt.STATE_CONNECTED);
-        verify(mListener, times(1)).onError(mExceptionCaptor.capture());
+        verify(mConnectAction, times(1)).reject(mExceptionCaptor.capture());
         BletiaException e = mExceptionCaptor.getValue();
-        assertThat(e.getTag()).isEqualTo("onConnectionStateChange");
+        assertThat(e.getType()).isEqualTo(BleErrorType.FAILURE);
+        assertThat(e.getAction()).isEqualTo(mConnectAction);
     }
 
     @Test
     public void onConnectionStateChange_WhenStatusIsFailureAndNewStateIsDisconnected() throws Exception {
         mCallbackHandler.onConnectionStateChange(mGattWrapper, BluetoothGatt.GATT_FAILURE, BluetoothGatt.STATE_DISCONNECTED);
-        verify(mListener, times(1)).onDisconnect(mGattWrapper);
+        verify(mDisconnectAction, times(1)).reject(mExceptionCaptor.capture());
+        BletiaException e = mExceptionCaptor.getValue();
+        assertThat(e.getType()).isEqualTo(BleErrorType.FAILURE);
+        assertThat(e.getAction()).isEqualTo(mDisconnectAction);
     }
 
     @Test
     public void onServiceDiscovered_WhenStatusIsSuccess() throws Exception {
         mCallbackHandler.onServicesDiscovered(mGattWrapper, BluetoothGatt.GATT_SUCCESS);
-        verify(mListener, times(1)).onServiceDiscovered(BluetoothGatt.GATT_SUCCESS);
+        verify(mContainer, times(1)).setState(BleState.SERVICE_DISCOVERED);
+        verify(mDiscoverServicesAction, times(1)).resolve(null);
     }
 
     @Test
     public void onServiceDiscovered_WhenStatusIsFailure() throws Exception {
         mCallbackHandler.onServicesDiscovered(mGattWrapper, BluetoothGatt.GATT_FAILURE);
-        verify(mListener, times(1)).onServiceDiscovered(BluetoothGatt.GATT_FAILURE);
+        verify(mDiscoverServicesAction, times(1)).reject(mExceptionCaptor.capture());
+        BletiaException e = mExceptionCaptor.getValue();
+        assertThat(e.getType()).isEqualTo(BleErrorType.FAILURE);
+        assertThat(e.getAction()).isEqualTo(mDiscoverServicesAction);
     }
 
     @Test

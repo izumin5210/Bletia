@@ -19,7 +19,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import org.jdeferred.DoneCallback;
+import org.jdeferred.DonePipe;
 import org.jdeferred.FailCallback;
+import org.jdeferred.Promise;
 
 import java.util.UUID;
 
@@ -28,8 +30,9 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnItemClick;
 import info.izumin.android.bletia.Bletia;
-import info.izumin.android.bletia.core.BletiaException;
 import info.izumin.android.bletia.BletiaListener;
+import info.izumin.android.bletia.core.BleState;
+import info.izumin.android.bletia.core.BletiaException;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -109,7 +112,15 @@ public class MainActivity extends AppCompatActivity {
                 scanBleDevice();
                 return true;
             case R.id.action_disconnect:
-                mBletia.disconenct();
+                mBletia.disconnect()
+                        .then(new DoneCallback<Void>() {
+                            @Override
+                            public void onDone(Void result) {
+                                Log.d(TAG, "Device disconnected...");
+                                refresh(false);
+                            }
+                        })
+                        .fail(mFailCallback);
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -120,7 +131,24 @@ public class MainActivity extends AppCompatActivity {
         BluetoothDevice device = mDeviceAdapter.getItem(position);
         Log.d(TAG, "Connected to " + device.getName() + " !");
         mScanner.stopScan(mScanCallback);
-        mBletia.connect(device);
+        mBletia.connect(device)
+                .then(new DonePipe<Void, Void, BletiaException, Void>() {
+                    @Override
+                    public Promise<Void, BletiaException, Void> pipeDone(Void result) {
+                        Log.d(TAG, "Device connected!");
+                        return mBletia.discoverServices();
+                    }
+                })
+                .then(new DoneCallback<Void>() {
+                    @Override
+                    public void onDone(Void result) {
+                        Log.d(TAG, "Services discovered!");
+                        refresh(true);
+                        mBletia.enableNotification(getBatteryStateCharacteristic(), true)
+                                .fail(mFailCallback);
+                    }
+                })
+                .fail(mFailCallback);
     }
 
     @OnClick(R.id.btn_alert_off)
@@ -202,28 +230,11 @@ public class MainActivity extends AppCompatActivity {
 
     private final BletiaListener mBletiaListener = new BletiaListener() {
         @Override
-        public void onConnect(Bletia bletia) {
-            Log.d(TAG, "Device connected!");
-            bletia.discoverServices();
-            refresh(true);
-        }
-
-        @Override
-        public void onDisconnect(Bletia bletia) {
-            Log.d(TAG, "Device disconnected...");
-            refresh(false);
-        }
-
-        @Override
-        public void onError(BletiaException exception) {
-            Log.d(TAG, exception.getMessage());
-        }
-
-        @Override
-        public void onServicesDiscovered(Bletia bletia, int status) {
-            Log.d(TAG, "Services discovered!");
-            mBletia.enableNotification(getBatteryStateCharacteristic(), true)
-                    .fail(mFailCallback);
+        public void onError(BletiaException exception, BleState state) {
+            Log.d(TAG, "[" + state.name() + "] " + exception.getMessage());
+            if (state == BleState.DISCONNECTED) {
+                refresh(false);
+            }
         }
 
         @Override
