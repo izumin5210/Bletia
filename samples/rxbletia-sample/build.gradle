@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'me.tatarka.retrolambda'
 
 android {
     compileSdkVersion 23
@@ -6,10 +7,14 @@ android {
 
     defaultConfig {
         applicationId "info.izumin.android.rx.sample"
-        minSdkVersion 18
+        minSdkVersion 21
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
     buildTypes {
         release {
@@ -20,7 +25,10 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:23.0.1'
+
+    compile 'com.jakewharton:butterknife:7.0.1'
+    compile 'io.reactivex:rxjava:1.0.16'
+    compile 'io.reactivex:rxandroid:1.0.1'
+    compile project(':rxbletia')
 }
