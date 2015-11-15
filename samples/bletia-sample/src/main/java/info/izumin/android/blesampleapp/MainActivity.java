@@ -1,5 +1,6 @@
 package info.izumin.android.blesampleapp;
 
+import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGattCharacteristic;
@@ -9,7 +10,10 @@ import android.bluetooth.le.ScanCallback;
 import android.bluetooth.le.ScanResult;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -17,6 +21,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.jdeferred.DoneCallback;
 import org.jdeferred.DonePipe;
@@ -44,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
     public static final UUID ALERT_LEVEL_UUID = UUID.fromString("00002a06-0000-1000-8000-00805f9b34fb");
 
     private final static int REQUEST_ENABLE_BT = 1;
+    private final static int REQUEST_LOCATION = 3;
 
     private Bletia mBletia;
 
@@ -95,6 +101,19 @@ public class MainActivity extends AppCompatActivity {
             case REQUEST_ENABLE_BT:
                 if (isEnabledBle()) { scanBleDevice(); }
                 break;
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == REQUEST_LOCATION) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                scanBleDevice();
+            } else {
+                Toast.makeText(this, "permission does not granted", Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
     }
 
@@ -191,6 +210,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void scanBleDevice() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_LOCATION);
+                return;
+            }
+        }
         mScanner = mBluetoothAdapter.getBluetoothLeScanner();
         mScanner.startScan(mScanCallback);
     }
