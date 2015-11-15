@@ -4,7 +4,7 @@ import android.bluetooth.BluetoothGattCharacteristic;
 
 import info.izumin.android.bletia.core.BletiaException;
 import info.izumin.android.bletia.core.action.AbstractEnableNotificationAction;
-import info.izumin.android.bletia.rx.RxObservableStrategy;
+import info.izumin.android.bletia.rx.RxObservableContinuouslyStrategy;
 import rx.Observable;
 
 /**
@@ -13,7 +13,7 @@ import rx.Observable;
 public class RxEnableNotificationAction extends AbstractEnableNotificationAction<Observable<BluetoothGattCharacteristic>> {
     public static final String TAG = RxEnableNotificationAction.class.getSimpleName();
 
-    public RxEnableNotificationAction(BluetoothGattCharacteristic characteristic, boolean enabled) {
-        super(characteristic, enabled, new RxObservableStrategy<BluetoothGattCharacteristic, BletiaException>());
+    public RxEnableNotificationAction(BluetoothGattCharacteristic characteristic) {
+        super(characteristic, true, new RxObservableContinuouslyStrategy<BluetoothGattCharacteristic, BletiaException>());
     }
 }

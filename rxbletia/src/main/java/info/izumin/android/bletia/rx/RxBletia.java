@@ -5,8 +5,14 @@ import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattDescriptor;
 import android.content.Context;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+
 import info.izumin.android.bletia.core.AbstractBletia;
+import info.izumin.android.bletia.core.BletiaException;
 import info.izumin.android.bletia.rx.action.RxConnectAction;
+import info.izumin.android.bletia.rx.action.RxDisableNotificationAction;
 import info.izumin.android.bletia.rx.action.RxDisconnectAction;
 import info.izumin.android.bletia.rx.action.RxDiscoverServicesAction;
 import info.izumin.android.bletia.rx.action.RxEnableNotificationAction;
@@ -16,6 +22,7 @@ import info.izumin.android.bletia.rx.action.RxReadRemoteRssiAction;
 import info.izumin.android.bletia.rx.action.RxWriteCharacteristicAction;
 import info.izumin.android.bletia.rx.action.RxWriteDescriptorAction;
 import rx.Observable;
+import rx.functions.Action1;
 
 /**
  * Created by izumin on 11/15/15.
@@ -23,8 +30,11 @@ import rx.Observable;
 public class RxBletia extends AbstractBletia {
     public static final String TAG = RxBletia.class.getSimpleName();
 
+    private final Map<UUID, RxEnableNotificationAction> mEnabledNotificationList;
+
     public RxBletia(Context context) {
         super(context);
+        mEnabledNotificationList = new HashMap<>();
     }
 
     public Observable<Void> conncet(BluetoothDevice device) {
@@ -56,10 +66,50 @@ public class RxBletia extends AbstractBletia {
     }
 
     public Observable<BluetoothGattCharacteristic> enableNotification(BluetoothGattCharacteristic characteristic, boolean enabled) {
-        return execute(new RxEnableNotificationAction(characteristic, enabled));
+        return enabled ? enableNotification(characteristic) : disableNotification(characteristic);
+    }
+
+    public Observable<BluetoothGattCharacteristic> enableNotification(BluetoothGattCharacteristic characteristic) {
+        final UUID uuid = characteristic.getUuid();
+        if (mEnabledNotificationList.containsKey(uuid)) {
+            return mEnabledNotificationList.get(uuid).getResolver();
+        }
+        final RxEnableNotificationAction action = new RxEnableNotificationAction(characteristic);
+        return execute(action)
+                .doOnNext(new Action1<BluetoothGattCharacteristic>() {
+                    @Override
+                    public void call(BluetoothGattCharacteristic characteristic) {
+                        mEnabledNotificationList.put(characteristic.getUuid(), action);
+                    }
+                });
+    }
+
+    public Observable<BluetoothGattCharacteristic> disableNotification(BluetoothGattCharacteristic characteristic) {
+        return execute(new RxDisableNotificationAction(characteristic))
+                .doOnNext(new Action1<BluetoothGattCharacteristic>() {
+                    @Override
+                    public void call(BluetoothGattCharacteristic characteristic) {
+                        mEnabledNotificationList.remove(characteristic.getUuid());
+                    }
+                });
     }
 
     public Observable<Integer> readRemoteRssi() {
         return execute(new RxReadRemoteRssiAction());
     }
+
+    private final BleEventListener mListener = new BleEventListener() {
+        @Override
+        public void onCharacteristicChanged(BluetoothGattCharacteristic characteristic) {
+            final UUID uuid = characteristic.getUuid();
+            if (mEnabledNotificationList.containsKey(uuid)) {
+                mEnabledNotificationList.get(uuid).resolve(characteristic);
+            }
+        }
+
+        @Override
+        public void onError(BletiaException exception) {
+
+        }
+    };
 }
