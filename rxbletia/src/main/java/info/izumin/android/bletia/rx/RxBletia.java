@@ -23,6 +23,7 @@ import info.izumin.android.bletia.rx.action.RxWriteCharacteristicAction;
 import info.izumin.android.bletia.rx.action.RxWriteDescriptorAction;
 import rx.Observable;
 import rx.functions.Action1;
+import rx.subjects.PublishSubject;
 
 /**
  * Created by izumin on 11/15/15.
@@ -31,10 +32,12 @@ public class RxBletia extends AbstractBletia {
     public static final String TAG = RxBletia.class.getSimpleName();
 
     private final Map<UUID, RxEnableNotificationAction> mEnabledNotificationList;
+    private final PublishSubject<BletiaException> mExceptionSubject;
 
     public RxBletia(Context context) {
         super(context);
         mEnabledNotificationList = new HashMap<>();
+        mExceptionSubject = PublishSubject.create();
     }
 
     public Observable<Void> conncet(BluetoothDevice device) {
@@ -98,6 +101,10 @@ public class RxBletia extends AbstractBletia {
         return execute(new RxReadRemoteRssiAction());
     }
 
+    public Observable<BletiaException> observeError() {
+        return mExceptionSubject;
+    }
+
     private final BleEventListener mListener = new BleEventListener() {
         @Override
         public void onCharacteristicChanged(BluetoothGattCharacteristic characteristic) {
@@ -109,7 +116,7 @@ public class RxBletia extends AbstractBletia {
 
         @Override
         public void onError(BletiaException exception) {
-
+            mExceptionSubject.onNext(exception);
         }
     };
 }
