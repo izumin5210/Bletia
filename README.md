@@ -1,15 +1,29 @@
-# Bletia
+# Bletia / RxBletia
 [![wercker status](https://app.wercker.com/status/480ca2bbd43cc73740554a6ad347cca5/s/master "wercker status")](//app.wercker.com/project/bykey/480ca2bbd43cc73740554a6ad347cca5)
 [![LICENSE](https://img.shields.io/badge/license-Apache%202.0-brightgreen.svg "LICENSE")](//github.com/izumin5210/Bletia/blob/master/LICENSE.md)
 [![Download](https://api.bintray.com/packages/izumin5210/maven/bletia/images/download.svg)](https://bintray.com/izumin5210/maven/bletia/_latestVersion)
 
-Promisified BluetoothGatt wrapper library, including [JDeferred](https://github.com/jdeferred/jdeferred).
+* Bletia: Promisified BluetoothGatt wrapper library(including [JDeferred](https://github.com/jdeferred/jdeferred))
+* RxBletia: RxJava binding APIs for Android's BluetoothGatt
 
 ## Download
 
+Use Bletia:
+
 ```groovy
 dependencies {
-    compile 'info.izumin.android:bletia:1.3.3'
+    // use Bletia
+    compile 'info.izumin.android:bletia:2.0.0'
+}
+```
+
+Use RxBletia:
+
+```groovy
+dependencies {
+    // use RxBletia
+    compile 'info.izumin.android:bletia:2.0.0'
+    compile 'io.reactivex:rxjava:1.0.16'
 }
 ```
 
@@ -141,12 +155,12 @@ bletia.readRemoteRssi()
     });
 ```
 
-## TODO
+## Sample
 
-* Add sample application
-* Support `reliableWrite`
-* Support `requestMtu`
-* Replace JDeferred with simple promise implementation
+* [bletia-sample](https://github.com/izumin5210/Bletia/tree/master/samples/bletia-sample)
+* [rxbletia-sample](https://github.com/izumin5210/Bletia/tree/master/samples/rxbletia-sample)
+
+
 
 ## License
 
