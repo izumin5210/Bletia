@@ -1,13 +1,5 @@
 apply plugin: 'com.android.library'
 
-def versionMajor = 1
-def versionMinor = 3
-def versionPatch = 3
-def versionBuild = 0
-
-def sdkVersionCode = versionMajor * 1000 + versionMinor * 100 + versionPatch * 10 + versionBuild
-def sdkVersionName = "${versionMajor}.${versionMinor}.${versionPatch}"
-
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
     buildToolsVersion rootProject.ext.buildToolsVersion
@@ -15,8 +7,8 @@ android {
     defaultConfig {
         minSdkVersion 18
         targetSdkVersion 23
-        versionCode sdkVersionCode
-        versionName sdkVersionName
+        versionCode versionCode
+        versionName versionName
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     packagingOptions {
@@ -32,6 +24,7 @@ android {
 }
 
 dependencies {
+    compile project(':bletia-core')
     compile 'org.jdeferred:jdeferred-android-aar:1.2.4'
 
     androidTestCompile 'com.android.support.test:runner:0.3'
@@ -45,7 +38,7 @@ apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: 'com.jfrog.bintray'
 
 group = 'info.izumin.android'
-version = sdkVersionName
+version = versionName
 
 def siteUrl = 'https://github.com/izumin5210/Bletia'
 def gitUrl = 'https://github.com/izumin5210/Bletia.git'
@@ -67,10 +60,10 @@ bintray {
         labels = ['aar', 'android', 'BLE']
         publicDownloadNumbers = true
         version {
-            name = sdkVersionName
-            desc = "Bletia: Android BLE Gatt wrapper ${sdkVersionName}"
+            name = versionName
+            desc = "Bletia: Android BLE Gatt wrapper ${versionName}"
             released  = new Date()
-            vcsTag = sdkVersionName
+            vcsTag = versionName
         }
     }
 }
