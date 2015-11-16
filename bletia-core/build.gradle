@@ -1,13 +1,5 @@
 apply plugin: 'com.android.library'
 
-def versionMajor = 1
-def versionMinor = 3
-def versionPatch = 3
-def versionBuild = 0
-
-def sdkVersionCode = versionMajor * 1000 + versionMinor * 100 + versionPatch * 10 + versionBuild
-def sdkVersionName = "${versionMajor}.${versionMinor}.${versionPatch}"
-
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
     buildToolsVersion rootProject.ext.buildToolsVersion
@@ -15,8 +7,8 @@ android {
     defaultConfig {
         minSdkVersion 18
         targetSdkVersion 23
-        versionCode sdkVersionCode
-        versionName sdkVersionName
+        versionCode versionCode
+        versionName versionName
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     packagingOptions {
@@ -39,4 +31,15 @@ dependencies {
     androidTestCompile 'org.mockito:mockito-core:1.9.5'
     androidTestCompile 'com.google.dexmaker:dexmaker-mockito:1.2'
     androidTestCompile 'com.squareup.assertj:assertj-android:1.1.0'
+}
+
+apply plugin: 'com.novoda.bintray-release'
+
+publish {
+    userOrg = 'izumin5210'
+    groupId = 'info.izumin.android'
+    artifactId = 'bletia-core'
+    version = versionName
+    description = 'Wrapper of Android\'s BluetoothGatt.'
+    website = 'https://github.com/izumin5210/Bletia'
 }
