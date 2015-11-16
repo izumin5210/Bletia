@@ -24,3 +24,14 @@ dependencies {
     testCompile 'junit:junit:4.12'
     provided 'io.reactivex:rxjava:1.0.16'
 }
+
+apply plugin: 'com.novoda.bintray-release'
+
+publish {
+    userOrg = 'izumin5210'
+    groupId = 'info.izumin.android'
+    artifactId = 'rxbletia'
+    version = versionName
+    description = 'RxJava binding APIs for Android\'s BluetoothGatt.'
+    website = 'https://github.com/izumin5210/Bletia'
+}
