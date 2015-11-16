@@ -1,28 +1,17 @@
 package info.izumin.android.bletia.action;
 
-import info.izumin.android.bletia.BleErrorType;
-import info.izumin.android.bletia.BletiaException;
-import info.izumin.android.bletia.wrapper.BluetoothGattWrapper;
+import org.jdeferred.Promise;
+
+import info.izumin.android.bletia.DeferredStrategy;
+import info.izumin.android.bletia.core.BletiaException;
+import info.izumin.android.bletia.core.action.AbstractReadRemoteRssiAction;
 
 /**
  * Created by izumin on 9/15/15.
  */
-public class ReadRemoteRssiAction extends Action<Integer, Void> {
+public class ReadRemoteRssiAction extends AbstractReadRemoteRssiAction<Promise<Integer, BletiaException, Void>> {
+
     public ReadRemoteRssiAction() {
-        super(null);
-    }
-
-    @Override
-    public Type getType() {
-        return Type.READ_REMOTE_RSSI;
-    }
-
-    @Override
-    public boolean execute(BluetoothGattWrapper gattWrapper) {
-        if (!gattWrapper.readRemoteRssi()) {
-            getDeferred().reject(new BletiaException(this, BleErrorType.REQUEST_FAILURE));
-            return false;
-        }
-        return true;
+        super(new DeferredStrategy<Integer, BletiaException>());
     }
 }

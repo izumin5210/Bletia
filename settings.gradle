@@ -1,1 +1,3 @@
-include 'bletia'
+include ':bletia-core', ':rxbletia'
+include ':bletia'
+include ':samples:bletia-sample', ':samples:rxbletia-sample'

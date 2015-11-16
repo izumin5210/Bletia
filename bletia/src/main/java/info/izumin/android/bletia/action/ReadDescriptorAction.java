@@ -2,30 +2,18 @@ package info.izumin.android.bletia.action;
 
 import android.bluetooth.BluetoothGattDescriptor;
 
-import info.izumin.android.bletia.BleErrorType;
-import info.izumin.android.bletia.BletiaException;
-import info.izumin.android.bletia.wrapper.BluetoothGattWrapper;
+import org.jdeferred.Promise;
+
+import info.izumin.android.bletia.DeferredStrategy;
+import info.izumin.android.bletia.core.BletiaException;
+import info.izumin.android.bletia.core.action.AbstractReadDescriptorAction;
 
 /**
  * Created by izumin on 9/15/15.
  */
-public class ReadDescriptorAction extends DescriptorAction {
+public class ReadDescriptorAction extends AbstractReadDescriptorAction<Promise<BluetoothGattDescriptor, BletiaException, Void>> {
 
     public ReadDescriptorAction(BluetoothGattDescriptor descriptor) {
-        super(descriptor);
-    }
-
-    @Override
-    public Type getType() {
-        return Type.READ_DESCRIPTOR;
-    }
-
-    @Override
-    public boolean execute(BluetoothGattWrapper gattWrapper) {
-        if (!gattWrapper.readDescriptor(getDescriptor())) {
-            getDeferred().reject(new BletiaException(this, BleErrorType.OPERATION_INITIATED_FAILURE));
-            return false;
-        }
-        return true;
+        super(descriptor, new DeferredStrategy<BluetoothGattDescriptor, BletiaException>());
     }
 }
