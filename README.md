@@ -32,127 +32,207 @@ dependencies {
 
 ```java
 // Pass application context to constructor.
+// If you use Bletia:
 Bletia bletia = new Bletia(context);
+
+// If you use RxBletia:
+RxBletia bletia = new RxBletia(context);
 ```
 
 ### Connect to BLE device
 
 ```java
 // BluetoothDevice device
+// If you use Bletia:
 bletia.connect(device);
+
+// If you use RxBletia:
+bletia.connect(device).subscribe();
 ```
 
 ### Enable notification
 
 ```java
 // BluetoothGattCharacteristic characteristic 
+// If you use Bletia:
 bletia.enableNotification(characteristic, true)
-    .then(new DoneCallback<BluetoothGattCharacteristic>() {
-        @Override
-        public void onDone(BluetoothGattCharacteristic result) {
-            // Call when the request was successfully.
-        }
-    })
-    .fail(new FailCallback<BletiaException>() {
-        @OVerride
-        public void onFail(BletiaException result) {
-            // Call when the request was failure.
-        }
-    });
+        .then(new DoneCallback<BluetoothGattCharacteristic>() {
+            @Override
+            public void onDone(BluetoothGattCharacteristic result) {
+                // Call when the request was successfully.
+            }
+        })
+        .fail(new FailCallback<BletiaException>() {
+            @Override
+            public void onFail(BletiaException result) {
+                // Call when the request was failure.
+            }
+        });
+
+// If you use RxBletia:
+bletia.enableNotification(characteristic, true)
+        .subscribe(
+                result -> {
+                    // Call when you receive the notification.
+                },
+                throwable -> {
+                    // Call when the request was failure.
+                }
+        );
 ```
 
 ### Read characteristic
 
 ```java
 // BluetoothGattCharacteristic characteristic 
+// If you use Bletia:
 bletia.readCharacteristic(characteristic)
-    .then(new DoneCallback<BluetoothGattCharacteristic>() {
-        @Override
-        public void onDone(BluetoothGattCharacteristic result) {
-            // Call when the request was successfully.
-        }
-    })
-    .fail(new FailCallback<BletiaException>() {
-        @OVerride
-        public void onFail(BletiaException result) {
-            // Call when the request was failure.
-        }
-    });
+        .then(new DoneCallback<BluetoothGattCharacteristic>() {
+            @Override
+            public void onDone(BluetoothGattCharacteristic result) {
+                // Call when the request was successfully.
+            }
+        })
+        .fail(new FailCallback<BletiaException>() {
+            @Override
+            public void onFail(BletiaException result) {
+                // Call when the request was failure.
+            }
+        });
+
+// If you use RxBletia:
+bletia.readCharacteristic(characteristic)
+        .subscribe(
+                result -> {
+                    // Call when the request was successfully.
+                },
+                throwable -> {
+                    // Call when the request was failure.
+                }
+        );
 ```
 
 ### Write characteristic
 
 ```java
 // BluetoothGattCharacteristic characteristic
+// If you use Bletia:
 bletia.writeCharacteristic(characteristic)
-    .then(new DoneCallback<BluetoothGattCharacteristic>() {
-        @Override
-        public void onDone(BluetoothGattCharacteristic result) {
-            // Call when the request was successfully.
-        }
-    })
-    .fail(new FailCallback<BletiaException>() {
-        @OVerride
-        public void onFail(BletiaException result) {
-            // Call when the request was failure.
-        }
-    });
+        .then(new DoneCallback<BluetoothGattCharacteristic>() {
+            @Override
+            public void onDone(BluetoothGattCharacteristic result) {
+                // Call when the request was successfully.
+            }
+        })
+        .fail(new FailCallback<BletiaException>() {
+            @Override
+            public void onFail(BletiaException result) {
+                // Call when the request was failure.
+            }
+        });
+    
+// If you use RxBletia:
+bletia.writeCharacteristic(characteristic)
+        .subscribe(
+                result -> {
+                    // Call when the request was successfully.
+                },
+                throwable -> {
+                    // Call when the request was failure.
+                }
+        );
 ```
 
 ### Read descriptor
 
 ```java
 // BluetoothGattDescriptor descriptor
+// If you use Bletia:
 bletia.readDescriptor(descriptor)
-    .then(new DoneCallback<BluetoothGattDescriptor>() {
-        @Override
-        public void onDone(BluetoothGattDescriptor result) {
-            // Call when the request was successfully.
-        }
-    })
-    .fail(new FailCallback<BletiaException>() {
-        @OVerride
-        public void onFail(BletiaException result) {
-            // Call when the request was failure.
-        }
-    });
+        .then(new DoneCallback<BluetoothGattDescriptor>() {
+            @Override
+            public void onDone(BluetoothGattDescriptor result) {
+                // Call when the request was successfully.
+            }
+        })
+        .fail(new FailCallback<BletiaException>() {
+            @Override
+            public void onFail(BletiaException result) {
+                // Call when the request was failure.
+            }
+        });
+    
+// If you use RxBletia:
+bletia.readDescriptor(descriptor)
+        .subscribe(
+                result -> {
+                    // Call when the request was successfully.
+                },
+                throwable -> {
+                    // Call when the request was failure.
+                }
+        );
 ```
 
 ### Write descriptor
 
 ```java
 // BluetoothGattDescriptor descriptor
+// If you use Bletia:
 bletia.writeDescriptor(descriptor)
     .then(new DoneCallback<BluetoothGattDescriptor>() {
-        @Override
-        public void onDone(BluetoothGattDescriptor result) {
-            // Call when the request was successfully.
-        }
-    })
-    .fail(new FailCallback<BletiaException>() {
-        @OVerride
-        public void onFail(BletiaException result) {
-            // Call when the request was failure.
-        }
-    });
+            @Override
+            public void onDone(BluetoothGattDescriptor result) {
+                // Call when the request was successfully.
+            }
+        })
+        .fail(new FailCallback<BletiaException>() {
+            @Override
+            public void onFail(BletiaException result) {
+                // Call when the request was failure.
+            }
+        });
+    
+// If you use RxBletia:
+bletia.writeDescriptor(descriptor)
+        .subscribe(
+                result -> {
+                    // Call when the request was successfully.
+                },
+                throwable -> {
+                    // Call when the request was failure.
+                }
+        );
 ```
 
 ### Read remote RSSI
 
 ```java
+// If you use RxBletia:
 bletia.readRemoteRssi()
-    .then(new DoneCallback<Integer>() {
-        @Override
-        public void onDone(Integer result) {
-            // Call when the request was successfully.
-        }
-    })
-    .fail(new FailCallback<BletiaException>() {
-        @OVerride
-        public void onFail(BletiaException result) {
-            // Call when the request was failure.
-        }
-    });
+        .then(new DoneCallback<Integer>() {
+            @Override
+            public void onDone(Integer result) {
+                // Call when the request was successfully.
+            }
+        })
+        .fail(new FailCallback<BletiaException>() {
+            @Override
+            public void onFail(BletiaException result) {
+                // Call when the request was failure.
+            }
+        });
+    
+// If you use RxBletia:
+bletia.readRemoteRssi()
+        .subscribe(
+                result -> {
+                    // Call when the request was successfully.
+                },
+                throwable -> {
+                    // Call when the request was failure.
+                }
+        );
 ```
 
 ## Sample
