@@ -2,6 +2,9 @@ package info.izumin.android.bletia.action;
 
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattDescriptor;
+import android.bluetooth.BluetoothGattService;
+
+import java.util.UUID;
 
 import info.izumin.android.bletia.BleErrorType;
 import info.izumin.android.bletia.BletiaException;
@@ -14,6 +17,11 @@ import info.izumin.android.bletia.wrapper.BluetoothGattWrapper;
 public class EnableNotificationAction extends CharacteristicAction {
 
     private final boolean mEnabled;
+
+    public EnableNotificationAction(BluetoothGattService service, UUID uuid, boolean enabled) {
+        super(service, uuid);
+        mEnabled = enabled;
+    }
 
     public EnableNotificationAction(BluetoothGattCharacteristic characteristic, boolean enabled) {
         super(characteristic);
