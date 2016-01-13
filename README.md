@@ -9,7 +9,7 @@ Promisified BluetoothGatt wrapper library, including [JDeferred](https://github.
 
 ```groovy
 dependencies {
-    compile 'info.izumin.android:bletia:1.3.4'
+    compile 'info.izumin.android:bletia:1.3.5'
 }
 ```
 
