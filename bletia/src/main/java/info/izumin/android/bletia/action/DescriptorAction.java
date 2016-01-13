@@ -1,5 +1,6 @@
 package info.izumin.android.bletia.action;
 
+import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattDescriptor;
 import android.os.Bundle;
 
@@ -11,6 +12,11 @@ import java.util.UUID;
 public abstract class DescriptorAction extends Action<BluetoothGattDescriptor, UUID> {
 
     private final BluetoothGattDescriptor mDescriptor;
+
+    public DescriptorAction(BluetoothGattCharacteristic characteristic, UUID uuid) {
+        super(uuid);
+        mDescriptor = characteristic.getDescriptor(uuid);
+    }
 
     public DescriptorAction(BluetoothGattDescriptor descriptor) {
         super(descriptor.getUuid());
