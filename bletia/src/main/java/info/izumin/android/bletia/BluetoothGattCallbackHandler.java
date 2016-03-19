@@ -3,7 +3,6 @@ package info.izumin.android.bletia;
 import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattDescriptor;
-
 import info.izumin.android.bletia.action.Action;
 import info.izumin.android.bletia.util.NotificationUtils;
 import info.izumin.android.bletia.wrapper.BluetoothGattCallbackWrapper;
@@ -52,6 +51,12 @@ class BluetoothGattCallbackHandler extends BluetoothGattCallbackWrapper {
 
     @Override
     public void onCharacteristicChanged(BluetoothGattWrapper gatt, BluetoothGattCharacteristic characteristic) {
+        if (mQueueContainer.getEnableNotificationActionQueue().isRunning(characteristic.getUuid())) {
+            mQueueContainer.getEnableNotificationActionQueue()
+                    .dequeue(characteristic.getUuid())
+                    .getDeferred()
+                    .resolve(characteristic);
+        }
         mCallback.onCharacteristicChanged(characteristic);
     }
 
