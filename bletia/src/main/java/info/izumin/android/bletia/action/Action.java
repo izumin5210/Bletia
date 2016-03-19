@@ -40,12 +40,21 @@ public abstract class Action<T, I> {
     }
 
     public static final String KEY_UUID = "key_uuid";
+    private static final int DEFAULT_TIMEOUT_MILLIS = 10 * 1000;
 
     private final I mIdentity;
     private final Deferred<T, BletiaException, Void> mDeferred;
+    private final long mTimeoutMillis;
+
+    private boolean mDequeued = false;
 
     public Action(I identity) {
+        this(identity, DEFAULT_TIMEOUT_MILLIS);
+    }
+
+    public Action(I identity, long timeoutMillis) {
         mIdentity = identity;
+        mTimeoutMillis = timeoutMillis;
         mDeferred = new DeferredObject<>();
     }
 
@@ -66,6 +75,18 @@ public abstract class Action<T, I> {
 
     public Bundle getBundle() {
         return new Bundle();
+    }
+
+    public long getTimeoutMillis() {
+        return mTimeoutMillis;
+    }
+
+    public void setDequeued(boolean dequeued) {
+        mDequeued = dequeued;
+    }
+
+    public boolean isDequeued() {
+        return mDequeued;
     }
 
     public abstract Type getType();

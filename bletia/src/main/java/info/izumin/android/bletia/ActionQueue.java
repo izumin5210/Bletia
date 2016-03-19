@@ -1,12 +1,13 @@
 package info.izumin.android.bletia;
 
+import android.os.Handler;
+import info.izumin.android.bletia.action.Action;
+import info.izumin.android.bletia.wrapper.BluetoothGattWrapper;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import info.izumin.android.bletia.action.Action;
-import info.izumin.android.bletia.wrapper.BluetoothGattWrapper;
 
 /**
  * Created by izumin on 10/3/15.
@@ -29,10 +30,19 @@ public class ActionQueue<A extends Action<?, I>, I> {
         if (isRunning(identity)) {
             return false;
         } else {
-            for (A action : mWaitingActionList) {
+            for (final A action : mWaitingActionList) {
                 if ((identity == null) ? (action.getIdentity() == null) : (identity.equals(action.getIdentity()))) {
                     mWaitingActionList.remove(action);
                     if (action.execute(gattWrapper)) {
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (!action.isDequeued()) {
+                                    dequeue(action.getIdentity());
+                                    action.getDeferred().reject(new BletiaException(BleErrorType.TIMEOUT));
+                                }
+                            }
+                        }, action.getTimeoutMillis());
                         mRunningActionMap.put(action.getIdentity(), action);
                         return true;
                     } else {
@@ -45,7 +55,9 @@ public class ActionQueue<A extends Action<?, I>, I> {
     }
 
     public synchronized A dequeue(I identity) {
-        return mRunningActionMap.remove(identity);
+        A action = mRunningActionMap.remove(identity);
+        action.setDequeued(true);
+        return action;
     }
 
     public boolean isRunning(I identity) {
