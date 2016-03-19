@@ -21,6 +21,7 @@ public enum BleErrorType implements BletiaErrorType {
     INVALID_PARAMETER(-1),
     OPERATION_INITIATED_FAILURE(-1),
     REQUEST_FAILURE(-1),
+    TIMEOUT(-1),
     UNKNOWN_ERROR(-1);
 
     private final int mCode;

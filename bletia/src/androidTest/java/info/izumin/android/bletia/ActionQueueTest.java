@@ -1,5 +1,7 @@
 package info.izumin.android.bletia;
 
+import info.izumin.android.bletia.action.Action;
+import info.izumin.android.bletia.wrapper.BluetoothGattWrapper;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -12,14 +14,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import info.izumin.android.bletia.action.Action;
-import info.izumin.android.bletia.wrapper.BluetoothGattWrapper;
-
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * Created by izumin on 10/5/15.
@@ -42,7 +38,7 @@ public class ActionQueueTest {
     }
 
     private ActionQueue<ActionImpl, String> mQueue;
-    @Mock private ActionImpl mAction;
+    private ActionImpl mAction;
     @Spy private List<ActionImpl> mWaitingActionList = new ArrayList<>();
     @Spy private Map<String, ActionImpl> mRunningActionMap = new HashMap<>();
     @Mock private BluetoothGattWrapper mGattWrapper;
@@ -50,8 +46,8 @@ public class ActionQueueTest {
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
+        mAction = spy(new ActionImpl("test"));
         mQueue = new ActionQueue<>();
-        when(mAction.getIdentity()).thenReturn("test");
         Whitebox.setInternalState(mQueue, "mWaitingActionList", mWaitingActionList);
         Whitebox.setInternalState(mQueue, "mRunningActionMap", mRunningActionMap);
         mWaitingActionList.add(mAction);
