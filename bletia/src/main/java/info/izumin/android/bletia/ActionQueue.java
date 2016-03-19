@@ -1,6 +1,7 @@
 package info.izumin.android.bletia;
 
 import android.os.Handler;
+import android.os.Looper;
 import info.izumin.android.bletia.action.Action;
 import info.izumin.android.bletia.wrapper.BluetoothGattWrapper;
 
@@ -16,10 +17,12 @@ public class ActionQueue<A extends Action<?, I>, I> {
 
     private List<A> mWaitingActionList;
     private Map<I, A> mRunningActionMap;
+    private Handler mHandler;
 
     public ActionQueue() {
         mWaitingActionList = new ArrayList<>();
         mRunningActionMap = new HashMap<>();
+        mHandler = new Handler(Looper.getMainLooper());
     }
 
     public synchronized boolean enqueue(A action) {
@@ -34,7 +37,7 @@ public class ActionQueue<A extends Action<?, I>, I> {
                 if ((identity == null) ? (action.getIdentity() == null) : (identity.equals(action.getIdentity()))) {
                     mWaitingActionList.remove(action);
                     if (action.execute(gattWrapper)) {
-                        new Handler().postDelayed(new Runnable() {
+                        mHandler.postDelayed(new Runnable() {
                             @Override
                             public void run() {
                                 if (!action.isDequeued()) {
