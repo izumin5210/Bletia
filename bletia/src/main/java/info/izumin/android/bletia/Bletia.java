@@ -105,6 +105,10 @@ public class Bletia implements BluetoothGattCallbackHandler.Callback {
         return execute(new ReadDescriptorAction(descriptor));
     }
 
+    public Promise<BluetoothGattCharacteristic, BletiaException, Void> enableNotification(BluetoothGattCharacteristic characteristic, boolean enabled, long timeoutMillis) {
+        return execute(new EnableNotificationAction(characteristic, enabled, timeoutMillis));
+    }
+
     public Promise<BluetoothGattCharacteristic, BletiaException, Void> enableNotification(BluetoothGattCharacteristic characteristic, boolean enabled) {
         return execute(new EnableNotificationAction(characteristic, enabled));
     }
