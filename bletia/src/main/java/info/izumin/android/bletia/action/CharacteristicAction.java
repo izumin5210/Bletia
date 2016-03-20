@@ -13,9 +13,19 @@ public abstract class CharacteristicAction extends Action<BluetoothGattCharacter
 
     private final BluetoothGattCharacteristic mCharacteristic;
 
+    public CharacteristicAction(BluetoothGattService service, UUID uuid, long timeoutMillis) {
+        super(uuid, timeoutMillis);
+        mCharacteristic = service.getCharacteristic(uuid);
+    }
+
     public CharacteristicAction(BluetoothGattService service, UUID uuid) {
         super(uuid);
         mCharacteristic = service.getCharacteristic(uuid);
+    }
+
+    public CharacteristicAction(BluetoothGattCharacteristic characteristic, long timeoutMillis) {
+        super(characteristic.getUuid(), timeoutMillis);
+        mCharacteristic = characteristic;
     }
 
     public CharacteristicAction(BluetoothGattCharacteristic characteristic) {

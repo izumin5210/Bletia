@@ -44,13 +44,17 @@ public abstract class Action<T, I> {
 
     private final I mIdentity;
     private final Deferred<T, BletiaException, Void> mDeferred;
-
-    private long mTimeoutMillis = DEFAULT_TIMEOUT_MILLIS;
+    private final long mTimeoutMillis;
 
     private boolean mDequeued = false;
 
     public Action(I identity) {
+        this(identity, DEFAULT_TIMEOUT_MILLIS);
+    }
+
+    public Action(I identity, long timeoutMillis) {
         mIdentity = identity;
+        mTimeoutMillis = timeoutMillis;
         mDeferred = new DeferredObject<>();
     }
 
@@ -75,10 +79,6 @@ public abstract class Action<T, I> {
 
     public long getTimeoutMillis() {
         return mTimeoutMillis;
-    }
-
-    protected void setTimeoutMillis(long timeoutMillis) {
-        mTimeoutMillis = timeoutMillis;
     }
 
     public void setDequeued(boolean dequeued) {
